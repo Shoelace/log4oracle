@@ -1,5 +1,4 @@
-prompt create or replace package body LogImpl 
-
+--prompt create or replace package body LogImpl 
 create or replace 
 package body LogImpl as
 
@@ -49,7 +48,7 @@ k_layout layout;
     end if;
 
 --this is should now event dispatch to appenders via logger config
-le := Log4oraclelogEvent('test logger',marker,fqcn,lvl,m,t);
+le := Log4oraclelogEvent('test logger',marker,fqcn,lvl,m,t, NULL,NULL,'mythreadname', StackTraceElement('a','b','c',4), systimestamp);
 
 IF k_appender IS NOT NULL THEN
 k_appender.APPEND(le);
@@ -80,7 +79,9 @@ BEGIN
 	THROWING_MARKER  := MarkerManager.getMarker('THROWING',EXCEPTION_MARKER);
 
 --TODO this needs to move to loggercontext
-k_layout := PatternLayout('%date %-5level - %marker - %message%newline');
+--k_layout := PatternLayout('%date %-5level - %marker - %message%newline');
+k_layout := PatternLayout('%r [%t] %-5p %l %x - %m%n');
+
 k_layout.ActivateOptions;
 k_appender := dbmsOutputAppender('dbmsoutput',null, k_layout, false);
 

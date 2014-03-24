@@ -163,8 +163,8 @@ begin
 		new PatternConverter('newline',  'chr(13)||chr(10)'),
 		new PatternConverter('n',        'chr(13)||chr(10)'),
 		
-		new PatternConverter('c',        'event.LoggerName'),
-		new PatternConverter('logger',   'event.LoggerName'),
+		NEW PatternConverter('c',        '''LoggerName'''),
+		new PatternConverter('logger',   '''LoggerName'''),
 		
 		new PatternConverter('date',     'to_char(event.getTimestamp(), ''yyyy-mm-dd hh24:mi:ss,ff3'')'),
 		NEW PatternConverter('d',        'to_char(event.getTimestamp(), ''yyyy-mm-dd hh24:mi:ss,ff3'')'),
@@ -178,14 +178,15 @@ begin
 		new PatternConverter('p',         'event.getLevel().m_name'),
 		NEW PatternConverter('level',     'event.getLevel().m_Name'),
 
-		NEW PatternConverter('location',        '''location'''),
-		NEW PatternConverter('L',        '''Line'''),
-		NEW PatternConverter('line',        '''Line'''),
-		NEW PatternConverter('l',        '''location'''),
+		NEW PatternConverter('location',  q'[(case when event is null or event.getSource() is null then '?1' else event.getSource().toString() end)]'),
+		NEW PatternConverter('L',         q'[(case when event is null or event.getSource() is null then '?2' else event.getSource().getLineNumber() end)]'),
+		NEW PatternConverter('line',      q'[(case when event is null or event.getSource() is null then '?3' else event.getSource().getLineNumber() end)]'),
+		NEW PatternConverter('l',         q'[(case when event is null or event.getSource() is null then '?4' else event.getSource().toString() end)]'),
     
 		
-		--NEW PatternConverter('msg',         q'[(case when event is null or event.getMessage() is null then '' else event.getMessage().getFormattedMessage() end)]'),
-		new PatternConverter('message',    q'[(case when event is null or event.getMessage() is null then '' else event.getMessage().getFormattedMessage() end)]'),
+		NEW PatternConverter('msg',       q'[(case when event is null or event.getMessage() is null then '' else event.getMessage().getFormattedMessage() end)]'),
+		new PatternConverter('message',   q'[(case when event is null or event.getMessage() is null then '' else event.getMessage().getFormattedMessage() end)]'),
+		NEW PatternConverter('m',         q'[(case when event is null or event.getMessage() is null then '' else event.getMessage().getFormattedMessage() end)]'),
 
 		NEW PatternConverter('M',         '''Method'''),
 		NEW PatternConverter('method',         '''Method'''),
@@ -198,16 +199,17 @@ begin
 		NEW PatternConverter('r',         '0'),
 		NEW PatternConverter('relative',         '0'),
 
+		NEW PatternConverter('t',         'event.getThreadName()'),
 		
 		NEW PatternConverter('utcdate',   q'[to_char(event.getTimestamp() at time zone 'UTC', 'yyyy-mm-dd hh24:mi:ss,ff3')]'),
 		NEW PatternConverter('utcDate',   q'[to_char(event.getTimestamp() at time zone 'UTC', 'yyyy-mm-dd hh24:mi:ss,ff3')]'),
 		new PatternConverter('UtcDate',   q'[to_char(event.getTimestamp() at time zone 'UTC', 'yyyy-mm-dd hh24:mi:ss,ff3')]'),
 		
-    NEW PatternConverter('x',         '0'),
-    NEW PatternConverter('NDC',         '0'),
+    NEW PatternConverter('x',         '''ndc'''),
+    NEW PatternConverter('NDC',       '''ndc'''),
 
-    NEW PatternConverter('X',         '0'),
-    NEW PatternConverter('MDC',         '0'),
+    NEW PatternConverter('X',         '''mdc'''),
+    NEW PatternConverter('MDC',       '''mdc'''),
     
 		new PatternConverter('w',         'event.UserName'),
 		NEW PatternConverter('username',  'event.UserName'));

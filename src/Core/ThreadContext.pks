@@ -18,6 +18,8 @@ AS
  * See the license for the specific language governing permissions and
  * limitations under the license.
  */
+ 
+ --EMPTY_MAP CONSTANT ThreadContextContextMap := ThreadContextContextMapIndex(null,null);
 
 /**
  * The ThreadContext allows applications to store information either in a Map or a Stack.
@@ -83,6 +85,7 @@ AS
      * @return A copy of this thread's stack.
      */
     --PUBLIC STATIC ContextStack cloneStack() {
+    function cloneStack return ThreadContextContextStack;
 
    /**
      * Set this thread's stack.
