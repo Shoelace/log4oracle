@@ -1,0 +1,9 @@
+# See http://www.pixelite.co.nz/article/using-git-attributes-exclude-files-your-release
+
+# end-of-line normalisation
+* text=auto
+
+# No Git attributes
+.gitattributes export-ignore
+.gitignore export-ignore
+.gitkeep export-ignore
