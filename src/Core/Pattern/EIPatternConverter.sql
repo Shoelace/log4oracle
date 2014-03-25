@@ -14,6 +14,20 @@
 * limitations under the License.
 */
 
-create or replace
-type PatternConverterArray is table of PatternConverter;
+create or replace 
+type EIPatternConverter
+under PatternConverter
+(
+	/**
+	* @headcom
+	*/
+	
+	member function Convert(event LogEvent, value varchar2) return varchar2,
+	
+	constructor function EIPatternConverter(key varchar2, value varchar2) return self as result,
+	
+	overriding member function Format(event LogEvent) return varchar2
+	
+) not final;
 /
+show errors

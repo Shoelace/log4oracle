@@ -14,6 +14,7 @@ end;
 constructor function Log4oracleLogEvent(loggerName VARCHAR2, mkr Marker, fqcn VARCHAR2, lvl loglevel, msg Message, t GenericException) return self as result
 is
 begin
+	self.m_fqcn := fqcn;
 	self.m_marker := mkr;
 	self.m_message := msg;
 	self.m_level := lvl;
@@ -24,12 +25,15 @@ end;
 constructor FUNCTION Log4oracleLogEvent(loggerName VARCHAR2, mkr Marker, fqcn VARCHAR2, lvl loglevel, msg Message, t GenericException, mdc ThreadContextContextMap, ndc ThreadContextContextStack,  threadName VARCHAR2, LOCATION StackTraceElement , ts TIMESTAMP WITH TIME ZONE) RETURN self AS result
 IS
 BEGIN
+	self.m_fqcn := fqcn;
 	self.m_marker := mkr;
 	self.m_message := msg;
 	self.m_level := lvl;
 	self.m_timestamp := SYSTIMESTAMP;
   self.m_ste :=  LOCATION;
   self.m_threadname := threadname;
+  self.m_mdc := mdc;
+  self.m_ndc := ndc;
 return;
 END;
 
@@ -38,7 +42,7 @@ END;
 	overriding member function toString return varchar2
 is
 begin
-return 'not impletemnted';
+return 'not implemented';
 end;
 	overriding member function getMarker return Marker
 is
@@ -61,6 +65,12 @@ is
 begin
 return m_level;
 end;
+	overriding MEMBER FUNCTION getLoggerName RETURN VARCHAR2
+is
+begin
+return m_fqcn;
+end;
+
 
 	overriding MEMBER FUNCTION getSource RETURN StackTraceElement
   IS

@@ -23,7 +23,7 @@ as object
 (
 	/**
 	* Extend this abstract class to create your own log layout format.
-	* @head
+	* @headcom
 	*/
 	
 	/**
@@ -59,6 +59,7 @@ as object
 	* If any of the configuration properties are modified then 
 	* <see cref="ActivateOptions"/> must be called again.
  	* This method must be implemented by the subclass.
+    * @deprecated
 	*/
 	not final member procedure ActivateOptions,
 	

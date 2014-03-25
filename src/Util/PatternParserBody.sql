@@ -34,7 +34,7 @@ package body PatternParser as
 		
 		m_converters.EXTEND(1);
 		i := m_converters.LAST;
-		m_converters(i) := new PatternConverter(converterName, options);
+		m_converters(i) := new EIPatternConverter(converterName, options);
 		
 		m_converters(i).m_min := minLength;
 		m_converters(i).m_max := maxLength;
@@ -127,7 +127,15 @@ package body PatternParser as
 								-- Look for option
 								/** TODO */
 								
-								ProcessConverter(matches(m).Key, matches(m).Value, LeftAlign, MinTextWidth, MaxTextWidth);
+--								ProcessConverter(matches(m).Key, matches(m).Value, LeftAlign, MinTextWidth, MaxTextWidth);
+	m_converters.EXTEND(1);
+		i := m_converters.LAST;
+		m_converters(i) := matches(m);
+		
+		m_converters(i).m_min := MinTextWidth;
+		m_converters(i).m_max := MaxTextWidth;
+		--m_converters(i).m_leftAlign := align;
+
 								exit;
 								
 							end if;
@@ -158,61 +166,62 @@ package body PatternParser as
 	end;
 	
 begin
-	m_globalRulesRegistry := new PatternConverterArray(
-		new PatternConverter('literal',  null),
-		new PatternConverter('newline',  'chr(13)||chr(10)'),
-		new PatternConverter('n',        'chr(13)||chr(10)'),
+	--a list of all availabel patter convertes with their key
+	m_globalRulesRegistry := NEW PatternConverterArray(
+		NEW EIPatternConverter('literal',  NULL),
+		new EIPatternConverter('newline',  'chr(13)||chr(10)'),
+		new EIPatternConverter('n',        'chr(13)||chr(10)'),
 		
-		NEW PatternConverter('c',        '''LoggerName'''),
-		new PatternConverter('logger',   '''LoggerName'''),
+		NEW EIPatternConverter('c',        '''LoggerName'''),
+		new EIPatternConverter('logger',   '''LoggerName'''),
 		
-		new PatternConverter('date',     'to_char(event.getTimestamp(), ''yyyy-mm-dd hh24:mi:ss,ff3'')'),
-		NEW PatternConverter('d',        'to_char(event.getTimestamp(), ''yyyy-mm-dd hh24:mi:ss,ff3'')'),
+		new EIPatternConverter('date',     'to_char(event.getTimestamp(), ''yyyy-mm-dd hh24:mi:ss,ff3'')'),
+		NEW EIPatternConverter('d',        'to_char(event.getTimestamp(), ''yyyy-mm-dd hh24:mi:ss,ff3'')'),
 		
-		NEW PatternConverter('exception', 'event.ExceptionString.Format()'),
-		NEW PatternConverter('ex',        'event.ExceptionString.Format()'),
-		NEW PatternConverter('throwable', 'event.ExceptionString.Format()'),
+		NEW EIPatternConverter('exception', 'event.ExceptionString.Format()'),
+		NEW EIPatternConverter('ex',        'event.ExceptionString.Format()'),
+		NEW EIPatternConverter('throwable', 'event.ExceptionString.Format()'),
 
-		NEW PatternConverter('f',        '''filename'''),
+		NEW EIPatternConverter('f',        '''filename'''),
 
-		new PatternConverter('p',         'event.getLevel().m_name'),
-		NEW PatternConverter('level',     'event.getLevel().m_Name'),
+		new EIPatternConverter('p',         'event.getLevel().m_name'),
+		NEW EIPatternConverter('level',     'event.getLevel().m_Name'),
 
-		NEW PatternConverter('location',  q'[(case when event is null or event.getSource() is null then '?1' else event.getSource().toString() end)]'),
-		NEW PatternConverter('L',         q'[(case when event is null or event.getSource() is null then '?2' else event.getSource().getLineNumber() end)]'),
-		NEW PatternConverter('line',      q'[(case when event is null or event.getSource() is null then '?3' else event.getSource().getLineNumber() end)]'),
-		NEW PatternConverter('l',         q'[(case when event is null or event.getSource() is null then '?4' else event.getSource().toString() end)]'),
+		NEW EIPatternConverter('location',  q'[(case when event is null or event.getSource() is null then '?1' else event.getSource().toString() end)]'),
+		NEW EIPatternConverter('L',         q'[(case when event is null or event.getSource() is null then '?2' else event.getSource().getLineNumber() end)]'),
+		NEW EIPatternConverter('line',      q'[(case when event is null or event.getSource() is null then '?3' else event.getSource().getLineNumber() end)]'),
+		NEW EIPatternConverter('l',         q'[(case when event is null or event.getSource() is null then '?4' else event.getSource().toString() end)]'),
     
 		
-		NEW PatternConverter('msg',       q'[(case when event is null or event.getMessage() is null then '' else event.getMessage().getFormattedMessage() end)]'),
-		new PatternConverter('message',   q'[(case when event is null or event.getMessage() is null then '' else event.getMessage().getFormattedMessage() end)]'),
-		NEW PatternConverter('m',         q'[(case when event is null or event.getMessage() is null then '' else event.getMessage().getFormattedMessage() end)]'),
+		NEW EIPatternConverter('msg',       q'[(case when event is null or event.getMessage() is null then '' else event.getMessage().getFormattedMessage() end)]'),
+		new EIPatternConverter('message',   q'[(case when event is null or event.getMessage() is null then '' else event.getMessage().getFormattedMessage() end)]'),
 
-		NEW PatternConverter('M',         '''Method'''),
-		NEW PatternConverter('method',         '''Method'''),
+		NEW EIPatternConverter('M',         '''Method'''),
+		NEW EIPatternConverter('method',         '''Method'''),
 		
-		NEW PatternConverter('marker',         q'[(case when event is null or event.getMarker() is null then '' else event.getMarker().toString() end)]'),
+		NEW EIPatternConverter('marker',         q'[(case when event is null or event.getMarker() is null then '' else event.getMarker().toString() end)]'),
+--need to put single char last
+		NEW EIPatternConverter('m',         q'[(case when event is null or event.getMessage() is null then '' else event.getMessage().getFormattedMessage() end)]'),
 
-		--NEW PatternConverter('m',         'event.getMessage().getformattedmessage()'), --need to put single char last
 
 
-		NEW PatternConverter('r',         '0'),
-		NEW PatternConverter('relative',         '0'),
+		NEW EIPatternConverter('r',         '0'),
+		NEW EIPatternConverter('relative',         '0'),
 
-		NEW PatternConverter('t',         'event.getThreadName()'),
+		NEW EIPatternConverter('t',         'event.getThreadName()'),
 		
-		NEW PatternConverter('utcdate',   q'[to_char(event.getTimestamp() at time zone 'UTC', 'yyyy-mm-dd hh24:mi:ss,ff3')]'),
-		NEW PatternConverter('utcDate',   q'[to_char(event.getTimestamp() at time zone 'UTC', 'yyyy-mm-dd hh24:mi:ss,ff3')]'),
-		new PatternConverter('UtcDate',   q'[to_char(event.getTimestamp() at time zone 'UTC', 'yyyy-mm-dd hh24:mi:ss,ff3')]'),
+		NEW EIPatternConverter('utcdate',   q'[to_char(event.getTimestamp() at time zone 'UTC', 'yyyy-mm-dd hh24:mi:ss,ff3')]'),
+		NEW EIPatternConverter('utcDate',   q'[to_char(event.getTimestamp() at time zone 'UTC', 'yyyy-mm-dd hh24:mi:ss,ff3')]'),
+		new EIPatternConverter('UtcDate',   q'[to_char(event.getTimestamp() at time zone 'UTC', 'yyyy-mm-dd hh24:mi:ss,ff3')]'),
 		
-    NEW PatternConverter('x',         '''ndc'''),
-    NEW PatternConverter('NDC',       '''ndc'''),
+    NEW NDCPatternConverter('x'),
+    NEW NDCPatternConverter('NDC'),
 
-    NEW PatternConverter('X',         '''mdc'''),
-    NEW PatternConverter('MDC',       '''mdc'''),
+    NEW EIPatternConverter('X',         'null'),
+    NEW EIPatternConverter('MDC',       'null'),
     
-		new PatternConverter('w',         'event.UserName'),
-		NEW PatternConverter('username',  'event.UserName'));
+		new EIPatternConverter('w',         'event.UserName'),
+		NEW EIPatternConverter('username',  'event.UserName'));
     
 end PatternParser;
 /

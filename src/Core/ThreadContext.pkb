@@ -3,7 +3,7 @@ create or replace
 package body threadcontext as
 
   k_contextMap ThreadContextContextMap;
-  k_contextStack ThreadContextContextStack;
+  k_contextStack ThreadContextContextStack := new ThreadContextContextStack();
 
   procedure put(key varchar2, value varchar2) as
   begin
@@ -59,7 +59,15 @@ package body threadcontext as
   begin
     -- TODO: Implementation required for function THREADCONTEXT.pop
     RETURN k_contextStack.pop();
-  end pop;
+  END pop;
+  PROCEDURE pop AS
+   dummy varchar2(32000);
+  begin
+    -- TODO: Implementation required for function THREADCONTEXT.pop
+    dummy := k_contextStack.pop();
+    return;
+  END pop;
+
 
   procedure push(message varchar2) as
   begin

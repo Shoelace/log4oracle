@@ -15,9 +15,9 @@
 */
 
 create or replace 
-type body PatternConverter as
+type body EIPatternConverter as
 	
-	constructor function PatternConverter(key varchar2, value varchar2) return self as result is
+	constructor function EIPatternConverter(key varchar2, value varchar2) return self as result is
 	begin
 		self.Key := key;
 		self.Value := value;
@@ -27,7 +27,7 @@ type body PatternConverter as
 		return;
 	end;
 	
-	static function Convert(event LogEvent, value varchar2) return varchar2 is
+	member function Convert(event LogEvent, value varchar2) return varchar2 is
 		l_ret varchar2(32767);
 	begin
 		--use execute immdiate to perform custom code for each pattern
@@ -43,11 +43,11 @@ type body PatternConverter as
 		return l_ret;
 	end;
 	
-	member function Format(event LogEvent) return varchar2 is
+	overriding member function Format(event LogEvent) return varchar2 is
 		msg varchar2(32767);
 		len number;
 	begin
-		msg := PatternConverter.Convert(event, self.Value);
+		msg := self.Convert(event, self.Value);
 		if not (m_min < 0 and m_max >= 471234567) then
 			len := length(msg);
 			if len > m_max then
@@ -66,7 +66,7 @@ type body PatternConverter as
 		return msg;
 	exception
 		when others then
-			return 'error!'||self.key||'@'||self.value||'#'||sqlerrm;
+			return 'EI-error!'||self.key||'@'||self.value||'#'||sqlerrm;
 	end;
 	
 end;

@@ -62,7 +62,7 @@ BEGIN
         line  := SUBSTR( line, NVL(n,1) );
         n     := instr( line, '.' );
         owner := ltrim(rtrim(SUBSTR( line, 1, n-1 )));
-        name  := LTRIM(RTRIM(SUBSTR( LINE, N   +1 )));
+        name  := NVL(LTRIM(RTRIM(SUBSTR( LINE, N   +1 ))),'__anonymous_block');
         EXIT;
       END IF;
     END IF;

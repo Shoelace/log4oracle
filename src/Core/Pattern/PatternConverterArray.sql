@@ -14,26 +14,11 @@
 * limitations under the License.
 */
 
-create or replace 
-type PatternConverter as object
-(
-	/**
-	* @headcom
-	*/
-	
-	Key varchar2(255),
-	Value varchar2(2000),
-	
-	/** formatting info */
-	m_min number,
-	m_max number,
-	m_leftAlign number,
-	
-	static function Convert(event LogEvent, value varchar2) return varchar2,
-	
-	constructor function PatternConverter(key varchar2, value varchar2) return self as result,
-	
-	member function Format(event LogEvent) return varchar2
-	
-);
+create or replace
+type PatternConverterArray is table of PatternConverter;
 /
+
+create or replace
+type FormattingInfoArray is table of FormattingInfo;
+/
+

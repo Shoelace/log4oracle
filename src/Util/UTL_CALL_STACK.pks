@@ -1,6 +1,12 @@
 create or replace PACKAGE utl_call_stack IS
 
-  /*
+/** 
+* this is a pre 12c implementauyion of utl_call_stack.
+*
+* @headcom
+*/
+
+  /**
     Exception: BAD_DEPTH_INDICATOR
 
     This exception is raised when a provided depth is out of bounds.
@@ -12,13 +18,14 @@ create or replace PACKAGE utl_call_stack IS
   BAD_DEPTH_INDICATOR EXCEPTION;
     pragma EXCEPTION_INIT(BAD_DEPTH_INDICATOR, -64610);
 
-  /*
+  /**
     Type: UNIT_QUALIFIED_NAME
 
     This data structure is a varray whose individual elements are, in order,
     the unit name, any lexical parents of the subprogram, and the subprogram
     name.
 
+<pre>
     For example, consider the following contrived PL/SQL procedure.
 
     > procedure topLevel is
@@ -38,6 +45,7 @@ create or replace PACKAGE utl_call_stack IS
    The unit qualified name at (1) would be
 
    >    ["topLevel", "localFunction", "innerFunction"]
+</pre>
 
    Note that the block enclosing (1) does not figure in the unit qualified
    name.
@@ -48,22 +56,22 @@ create or replace PACKAGE utl_call_stack IS
   TYPE UNIT_QUALIFIED_NAME IS VARRAY(256) OF VARCHAR2(32767);
 
   /*
-    Function: subprogram
-
-    Returns the unit-qualified name of the subprogram at the specified dynamic
-    depth.
-
-    Parameters:
-
-      dynamic_depth - The depth in the call stack.
-
-    Returns:
-
-      The unit-qualified name of the subprogram at the specified dynamic depth.
-
-    Exception:
-
-      Raises <BAD_DEPTH_INDICATOR>
+*    Function: subprogram
+*
+*    Returns the unit-qualified name of the subprogram at the specified dynamic
+*    depth.
+*
+*    Parameters:
+*
+*      @param dynamic_depth - The depth in the call stack.
+*
+*    Returns:
+*
+*      @return The unit-qualified name of the subprogram at the specified dynamic depth.
+*
+*    Exception:
+*
+*     @throws  BAD_DEPTH_INDICATOR
    */
   FUNCTION subprogram(dynamic_depth IN PLS_INTEGER) RETURN UNIT_QUALIFIED_NAME;
 

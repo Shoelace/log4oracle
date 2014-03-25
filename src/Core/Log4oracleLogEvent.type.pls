@@ -8,6 +8,7 @@ under LogEvent
 	m_marker Marker,
 	m_level LogLevel,
 	m_name  VARCHAR2(200),
+	m_fqcn  VARCHAR2(200),
 	m_threadname  varchar2(200),
 	m_message Message,
 	m_timestamp TIMESTAMP WITH TIME ZONE,
@@ -28,6 +29,8 @@ constructor FUNCTION Log4oracleLogEvent(loggerName VARCHAR2, mkr Marker, fqcn VA
 
   overriding MEMBER FUNCTION getContextMap RETURN ThreadContextContextMap,
   overriding MEMBER FUNCTION getContextStack RETURN ThreadContextContextStack,
+
+	overriding MEMBER FUNCTION getLoggerName RETURN VARCHAR2,
 
 	overriding member function getMessage return Message,
 	overriding member function getMarker return Marker,

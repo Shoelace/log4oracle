@@ -70,10 +70,12 @@ m_fileName VARCHAR2(255),
 126      * </ul>
 127      * @see    Throwable#printStackTrace()
 128      */
-	MEMBER FUNCTION toString RETURN VARCHAR2,
+	MEMBER FUNCTION toString RETURN VARCHAR2
 
 
-	CONSTRUCTOR FUNCTION StackTraceElement(self IN OUT NOCOPY StackTraceElement, declaringClass VARCHAR2,  methodName VARCHAR2, fileName VARCHAR2, lineNumber INTEGER)  RETURN SELF AS RESULT
+	,CONSTRUCTOR FUNCTION StackTraceElement(self IN OUT NOCOPY StackTraceElement, declaringClass VARCHAR2,  methodName VARCHAR2, fileName VARCHAR2, lineNumber INTEGER)  RETURN SELF AS RESULT
+	,CONSTRUCTOR FUNCTION StackTraceElement(self IN OUT NOCOPY StackTraceElement, depth PLS_INTEGER )  RETURN SELF AS RESULT
+	,CONSTRUCTOR FUNCTION StackTraceElement(self IN OUT NOCOPY StackTraceElement)  RETURN SELF AS RESULT
 	
 )
 instantiable final;

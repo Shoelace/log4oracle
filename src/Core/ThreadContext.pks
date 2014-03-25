@@ -110,6 +110,7 @@ AS
      * @return String The innermost diagnostic context.
      */
     function pop return VARCHAR2;
+    PROCEDURE pop;
     
    /**
      * Push new diagnostic context information for the current thread.

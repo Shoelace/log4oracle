@@ -46,11 +46,10 @@ BEGIN
 	--logcontext 
     ) VALUES (
     event.getTimestamp(),
-    'fqcn',
+    event.getLoggerName(),
         ll.m_name,
 		event.getMarker().toString(),
-    'loc.toString()',
-    --msg,
+    event.getSource().toString(),
     event.getmessage().getFormattedMessage() ,
 		--throwable.toString()
     '', --throwable.errorstack || throwable.errorbacktrace 

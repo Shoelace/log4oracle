@@ -10,7 +10,24 @@ TYPE BODY StackTraceElement AS
     self.m_lineNumber     := linenumber;
     RETURN;
   END;
-	
+	CONSTRUCTOR FUNCTION StackTraceElement(self IN OUT NOCOPY StackTraceElement)  RETURN SELF AS RESULT
+  IS
+  BEGIN
+    self.m_declaringClass := utl_call_stack.owner(2); 
+    self.m_methodName     := utl_call_stack.concatenate_subprogram(utl_call_stack.subprogram(2));
+    self.m_fileName       := NULL;
+    self.m_lineNumber     := utl_call_stack.unit_line(2);
+    RETURN;
+  END;  
+	CONSTRUCTOR FUNCTION StackTraceElement(self IN OUT NOCOPY StackTraceElement, depth PLS_INTEGER)  RETURN SELF AS RESULT
+  IS
+  BEGIN
+    self.m_declaringClass := utl_call_stack.owner(2+depth); 
+    self.m_methodName     := utl_call_stack.concatenate_subprogram(utl_call_stack.subprogram(2+depth));
+    self.m_fileName       := NULL;
+    self.m_lineNumber     := utl_call_stack.unit_line(2+depth);
+    RETURN;
+  END; 	
   
 /**
 Returns a string representation of this stack trace element. The format of this string depends on the implementation, but the following examples may be regarded as typical:

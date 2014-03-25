@@ -35,20 +35,17 @@ k_layout layout;
 
 	procedure log(marker Marker, fqcn varchar2, lvl LogLevel, msg Message, t GenericException default null)
 	is
-		loc LocationInfo := LocationInfo();
-    
     A Appender;
     le LogEvent;
     m Message := msg;
 	begin
-		log4util.WHO_CALLED_ME( LOC.OWNER, LOC.name, LOC.LINENO, LOC.CALLER_TYPE  ,2);
     
     IF m IS NULL THEN 
     m := simplemessage('');
     end if;
 
 --this is should now event dispatch to appenders via logger config
-le := Log4oraclelogEvent('test logger',marker,fqcn,lvl,m,t, NULL,NULL,'mythreadname', StackTraceElement('a','b','c',4), systimestamp);
+le := Log4oraclelogEvent('test logger',marker,fqcn,lvl,m,t, NULL ,THREADCONTEXT.CLONESTACK(),'mythreadname', StackTraceElement(2), systimestamp);
 
 IF k_appender IS NOT NULL THEN
 k_appender.APPEND(le);
@@ -79,8 +76,8 @@ BEGIN
 	THROWING_MARKER  := MarkerManager.getMarker('THROWING',EXCEPTION_MARKER);
 
 --TODO this needs to move to loggercontext
---k_layout := PatternLayout('%date %-5level - %marker - %message%newline');
-k_layout := PatternLayout('%r [%t] %-5p %l %x - %m%n');
+k_layout := PatternLayout('%date %-5level - %marker - %l - %x - %message%newline');
+--k_layout := PatternLayout('%r [%t] %-5p %l %x - %m%n');
 
 k_layout.ActivateOptions;
 k_appender := dbmsOutputAppender('dbmsoutput',null, k_layout, false);
