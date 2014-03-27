@@ -2,8 +2,10 @@
 create or replace 
 package body LogImpl as
 
-k_appender appender;
-k_appender2 appender;
+TYPE appender_table IS TABLE OF appender;
+
+k_appenders appender_table;
+
 k_layout layout;
 
 	function isEnabled(self IN Logger, lvl LogLevel, mkr Marker) return BOOLEAN 
@@ -35,25 +37,25 @@ k_layout layout;
 
 	procedure log(marker Marker, fqcn varchar2, lvl LogLevel, msg Message, t GenericException default null)
 	is
-    A Appender;
     le LogEvent;
     m Message := msg;
 	begin
     
-    IF m IS NULL THEN 
-    m := simplemessage('');
-    end if;
 
 --this is should now event dispatch to appenders via logger config
-le := Log4oraclelogEvent('test logger',marker,fqcn,lvl,m,t, NULL ,THREADCONTEXT.CLONESTACK(),'mythreadname', StackTraceElement(2), systimestamp);
+IF k_appenders.count > 0 THEN
+    IF m IS NULL THEN 
+    m := simplemessage('');
+    END IF;
+   le := Log4oraclelogEvent('test logger',marker,fqcn,lvl,m,t, NULL ,THREADCONTEXT.CLONESTACK(),'mythreadname', StackTraceElement(3), SYSTIMESTAMP);
+ELSE
+   return; --no appenders
+END IF;
 
-IF k_appender IS NOT NULL THEN
-k_appender.APPEND(le);
-end if;
-IF k_appender2 IS NOT NULL THEN
-k_appender2.APPEND(le);
-end if;
+FOR i IN k_appenders.FIRST .. k_appenders.LAST LOOP
+ k_appenders(i).APPEND(le);
 
+end loop;
 
 	END;
 
@@ -76,13 +78,19 @@ BEGIN
 	THROWING_MARKER  := MarkerManager.getMarker('THROWING',EXCEPTION_MARKER);
 
 --TODO this needs to move to loggercontext
-k_layout := PatternLayout('%date %-5level - %marker - %l - %x - %message%newline');
+k_layout := PatternLayout('%date %5level - %marker - %l - %message%newline');
+--k_layout := PatternLayout('%message%newline');
 --k_layout := PatternLayout('%r [%t] %-5p %l %x - %m%n');
 
 k_layout.ActivateOptions;
-k_appender := dbmsOutputAppender('dbmsoutput',null, k_layout, false);
+k_appenders := appender_table();
 
-k_appender2 := TableAppender('dbmsoutput2',NULL, k_layout, FALSE);
+k_appenders.EXTEND;
+k_appenders(k_appenders.last) := dbmsOutputAppender('dbmsoutput',null, k_layout, false);
+
+k_appenders.EXTEND;
+k_appenders(k_appenders.LAST) := TableAppender('dbmsoutput2',NULL, k_layout, FALSE);
+
 
 END;
 /

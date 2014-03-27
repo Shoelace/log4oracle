@@ -1,4 +1,3 @@
-
 create or replace type body LOGGER AS
   member function getName return VARCHAR2
 	is

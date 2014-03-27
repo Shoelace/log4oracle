@@ -1,5 +1,15 @@
 create or replace PACKAGE utl_call_stack IS
 
+TYPE stackline IS record  (
+handle VARCHAR2(30),
+line NUMBER,
+object_name VARCHAR2(255),
+caller_type varchar2(50));
+
+TYPE callstack IS TABLE OF stackline;
+
+FUNCTION getCallStack RETURN callstack;
+
 /** 
 * this is a pre 12c implementauyion of utl_call_stack.
 *
@@ -53,6 +63,7 @@ create or replace PACKAGE utl_call_stack IS
    If the unit were an anonymous block, the unit name would be "__anonymous_block"
 
   */
+
   TYPE UNIT_QUALIFIED_NAME IS VARRAY(256) OF VARCHAR2(32767);
 
   /*

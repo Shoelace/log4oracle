@@ -47,7 +47,7 @@ BEGIN
     ) VALUES (
     event.getTimestamp(),
     event.getLoggerName(),
-        ll.m_name,
+    ll.m_name,
 		event.getMarker().toString(),
     event.getSource().toString(),
     event.getmessage().getFormattedMessage() ,
