@@ -47,7 +47,7 @@ IF k_appenders.count > 0 THEN
     IF m IS NULL THEN 
     m := simplemessage('');
     END IF;
-   le := Log4oraclelogEvent('test logger',marker,fqcn,lvl,m,t, NULL ,THREADCONTEXT.CLONESTACK(),'mythreadname', StackTraceElement(2), SYSTIMESTAMP);
+   le := Log4oraclelogEvent('test logger',marker,fqcn,lvl,m,t, THREADCONTEXT.CLONEMAP() ,THREADCONTEXT.CLONESTACK(),'mythreadname', StackTraceElement(2), SYSTIMESTAMP);
 ELSE
    return; --no appenders
 END IF;
@@ -78,7 +78,7 @@ BEGIN
 	THROWING_MARKER  := MarkerManager.getMarker('THROWING',EXCEPTION_MARKER);
 
 --TODO this needs to move to loggercontext
-k_layout := PatternLayout('%date %5level - %marker - %l - %message%newline');
+k_layout := PatternLayout('%date %5level %logger - %marker - %l - %X - %X{batch_id} - %message%newline');
 --k_layout := PatternLayout('%message%newline');
 --k_layout := PatternLayout('%r [%t] %-5p %l %x - %m%n');
 

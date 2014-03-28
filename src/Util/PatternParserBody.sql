@@ -17,13 +17,16 @@
 create or replace 
 package body PatternParser as
 	
-	m_globalRulesRegistry PatternConverterArray;
+	m_converterRules PatternConverterMap;
+  
 	m_converters PatternConverterArray;
 	
+
 	procedure ProcessConverter(converterName varchar2, options varchar2, leftAlign boolean, minLength number, maxLength number) is
 	  i number;
 	  align number;
-	begin
+	BEGIN
+  /*
 		if leftAlign then
 			align := 1;
 		else
@@ -39,8 +42,10 @@ package body PatternParser as
 		m_converters(i).m_min := minLength;
 		m_converters(i).m_max := maxLength;
 		m_converters(i).m_leftAlign := align;
+	*/
+  null;
 	end;
-	
+  
 	procedure ProcessLiteral(text varchar2) is
 	begin
 		if length(text) > 0 then
@@ -48,7 +53,7 @@ package body PatternParser as
 		end if;
 	end;
 	
-	function ParseInternal(pattern varchar2, matches PatternConverterArray) return PatternConverterArray is
+	function ParseInternal(pattern varchar2) return PatternConverterArray is
 		offset number := 1;
 		i number;
 		remainingStringLength number;
@@ -118,23 +123,31 @@ package body PatternParser as
 					remainingStringLength := length(pattern) - (offset - 1);
 					
 					-- Look for pattern
-					for m in matches.FIRST..matches.LAST loop
-						if length(matches(m).Key) <= remainingStringLength then
-							if substr(pattern, offset, length(matches(m).Key)) = matches(m).Key then
+					for m in m_converterRules.FIRST..m_converterRules.LAST loop
+						if length(m_converterRules(m).Key) <= remainingStringLength then
+							if substr(pattern, offset, length(m_converterRules(m).Key)) = m_converterRules(m).Key then
 								-- Found match
-								offset := offset + length(matches(m).Key);
+								offset := offset + length(m_converterRules(m).Key);
 								
 								-- Look for option
 								/** TODO */
+                dbms_output.put_line('look for options:'||substr(pattern,offset) );
+                
+                IF substr(pattern, offset, 1) = '{' THEN
+                i := instr(pattern, '}', offset);
+                dbms_output.put_line('FOUND OPTIONS:'||substr(pattern, offset, i - offset+1 ));
+                offset := i+1;
+                
+                end if;
 								
 --								ProcessConverter(matches(m).Key, matches(m).Value, LeftAlign, MinTextWidth, MaxTextWidth);
-	m_converters.EXTEND(1);
-		i := m_converters.LAST;
-		m_converters(i) := matches(m);
+	--m_converters.EXTEND(1);
+--		i := m_converters.LAST;
+		--m_converters(i) := m_converterRules(m);
 		
-		m_converters(i).m_min := MinTextWidth;
-		m_converters(i).m_max := MaxTextWidth;
-		--m_converters(i).m_leftAlign := align;
+		--m_converters(i).m_min := MinTextWidth;
+		--m_converters(i).m_max := MaxTextWidth;
+		--m_converters(i).m_leftAlign := LeftAlign;
 
 								exit;
 								
@@ -146,34 +159,65 @@ package body PatternParser as
 		end loop;
 		
 		-- Remove ending newline pattern due to usage of PUT_LINE
-		if m_converters IS NOT NULL AND m_converters(m_converters.LAST).Key in ('n', 'newline') then
-			m_converters.DELETE(m_converters.LAST);
-		end if;
+		--if m_converters IS NOT NULL AND m_converters(m_converters.LAST).Key in ('n', 'newline') then
+--			m_converters.DELETE(m_converters.LAST);
+		--end if;
 		
 		return m_converters;
 	end;
-	
-	function GlobalRulesRegistry return PatternConverterArray is
-	begin
-		return m_globalRulesRegistry;
-	end;
+
 	
 	function Parse(pattern varchar2) return PatternConverterArray is
-		converterNamesCache PatternConverterArray;
 	begin
-		converterNamesCache := PatternParser.GlobalRulesRegistry;
-		return ParseInternal(pattern, converterNamesCache);
+	
+		return ParseInternal(pattern);
 	end;
 	
-begin
+BEGIN
+m_converterRules := PatternConverterMap();
+
 	--a list of all availabel patter convertes with their key
+  DECLARE
+k VARCHAR2(2000);
+offset number :=1;
+BEGIN
+
+for pc in (SELECT type_name
+FROM user_types
+WHERE INSTANTIABLE = 'YES'
+CONNECT BY  supertype_name = PRIOR type_name
+START WITH type_name = 'PATTERNCONVERTER') LOOP
+
+execute immediate 'begin :k := '||pc.type_name||'.converterkeys(); end;' using out k;
+
+while k IS NOT NULL loop
+
+offset := instr(k,' ');
+IF offset  = 0 THEN
+offset := LENGTH(k);
+end if;
+
+m_converterRules.EXTEND;
+m_converterRules(m_converterRules.LAST).KEY := substr(k,1,offset-1);
+m_converterRules(m_converterRules.LAST).value := pc.type_name;
+
+dbms_output.put_line(substr(k,1,offset)||','||pc.type_name);
+k := substr(k,offset+1);
+
+end loop;
+END LOOP;
+
+END;
+
+
+/*
 	m_globalRulesRegistry := NEW PatternConverterArray(
 		NEW EIPatternConverter('literal',  NULL),
 		new EIPatternConverter('newline',  'chr(13)||chr(10)'),
 		new EIPatternConverter('n',        'chr(13)||chr(10)'),
 		
-		NEW EIPatternConverter('c',        '''LoggerName'''),
-		new EIPatternConverter('logger',   '''LoggerName'''),
+		NEW EIPatternConverter('c',        'event.getLoggername()'),
+		new EIPatternConverter('logger',   'event.getLoggername()'),
 		
 		new EIPatternConverter('date',     'to_char(event.getTimestamp(), ''yyyy-mm-dd hh24:mi:ss,ff3'')'),
 		NEW EIPatternConverter('d',        'to_char(event.getTimestamp(), ''yyyy-mm-dd hh24:mi:ss,ff3'')'),
@@ -217,11 +261,13 @@ begin
     NEW NDCPatternConverter('x'),
     NEW NDCPatternConverter('NDC'),
 
-    NEW EIPatternConverter('X',         'null'),
-    NEW EIPatternConverter('MDC',       'null'),
+    NEW MDCPatternConverter('X'),
+    NEW MDCPatternConverter('MDC'),
+    NEW MDCPatternConverter('mdc'),
     
 		new EIPatternConverter('w',         'event.UserName'),
 		NEW EIPatternConverter('username',  'event.UserName'));
-    
+*/
+
 end PatternParser;
 /

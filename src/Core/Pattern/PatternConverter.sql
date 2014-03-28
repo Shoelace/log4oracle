@@ -23,19 +23,46 @@ as object
 	* @headcom
 	*/
 	
-	Key varchar2(255),
-	Value varchar2(2000),
-	
-	/** formatting info */
-	m_min number,
-	m_max number,
-	m_leftAlign number
-
+	name varchar2(255),
+	style varchar2(2000)
 	
 	
-	,member function Format(event LogEvent) return varchar2
+	,member function Format(obj log4_object) return varchar2
 	,member function getName return varchar2
+	,member function getStyleClass return varchar2
+	,static function converterkeys return varchar2
 	
 ) not final not instantiable;
 /
 show errors
+
+create or replace 
+type body PatternConverter
+as
+
+  static FUNCTION ConverterKeys RETURN VARCHAR2
+  IS
+  BEGIN
+    RETURN NULL;
+  end;
+	
+	member function Format(obj log4_object) return varchar2
+	is
+	begin
+		return obj.tostring();
+	end;
+
+	member function getName return varchar2
+	is
+	begin
+		return name;
+	end;
+	member function getStyleClass return varchar2
+	is
+	begin
+		return style;
+	end;
+	
+end;
+/
+

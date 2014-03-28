@@ -17,13 +17,13 @@
 create or replace 
 type body EIPatternConverter as
 	
-	constructor function EIPatternConverter(key varchar2, value varchar2) return self as result is
+	constructor function EIPatternConverter( value varchar2) return self as result is
 	begin
-		self.Key := key;
+dbms_output.put_line('creating eip:'||value);
 		self.Value := value;
-		self.m_min := 0;
-		self.m_max := 471234567;
-		self.m_leftAlign := 0;
+		--self.m_min := 0;
+		--self.m_max := 471234567;
+		--self.m_leftAlign := 0;
 		return;
 	end;
 	
@@ -48,6 +48,7 @@ type body EIPatternConverter as
 		len number;
 	begin
 		msg := self.Convert(event, self.Value);
+/*
 		if not (m_min < 0 and m_max >= 471234567) then
 			len := length(msg);
 			if len > m_max then
@@ -62,11 +63,12 @@ type body EIPatternConverter as
 				end if;
 			end if;
 		end if;
+*/
 		
 		return msg;
-	exception
-		when others then
-			return 'EI-error!'||self.key||'@'||self.value||'#'||sqlerrm;
+	--exception
+		--when others then
+			--return 'EI-error!'||self.key||'@'||self.value||'#'||sqlerrm;
 	end;
 	
 end;

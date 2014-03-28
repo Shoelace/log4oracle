@@ -1,4 +1,4 @@
-prompt create or replace package body LOGMANAGER 
+--prompt create or replace package body LOGMANAGER 
 
 create or replace 
 package body LOGMANAGER as
@@ -14,7 +14,7 @@ package body LOGMANAGER as
 	--dbms_output.put_line($$PLSQL_UNIT ||':'||loc.lineno);
 	--dbms_output.put_line($$PLSQL_UNIT ||':'||loc.toString());
 	--return k_logger.exit('getClassName',loc.getfqcn);
-	return utl_call_stack.concatenate_subprogram(utl_call_stack.subprogram(depth));
+	return utl_call_stack.concatenate_subprogram(utl_call_stack.subprogram(depth+1));
 	END;
 
 

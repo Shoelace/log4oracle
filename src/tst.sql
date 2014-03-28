@@ -1,4 +1,8 @@
 set serveroutput on size unlimited
+alter package logimpl compile;
+alter package threadcontext compile;
+alter package patternparser compile;
+
 declare
     --get instance of logger
     l Logger := logmanager.getlogger();
@@ -17,6 +21,9 @@ begin
     l.exit;
 end;
 begin
+ThreadContext.push('level1');
+ThreadContext.put('level','1');
+ThreadContext.put('batch_id','crap');
 print_call_stack;
 dolog;
 end;

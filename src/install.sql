@@ -114,6 +114,7 @@ prompt &line1
 @@Core/Pattern/EIPatternConverter.sql
 @@Core/Pattern/EIPatternConverterBody.sql
 @@Core/Pattern/NDCPatternConverter.sql
+@@Core/Pattern/MDCPatternConverter.sql
 @@Util/PatternParser.sql
 @@Util/PatternParserBody.sql
 

@@ -23,11 +23,14 @@ package PatternParser as
 	* returns a chain of <see cref="PatternConverter"/> objects.
 	* @headcom
 	*/
+  type map_entry is record ( key varchar2(200), value varchar2(200));
 	
+  type PatternConverterMap is table of map_entry;
+  
 	/**
 	* @return List of global pattern rules.
 	*/
-	function GlobalRulesRegistry return PatternConverterArray;
+	--function GlobalRulesRegistry return PatternConverterArray;
 	
 	/**
 	* Parses the pattern into a chain of pattern converters.

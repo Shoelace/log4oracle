@@ -86,6 +86,7 @@ AS
      */
     --PUBLIC STATIC ContextStack cloneStack() {
     function cloneStack return ThreadContextContextStack;
+    function cloneMap return ThreadContextContextMap;
 
    /**
      * Set this thread's stack.

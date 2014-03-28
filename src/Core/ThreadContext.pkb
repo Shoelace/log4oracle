@@ -2,7 +2,7 @@
 create or replace 
 package body threadcontext as
 
-  k_contextMap ThreadContextContextMap;
+  k_contextMap ThreadContextContextMap := new ThreadContextContextMap();
   k_contextStack ThreadContextContextStack := new ThreadContextContextStack();
 
   procedure put(key varchar2, value varchar2) as
@@ -50,6 +50,11 @@ package body threadcontext as
     RETURN k_contextStack;
   END cloneStack;
 
+  function cloneMap return ThreadContextContextMap AS
+  BEGIN
+    RETURN k_contextMap;
+  END cloneMap;
+
   function getdepth return integer as
   BEGIN
     RETURN k_contextStack.getDepth();
@@ -57,13 +62,11 @@ package body threadcontext as
 
   function pop return varchar2 as
   begin
-    -- TODO: Implementation required for function THREADCONTEXT.pop
     RETURN k_contextStack.pop();
   END pop;
   PROCEDURE pop AS
    dummy varchar2(32000);
   begin
-    -- TODO: Implementation required for function THREADCONTEXT.pop
     dummy := k_contextStack.pop();
     return;
   END pop;
@@ -71,7 +74,6 @@ package body threadcontext as
 
   procedure push(message varchar2) as
   begin
-    -- TODO: Implementation required for PROCEDURE THREADCONTEXT.push
     k_contextStack.push(message);
   END push;
 
@@ -82,7 +84,6 @@ package body threadcontext as
 
   procedure trim(depth integer)  as
   begin
-    -- TODO: Implementation required for procedure THREADCONTEXT.trim
     k_contextStack.trim(depth);
   end trim;
 

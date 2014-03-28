@@ -15,31 +15,31 @@
 */
 
 create or replace 
-type  NDCPatternConverter 
+type  MDCPatternConverter 
 under    LogEventPatternConverter 
 (
-	--static function Convert(event LogEvent, value varchar2) return varchar2,
+	constructor function MDCPatternConverter(options varchar2) return self as result,
 	
-	constructor function NDCPatternConverter(options varchar2) return self as result,
-	
-	overriding MEMBER FUNCTION Format(event LogEvent) RETURN VARCHAR2
+	overriding member function Format(event LogEvent) return varchar2
+  
 	, static FUNCTION ConverterKeys RETURN VARCHAR2
   
+	
 );
 /
 show errors
 
 
 create or replace 
-type body NDCPatternConverter as
+type body MDCPatternConverter as
 
   static FUNCTION ConverterKeys RETURN VARCHAR2
   IS
   BEGIN
-    RETURN 'x NDC ndc';
+    return 'X MDC mdc';
   end;
 
-	constructor function NDCPatternConverter(options varchar2) return self as result is
+	constructor function MDCPatternConverter(options varchar2) return self as result is
 	begin
 		self.name := $$PLSQL_UNIT;
 		--self.Key := key;
@@ -49,14 +49,15 @@ type body NDCPatternConverter as
 	overriding member function Format(event LogEvent) return varchar2 is
 		msg varchar2(32767);
 		len number;
-		stk ThreadContextContextStack := event.getContextStack();
+		map ThreadContextContextMap := event.getContextMap();
 	begin
-		LOOP
-			exit when stk.getDepth() = 0;
-			msg := msg ||','||stk.pop();
-		end loop;
+		if map is null then return null; end if;
+		--LOOP
+			--exit when stk.getDepth() = 0;
+			msg := msg ||map.toString();
+		--end loop;
 
-		return ltrim(msg,',');
+		return msg;
 	--exception
 		--when others then
 			--return 'NDC:error!'||self.key||'@'||'#'||sqlerrm;

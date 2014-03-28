@@ -3,7 +3,7 @@
 create or replace
 TYPE LogEvent 
 authid definer
-as object
+under log4_object
 (
 	m_endofbatch varchar2(1),
   
@@ -93,7 +93,7 @@ as object
      */
     member procedure setEndOfBatch(endOfBatch boolean ),
 
-	member function toString return varchar2
+	overriding member function toString return varchar2
 
 )
 not final not instantiable ;
