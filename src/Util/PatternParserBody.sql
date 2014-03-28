@@ -138,10 +138,11 @@ package body PatternParser as
                 dbms_output.put_line('FOUND OPTIONS:'||substr(pattern, offset, i - offset+1 ));
                 offset := i+1;
                 
-                end if;
-								
+                END IF;
+dbms_output.put_line('create instance of:'||m_converterRules(m).VALUE ||' for '||m_converterRules(m).key);
+	  m_converters.EXTEND(1);
+execute immediate 'begin :a := '||m_converterRules(m).VALUE||'(:b); end;' using IN OUT m_converters(m_converters.LAST), m_converterRules(m).arg;
 --								ProcessConverter(matches(m).Key, matches(m).Value, LeftAlign, MinTextWidth, MaxTextWidth);
-	--m_converters.EXTEND(1);
 --		i := m_converters.LAST;
 		--m_converters(i) := m_converterRules(m);
 		
@@ -201,13 +202,32 @@ m_converterRules.EXTEND;
 m_converterRules(m_converterRules.LAST).KEY := substr(k,1,offset-1);
 m_converterRules(m_converterRules.LAST).value := pc.type_name;
 
-dbms_output.put_line(substr(k,1,offset)||','||pc.type_name);
+--dbms_output.put_line(substr(k,1,offset)||','||pc.type_name);
 k := substr(k,offset+1);
 
 end loop;
 END LOOP;
 
 END;
+
+m_converterRules.EXTEND;
+m_converterRules(m_converterRules.LAST).KEY := 'literal';
+m_converterRules(m_converterRules.LAST).value := 'EIPatternConverter';
+
+m_converterRules.EXTEND;
+m_converterRules(m_converterRules.LAST).KEY := 'date';
+m_converterRules(m_converterRules.LAST).VALUE := 'EIPatternConverter';
+m_converterRules(m_converterRules.LAST).arg := 'to_char(event.getTimestamp(), ''yyyy-mm-dd hh24:mi:ss,ff3'')';
+
+m_converterRules.EXTEND;
+m_converterRules(m_converterRules.LAST).KEY := 'message';
+m_converterRules(m_converterRules.LAST).VALUE := 'EIPatternConverter';
+m_converterRules(m_converterRules.LAST).arg := q'[(case when event is null or event.getMessage() is null then '' else event.getMessage().getFormattedMessage() end)]';
+
+m_converterRules.EXTEND;
+m_converterRules(m_converterRules.LAST).KEY := 'newline';
+m_converterRules(m_converterRules.LAST).VALUE := 'EIPatternConverter';
+m_converterRules(m_converterRules.LAST).arg := 'chr(13)||chr(10)';
 
 
 /*
