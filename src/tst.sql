@@ -3,6 +3,7 @@ declare
     --get instance of logger
     l Logger := logmanager.getlogger();
     
+procedure mydolog is
 procedure dolog is
 begin
     l.entry;
@@ -15,9 +16,14 @@ begin
     L.DEBUG('hello world debug');
     l.exit;
 end;
+begin
+print_call_stack;
+dolog;
+end;
 
 BEGIN
-  dolog;
+--  dolog;
+  mydolog;
 end;
 /
 /*

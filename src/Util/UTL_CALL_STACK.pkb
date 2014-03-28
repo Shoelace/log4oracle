@@ -39,7 +39,7 @@ BEGIN
       -- cnt = 1 is ME
       -- cnt = 2 is MY Caller
       -- cnt = 3 is Their Caller
-      IF ( cnt >1 ) THEN --start with 1 to ignore this fake getCallStack call.
+      IF ( cnt >2 ) THEN --start with 1 to ignore this fake getCallStack call.
       
          retval.extend;
        
@@ -86,7 +86,7 @@ END getCallStack;
     cs callstack;
   BEGIN
     cs := getcallstack;
-    RETURN UNIT_QUALIFIED_NAME(cs(dynamic_depth).object_name);
+    RETURN UNIT_QUALIFIED_NAME(nvl(cs(dynamic_depth).object_name, '__anonymous_block'));
   END subprogram;
 
   FUNCTION concatenate_subprogram(qualified_name IN UNIT_QUALIFIED_NAME)

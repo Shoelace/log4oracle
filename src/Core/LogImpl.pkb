@@ -4,7 +4,7 @@ package body LogImpl as
 
 TYPE appender_table IS TABLE OF appender;
 
-k_appenders appender_table;
+k_appenders appender_table := appender_table();
 
 k_layout layout;
 
@@ -47,7 +47,7 @@ IF k_appenders.count > 0 THEN
     IF m IS NULL THEN 
     m := simplemessage('');
     END IF;
-   le := Log4oraclelogEvent('test logger',marker,fqcn,lvl,m,t, NULL ,THREADCONTEXT.CLONESTACK(),'mythreadname', StackTraceElement(3), SYSTIMESTAMP);
+   le := Log4oraclelogEvent('test logger',marker,fqcn,lvl,m,t, NULL ,THREADCONTEXT.CLONESTACK(),'mythreadname', StackTraceElement(2), SYSTIMESTAMP);
 ELSE
    return; --no appenders
 END IF;
@@ -83,7 +83,6 @@ k_layout := PatternLayout('%date %5level - %marker - %l - %message%newline');
 --k_layout := PatternLayout('%r [%t] %-5p %l %x - %m%n');
 
 k_layout.ActivateOptions;
-k_appenders := appender_table();
 
 k_appenders.EXTEND;
 k_appenders(k_appenders.last) := dbmsOutputAppender('dbmsoutput',null, k_layout, false);

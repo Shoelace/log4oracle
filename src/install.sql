@@ -109,11 +109,11 @@ prompt &line1
 @@Appender/Appender.type.pls
 
 @@Core/Log4oracleLogEvent.type.pls
-@@Util/PatternConverter.sql
-@@Util/PatternConverterArray.sql
-@@Util/EIPatternConverter.sql
-@@Util/EIPatternConverterBody.sql
-@@Util/NDCPatternConverter.sql
+@@Core/Pattern/PatternConverter.sql
+@@Core/Pattern/PatternConverterArray.sql
+@@Core/Pattern/EIPatternConverter.sql
+@@Core/Pattern/EIPatternConverterBody.sql
+@@Core/Pattern/NDCPatternConverter.sql
 @@Util/PatternParser.sql
 @@Util/PatternParserBody.sql
 
