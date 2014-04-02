@@ -85,7 +85,27 @@ package body threadcontext as
   procedure trim(depth integer)  as
   begin
     k_contextStack.trim(depth);
-  end trim;
+  END trim;
+
+BEGIN
+--pre populate threadcontext with system info
+
+put('instance'     , SYS_CONTEXT('USERENV', 'INSTANCE') );
+put('instance_name', SYS_CONTEXT('USERENV', 'INSTANCE_NAME'));
+put('db_domain'    , SYS_CONTEXT('USERENV', 'DB_DOMAIN'));
+put('db_name'      , SYS_CONTEXT('USERENV', 'DB_NAME'));
+put('db_role'      , SYS_CONTEXT('USERENV', 'DATABASE_ROLE'));
+put('server_host'  , SYS_CONTEXT ('USERENV', 'SERVER_HOST'));
+put('service_name' , SYS_CONTEXT ('USERENV', 'SERVICE_NAME'));
+
+put('client_ip'    , SYS_CONTEXT('USERENV', 'IP_ADDRESS'));
+put('session_id'   , SYS_CONTEXT('USERENV', 'SESSIONID'));
+
+put('os_user'      , SYS_CONTEXT('USERENV', 'OS_USER'));
+put('host'         , SYS_CONTEXT('USERENV', 'HOST'));
+
+put('session_user' , SYS_CONTEXT('USERENV', 'SESSION_USER'));
+put('terminal'     , SYS_CONTEXT('USERENV', 'TERMINAL'));
 
 END threadcontext;
 /

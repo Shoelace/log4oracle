@@ -113,15 +113,23 @@ prompt &line1
 
 @@Core/Pattern/PatternConverter.sql
 @@Core/Pattern/PatternConverterArray.sql
+@@Core/Pattern/LogEventPatternConverter.sql
 
+@@Core/Pattern/DatePatternConverter.sql
 @@Core/Pattern/EIPatternConverter.sql
 @@Core/Pattern/EIPatternConverterBody.sql
-@@Core/Pattern/NDCPatternConverter.sql
-@@Core/Pattern/MDCPatternConverter.sql
+@@Core/Pattern/FullLocationPatternConverter.sql
+@@Core/Pattern/LevelPatternConverter.sql
 @@Core/Pattern/LineSeparatorPatternConverter.sql
+@@Core/Pattern/LiteralPatternConverter.sql
+@@Core/Pattern/MarkerPatternConverter.sql
+@@Core/Pattern/MDCPatternConverter.sql
+@@Core/Pattern/MessagePatternConverter.sql
+@@Core/Pattern/NDCPatternConverter.sql
+@@Core/Pattern/ThrowablePatternConverter.sql
 
-@@Util/PatternParser.sql
-@@Util/PatternParserBody.sql
+@@Core/Pattern/PatternParser.sql
+@@Core/Pattern/PatternParserBody.sql
 
 @@Message/MessageFactory.pks
 @@Message/ObjectMessage.type.pls

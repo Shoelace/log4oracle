@@ -39,6 +39,7 @@ k_layout layout;
 	is
     le LogEvent;
     m Message := msg;
+    ctxmap ThreadContextContextMap := THREADCONTEXT.CLONEMAP();
 	begin
     
 
@@ -47,7 +48,26 @@ IF k_appenders.count > 0 THEN
     IF m IS NULL THEN 
     m := simplemessage('');
     END IF;
-   le := Log4oraclelogEvent('test logger',marker,fqcn,lvl,m,t, THREADCONTEXT.CLONEMAP() ,THREADCONTEXT.CLONESTACK(),'mythreadname', StackTraceElement(2), SYSTIMESTAMP);
+    
+    --these user env option can change during a session so need to save at time of call.
+    ctxmap.put('module'     , SYS_CONTEXT('USERENV', 'MODULE'));
+    ctxmap.put('action'     , SYS_CONTEXT('USERENV', 'ACTION'));
+    ctxmap.put('client_info', SYS_CONTEXT('USERENV', 'CLIENT_INFO'));
+
+  <<debug_web_variables>>
+   BEGIN
+      FOR i IN 1 .. OWA.num_cgi_vars
+      LOOP
+       ctxmap.put(OWA.cgi_var_name (i),OWA.cgi_var_val (i));
+      END LOOP;
+   EXCEPTION
+      WHEN VALUE_ERROR
+      THEN
+         NULL;
+   END debug_web_variables;      
+    
+
+   le := Log4oraclelogEvent('test logger',marker,fqcn,lvl,m,t, ctxmap ,THREADCONTEXT.CLONESTACK(),'mythreadname', StackTraceElement(2), SYSTIMESTAMP);
 ELSE
    return; --no appenders
 END IF;
@@ -63,18 +83,18 @@ end loop;
 BEGIN
 	ll_TRACE := LogLevel.TRACE;
 	ll_DEBUG := LogLevel.DEBUG;
-	ll_INFO := LogLevel.INFO;
-	ll_WARN := LogLevel.WARN;
+	ll_INFO  := LogLevel.INFO;
+	ll_WARN  := LogLevel.WARN;
 	ll_ERROR := LogLevel.ERROR;
 	ll_FATAL := LogLevel.FATAL;
-	ll_ALL := LogLevel.ll_ALL;
+	ll_ALL   := LogLevel.ll_ALL;
 
-  	FLOW_MARKER      := MARKERMANAGER.GETMARKER('FLOW');
+ 	FLOW_MARKER      := MarkerManager.getMarker('FLOW');
 	ENTRY_MARKER     := MarkerManager.getMarker('ENTRY',FLOW_MARKER);
-	EXIT_MARKER      := MarkerManager.getMarker('EXIT',FLOW_MARKER);
+	EXIT_MARKER      := MarkerManager.getMarker('EXIT' ,FLOW_MARKER);
 
 	EXCEPTION_MARKER := MarkerManager.getMarker('EXCEPTION');
-	CATCHING_MARKER  := MARKERMANAGER.GETMARKER('CATCHING',EXCEPTION_MARKER);
+	CATCHING_MARKER  := MarkerManager.getMarker('CATCHING',EXCEPTION_MARKER);
 	THROWING_MARKER  := MarkerManager.getMarker('THROWING',EXCEPTION_MARKER);
 
 --TODO this needs to move to loggercontext
@@ -89,7 +109,7 @@ k_appenders.EXTEND;
 k_appenders(k_appenders.last) := dbmsOutputAppender('dbmsoutput',null, k_layout, false);
 
 k_appenders.EXTEND;
-k_appenders(k_appenders.LAST) := TableAppender('dbmsoutput2',NULL, k_layout, FALSE);
+k_appenders(k_appenders.LAST) := TableAppender('tableoutput',NULL, NULL, FALSE);
 
 
 END;

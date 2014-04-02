@@ -5,10 +5,11 @@ alter package patternparser compile;
 
 declare
     --get instance of logger
-    l Logger := logmanager.getlogger();
+    l Logger := logmanager.getlogger('mytestlogger');
     
 procedure mydolog is
 procedure dolog is
+v number;
 begin
     l.entry;
     l.trace('hello world trace');
@@ -18,7 +19,7 @@ begin
     l.error('hello world error');
     l.FATAL('hello world fatal');
     L.DEBUG('hello world debug');
-    l.exit;
+    v := l.exit(3);
 end;
 begin
 ThreadContext.push('level1');
@@ -26,11 +27,15 @@ ThreadContext.put('level','1');
 ThreadContext.put('batch_id','crap');
 print_call_stack;
 dolog;
+raise no_data_found;
 end;
 
 BEGIN
 --  dolog;
   mydolog;
+exception
+when others then
+l.catching();
 end;
 /
 /*

@@ -35,7 +35,9 @@ package body PatternParser as
     
 --dbms_output.put_line('create instance of:'||converter.VALUE ||' for '||converter.key ||'opt:'||options||' arg:'||converter.arg);
 	  m_converters.EXTEND(1);
-EXECUTE IMMEDIATE 'begin :a := '||converter.VALUE||'(:b); end;' USING IN OUT m_converters(m_converters.LAST), nvl(converter.arg,options);
+EXECUTE IMMEDIATE 'begin :a := '||converter.VALUE||'(:b); end;' USING IN OUT m_converters(m_converters.LAST), options;
+
+--TODO create format info
 
 --								ProcessConverter(matches(m).Key, matches(m).Value, LeftAlign, MinTextWidth, MaxTextWidth);
 --		i := m_converters.LAST;
@@ -50,7 +52,7 @@ EXECUTE IMMEDIATE 'begin :a := '||converter.VALUE||'(:b); end;' USING IN OUT m_c
 	procedure ProcessLiteral(text varchar2) is
 	begin
 		IF LENGTH(text) > 0 THEN
-			ProcessConverter(m_converterRules('literal'), ''''||text||'''', false, 0, 2147483647);
+			ProcessConverter(m_converterRules('literal'),text, false, 0, 2147483647);
 		end if;
 	end;
 	
@@ -184,13 +186,14 @@ BEGIN
 
 --make sure literal is id:1
 --m_converterRules.extend;
-m_converterRules('literal').KEY := 'literal';
-m_converterRules('literal').value := 'EIPatternConverter';
+--m_converterRules('literal').KEY := 'literal';
+--m_converterRules('literal').value := 'EIPatternConverter';
 
 
 	--a list of all available pattern converters with their key
   DECLARE
 k VARCHAR2(2000);
+key varchar2(2000);
 offset number :=1;
 BEGIN
 
@@ -210,10 +213,12 @@ IF offset  = 0 THEN
 offset := LENGTH(k)+1;
 end if;
 
-m_converterRules(substr(k,1,offset-1)).KEY := substr(k,1,offset-1);
-m_converterRules(substr(k,1,offset-1)).value := pc.type_name;
+KEY := substr(k,1,offset-1);
 
---dbms_output.put_line(m_converterRules(m_converterRules.LAST).KEY||','||m_converterRules(m_converterRules.LAST).value);
+m_converterRules(key).KEY := key;
+m_converterRules(key).value := pc.type_name;
+
+dbms_output.put_line(m_converterRules(key).KEY||','||m_converterRules(key).value);
 k := substr(k,offset+1); --pass over seperator
 
 end loop;
@@ -222,7 +227,7 @@ END LOOP;
 END;
 
 --these should all be replace by individual objects
-
+/*
 m_converterRules('date').KEY := 'date';
 m_converterRules('date').VALUE := 'EIPatternConverter';
 m_converterRules('date').arg := 'to_char(event.getTimestamp(), ''yyyy-mm-dd hh24:mi:ss,ff3'')';
@@ -253,6 +258,7 @@ m_converterRules('l').VALUE := 'EIPatternConverter';
 m_converterRules('l').arg := q'[(case when event is null or event.getSource() is null then '?4' else event.getSource().toString() end)]';
 m_converterRules('location') := m_converterRules('l');
 --
+*/
 
 
 /*
