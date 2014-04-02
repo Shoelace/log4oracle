@@ -86,7 +86,11 @@ END getCallStack;
     cs callstack;
   BEGIN
     cs := getcallstack;
-    RETURN UNIT_QUALIFIED_NAME(nvl(cs(dynamic_depth).object_name, '__anonymous_block'));
+    --RETURN UNIT_QUALIFIED_NAME(
+    --substr(cs(dynamic_depth).object_name,1, instr(cs(dynamic_depth).object_name,'.'))
+    --,nvl( substr(cs(dynamic_depth).object_name,instr(cs(dynamic_depth).object_name,'.')), '__anonymous_block')
+    --);
+    RETURN UNIT_QUALIFIED_NAME(nvl( substr(cs(dynamic_depth).object_name,instr(cs(dynamic_depth).object_name,'.')), '__anonymous_block'));
   END subprogram;
 
   FUNCTION concatenate_subprogram(qualified_name IN UNIT_QUALIFIED_NAME)
@@ -103,7 +107,8 @@ END getCallStack;
     cs callstack;
   BEGIN
     cs := getcallstack;
-    RETURN cs(dynamic_depth).object_name;
+    --RETURN subprogram(dynamic_depth)(0);
+    RETURN substr(cs(dynamic_depth).object_name,1,instr(cs(dynamic_depth).object_name,'.')-1);
   END owner;
 
   FUNCTION unit_line(dynamic_depth IN PLS_INTEGER) RETURN PLS_INTEGER AS

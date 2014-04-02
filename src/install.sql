@@ -91,7 +91,8 @@ prompt &line1
 prompt Object Types
 prompt &line1
 
-@@Core/ThreadContextObjects.sql
+@@Core/ThreadContextStack.sql
+@@Core/ThreadContextMap.sql
 @@Util/StackTraceElement.type.pls
 
 @@Util/log4_object.sql
@@ -109,12 +110,16 @@ prompt &line1
 @@Appender/Appender.type.pls
 
 @@Core/Log4oracleLogEvent.type.pls
+
 @@Core/Pattern/PatternConverter.sql
 @@Core/Pattern/PatternConverterArray.sql
+
 @@Core/Pattern/EIPatternConverter.sql
 @@Core/Pattern/EIPatternConverterBody.sql
 @@Core/Pattern/NDCPatternConverter.sql
 @@Core/Pattern/MDCPatternConverter.sql
+@@Core/Pattern/LineSeparatorPatternConverter.sql
+
 @@Util/PatternParser.sql
 @@Util/PatternParserBody.sql
 

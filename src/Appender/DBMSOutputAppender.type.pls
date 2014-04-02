@@ -31,7 +31,7 @@ as
 	overriding member procedure append(event LogEvent) 
 	IS
 	BEGIN
-		dbms_output.put_line(m_layout.format(event));
+		dbms_output.put_line(rtrim(m_layout.format(event),CHR(13)||CHR(10)) );
 		NULL;
 	END;
 

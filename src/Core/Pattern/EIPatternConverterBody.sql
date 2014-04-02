@@ -18,8 +18,10 @@ create or replace
 type body EIPatternConverter as
 	
 	constructor function EIPatternConverter( value varchar2) return self as result is
-	begin
-dbms_output.put_line('creating eip:'||value);
+	BEGIN
+		self.name := $$PLSQL_UNIT;
+
+--dbms_output.put_line('creating eip:'||value);
 		self.Value := value;
 		--self.m_min := 0;
 		--self.m_max := 471234567;

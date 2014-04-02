@@ -19,6 +19,7 @@ begin
 	self.m_message := msg;
 	self.m_level := lvl;
 	self.m_timestamp := systimestamp;
+	self.m_throwable := t;
 return;
 end;
 
@@ -34,6 +35,7 @@ BEGIN
   self.m_threadname := threadname;
   self.m_mdc := mdc;
   self.m_ndc := ndc;
+	self.m_throwable := t;
 return;
 END;
 
@@ -94,6 +96,13 @@ end;
   BEGIN
   RETURN M_NDC;
   end;
+
+  overriding MEMBER FUNCTION getThrown RETURN GenericException
+  IS
+  begin
+  RETURN m_throwable;
+  end;
+
 
 END;
 /

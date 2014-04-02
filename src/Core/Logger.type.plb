@@ -242,33 +242,77 @@ create or replace type body LOGGER AS
 
 	member function exit(result VARCHAR2) return VARCHAR2
 	is
-	begin
+	BEGIN
+		if isenabled(logimpl.ll_TRACE,logimpl.EXIT_MARKER) THEN
+			if result is null then
+				logimpl.log(logimpl.EXIT_MARKER ,m_name, logimpl.ll_TRACE, MessageFactory.newMessage('exit'));
+			else
+				logimpl.log(logimpl.EXIT_MARKER ,m_name, logimpl.ll_TRACE, MessageFactory.newMessage('exit with ('||result||')'));
+			end if;
+		end if;  
 		return result;
 	end;
 	member function exit(result NUMBER) return NUMBER
 	is
-	begin
+	BEGIN
+		if isenabled(logimpl.ll_TRACE,logimpl.EXIT_MARKER) THEN
+			if result is null then
+				logimpl.log(logimpl.EXIT_MARKER ,m_name, logimpl.ll_TRACE, MessageFactory.newMessage('exit'));
+			ELSE
+				logimpl.log(logimpl.EXIT_MARKER ,m_name, logimpl.ll_TRACE, MessageFactory.newMessage('exit with ('||to_char(result)||')'));
+			END IF;
+		end if;  
 		return result;
 	end;
 	member function exit(result DATE) return DATE
 	is
-	begin
+	BEGIN
+		if isenabled(logimpl.ll_TRACE,logimpl.EXIT_MARKER) THEN
+			if result is null then
+				logimpl.log(logimpl.EXIT_MARKER ,m_name, logimpl.ll_TRACE, MessageFactory.newMessage('exit'));
+			ELSE
+				logimpl.log(logimpl.EXIT_MARKER ,m_name, logimpl.ll_TRACE, MessageFactory.newMessage('exit with ('||TO_CHAR(result)||')'));
+			END IF;
+		end if;  
 		return result;
 	end;
 	member function exit(result TIMESTAMP ) return TIMESTAMP 
 	is
-	begin
+	BEGIN
+		if isenabled(logimpl.ll_TRACE,logimpl.EXIT_MARKER) THEN
+			if result is null then
+				logimpl.log(logimpl.EXIT_MARKER ,m_name, logimpl.ll_TRACE, MessageFactory.newMessage('exit'));
+			ELSE
+				logimpl.log(logimpl.EXIT_MARKER ,m_name, logimpl.ll_TRACE, MessageFactory.newMessage('exit with ('||TO_CHAR(result)||')'));
+			END IF;
+		end if;    
 		return result;
 	end;
 	member function exit(result TIMESTAMP WITH TIME ZONE) return TIMESTAMP WITH TIME ZONE
 	is
-	begin
+	BEGIN
+		if isenabled(logimpl.ll_TRACE,logimpl.EXIT_MARKER) THEN
+			if result is null then
+				logimpl.log(logimpl.EXIT_MARKER ,m_name, logimpl.ll_TRACE, MessageFactory.newMessage('exit'));
+			ELSE
+				logimpl.log(logimpl.EXIT_MARKER ,m_name, logimpl.ll_TRACE, MessageFactory.newMessage('exit with ('||TO_CHAR(result)||')'));
+			END IF;
+		end if;    
 		return result;
 	end;
 
 	member function exit(result BOOLEAN) return BOOLEAN
 	is
-	begin
+	BEGIN
+		if isenabled(logimpl.ll_TRACE,logimpl.EXIT_MARKER) THEN
+			IF result IS NULL THEN
+				logimpl.LOG(logimpl.EXIT_MARKER ,m_name, logimpl.ll_TRACE, MessageFactory.newMessage('exit with (NULL)'));
+			elsif result then
+				logimpl.LOG(logimpl.EXIT_MARKER ,m_name, logimpl.ll_TRACE, MessageFactory.newMessage('exit with (TRUE)'));
+      else
+				logimpl.log(logimpl.EXIT_MARKER ,m_name, logimpl.ll_TRACE, MessageFactory.newMessage('exit with (FALSE)'));
+			end if;
+		end if;  
 		return result;
 	end;
 

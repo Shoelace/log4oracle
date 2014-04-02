@@ -37,7 +37,8 @@ constructor FUNCTION Log4oracleLogEvent(loggerName VARCHAR2, mkr Marker, fqcn VA
 	overriding member function getLevel return LogLevel,
 	overriding MEMBER FUNCTION getTimestamp RETURN TIMESTAMP WITH TIME ZONE, --was getMilis
 	overriding MEMBER FUNCTION getSource RETURN StackTraceElement, 
-  overriding member function getThreadName return varchar2,
+	overriding member function getThreadName return varchar2,
+	overriding member function getThrown return GenericException,
 	overriding member function toString return varchar2
 )
 not final instantiable ;

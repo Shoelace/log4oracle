@@ -25,7 +25,7 @@ package PatternParser as
 	*/
   type map_entry is record ( key varchar2(200), value varchar2(200), arg varchar2(2000));
 	
-  type PatternConverterMap is table of map_entry;
+  type PatternConverterMap is table of map_entry index by varchar2(200);
   
 	/**
 	* @return List of global pattern rules.

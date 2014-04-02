@@ -78,7 +78,8 @@ BEGIN
 	THROWING_MARKER  := MarkerManager.getMarker('THROWING',EXCEPTION_MARKER);
 
 --TODO this needs to move to loggercontext
-k_layout := PatternLayout('%date %5level %logger - %marker - %l - %X - %X{batch_id} - %message%newline');
+--k_layout := PatternLayout('%date %5level %logger - %marker - %l - %X - %X{batch_id} - %m%n');
+k_layout := PatternLayout('%date - %5level - %marker - %l - %message %ex');
 --k_layout := PatternLayout('%message%newline');
 --k_layout := PatternLayout('%r [%t] %-5p %l %x - %m%n');
 

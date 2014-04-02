@@ -22,34 +22,35 @@ package body PatternParser as
 	m_converters PatternConverterArray;
 	
 
-	procedure ProcessConverter(converterName varchar2, options varchar2, leftAlign boolean, minLength number, maxLength number) is
+	procedure ProcessConverter(converter map_entry, options varchar2, leftAlign boolean, minLength number, maxLength number) is
 	  i number;
 	  align number;
 	BEGIN
-  /*
+
 		if leftAlign then
 			align := 1;
 		else
 			align := 0;
 		end if;
-	
-		--LogLog.Debug('Converter ['||converterName||'] Option ['||options||'] Format [min='||minLength||',max='||maxLength||',leftAlign='||align||']');
+    
+--dbms_output.put_line('create instance of:'||converter.VALUE ||' for '||converter.key ||'opt:'||options||' arg:'||converter.arg);
+	  m_converters.EXTEND(1);
+EXECUTE IMMEDIATE 'begin :a := '||converter.VALUE||'(:b); end;' USING IN OUT m_converters(m_converters.LAST), nvl(converter.arg,options);
+
+--								ProcessConverter(matches(m).Key, matches(m).Value, LeftAlign, MinTextWidth, MaxTextWidth);
+--		i := m_converters.LAST;
+		--m_converters(i) := m_converterRules(m);
 		
-		m_converters.EXTEND(1);
-		i := m_converters.LAST;
-		m_converters(i) := new EIPatternConverter(converterName, options);
-		
-		m_converters(i).m_min := minLength;
-		m_converters(i).m_max := maxLength;
-		m_converters(i).m_leftAlign := align;
-	*/
-  null;
+		--m_converters(i).m_min := MinTextWidth;
+		--m_converters(i).m_max := MaxTextWidth;
+		--m_converters(i).m_leftAlign := LeftAlign;
+
 	end;
   
 	procedure ProcessLiteral(text varchar2) is
 	begin
-		if length(text) > 0 then
-			ProcessConverter('literal', ''''||text||'''', false, 0, 2147483647);
+		IF LENGTH(text) > 0 THEN
+			ProcessConverter(m_converterRules('literal'), ''''||text||'''', false, 0, 2147483647);
 		end if;
 	end;
 	
@@ -59,18 +60,20 @@ package body PatternParser as
 		remainingStringLength number;
 		LeftAlign boolean;
 		MinTextWidth number := 0;
-		MaxTextWidth number := 2147483647;
+		MaxTextWidth NUMBER := 2147483647;
+    m varchar2(200);
 	begin
 		-- Initialize new pattern
 		m_converters := new PatternConverterArray();
 		
-		while offset < length(pattern) loop
+		while offset < LENGTH(pattern) loop
 			i := instr(pattern, '%', offset);
 			if (i < 1 or i = length(pattern)) then
 				ProcessLiteral(substr(pattern, offset));
 				offset := length(pattern);
-			else
-				if substr(pattern, i+1, 1) = '%' then
+			ELSE
+
+				IF substr(pattern, i+1, 1) = '%' THEN
 					-- Escaped
 					ProcessLiteral(substr(pattern, offset, i - offset + 1));
 					offset := i + 2;
@@ -120,49 +123,51 @@ package body PatternParser as
 						offset := offset + 1;
 					end loop;
 
-					remainingStringLength := length(pattern) - (offset - 1);
-					
+					remainingStringLength := LENGTH(pattern) - (offset - 1);
+
 					-- Look for pattern
-					for m in m_converterRules.FIRST..m_converterRules.LAST loop
-						if length(m_converterRules(m).Key) <= remainingStringLength then
-							if substr(pattern, offset, length(m_converterRules(m).Key)) = m_converterRules(m).Key then
+					--FOR m IN m_converterRules.FIRST..m_converterRules.LAST loop
+          m := m_converterRules.LAST;
+          while (m IS NOT NULL) LOOP
+						if length(m) <= remainingStringLength then
+							if substr(pattern, offset, length(m)) = m then
 								-- Found match
-								offset := offset + length(m_converterRules(m).Key);
+								offset := offset + length(m);
 								
 								-- Look for option
 								/** TODO */
-                dbms_output.put_line('look for options:'||substr(pattern,offset) );
+                --dbms_output.put_line('look for options:'||substr(pattern,offset) );
                 
                 IF substr(pattern, offset, 1) = '{' THEN
-                i := instr(pattern, '}', offset);
-                dbms_output.put_line('FOUND OPTIONS:'||substr(pattern, offset, i - offset+1 ));
-                offset := i+1;
+                  i := instr(pattern, '}', offset);
+                 -- dbms_output.put_line('FOUND OPTIONS:'||substr(pattern, offset, i - offset+1 ));
+                  processconverter(m_converterRules(m), substr(pattern, offset+1, i - offset ), LeftAlign, MinTextWidth,MaxTextWidth);
+                  offset := i+1;
+                ELSE
+                 processconverter(m_converterRules(m), NULL, LeftAlign, MinTextWidth,MaxTextWidth);
                 
                 END IF;
-dbms_output.put_line('create instance of:'||m_converterRules(m).VALUE ||' for '||m_converterRules(m).key);
-	  m_converters.EXTEND(1);
-execute immediate 'begin :a := '||m_converterRules(m).VALUE||'(:b); end;' using IN OUT m_converters(m_converters.LAST), m_converterRules(m).arg;
---								ProcessConverter(matches(m).Key, matches(m).Value, LeftAlign, MinTextWidth, MaxTextWidth);
---		i := m_converters.LAST;
-		--m_converters(i) := m_converterRules(m);
-		
-		--m_converters(i).m_min := MinTextWidth;
-		--m_converters(i).m_max := MaxTextWidth;
-		--m_converters(i).m_leftAlign := LeftAlign;
+
 
 								exit;
 								
 							end if;
-						end if;
+						END IF;
+            m := m_converterRules.prior(m);
+            
 					end loop;
 				end if;
 			end if;
 		end loop;
 		
+    --FOR z IN m_converters.FIRST .. m_converters.LAST LOOP
+    --dbms_output.put_line(z||':'||m_converters(z).getName());
+    --end loop;
+     
 		-- Remove ending newline pattern due to usage of PUT_LINE
-		--if m_converters IS NOT NULL AND m_converters(m_converters.LAST).Key in ('n', 'newline') then
---			m_converters.DELETE(m_converters.LAST);
-		--end if;
+		IF m_converters IS NOT NULL AND m_converters(m_converters.LAST).NAME IN ('LINESEPARATORPATTERNCONVERTER') THEN
+			m_converters.DELETE(m_converters.LAST);
+		END IF;
 		
 		return m_converters;
 	end;
@@ -175,19 +180,26 @@ execute immediate 'begin :a := '||m_converterRules(m).VALUE||'(:b); end;' using 
 	end;
 	
 BEGIN
-m_converterRules := PatternConverterMap();
+--m_converterRules := PatternConverterMap();
 
-	--a list of all availabel patter convertes with their key
+--make sure literal is id:1
+--m_converterRules.extend;
+m_converterRules('literal').KEY := 'literal';
+m_converterRules('literal').value := 'EIPatternConverter';
+
+
+	--a list of all available pattern converters with their key
   DECLARE
 k VARCHAR2(2000);
 offset number :=1;
 BEGIN
 
 for pc in (SELECT type_name
-FROM user_types
+FROM all_types
 WHERE INSTANTIABLE = 'YES'
 CONNECT BY  supertype_name = PRIOR type_name
-START WITH type_name = 'PATTERNCONVERTER') LOOP
+START WITH type_name = 'PATTERNCONVERTER'
+) LOOP
 
 execute immediate 'begin :k := '||pc.type_name||'.converterkeys(); end;' using out k;
 
@@ -195,52 +207,59 @@ while k IS NOT NULL loop
 
 offset := instr(k,' ');
 IF offset  = 0 THEN
-offset := LENGTH(k);
+offset := LENGTH(k)+1;
 end if;
 
-m_converterRules.EXTEND;
-m_converterRules(m_converterRules.LAST).KEY := substr(k,1,offset-1);
-m_converterRules(m_converterRules.LAST).value := pc.type_name;
+m_converterRules(substr(k,1,offset-1)).KEY := substr(k,1,offset-1);
+m_converterRules(substr(k,1,offset-1)).value := pc.type_name;
 
---dbms_output.put_line(substr(k,1,offset)||','||pc.type_name);
-k := substr(k,offset+1);
+--dbms_output.put_line(m_converterRules(m_converterRules.LAST).KEY||','||m_converterRules(m_converterRules.LAST).value);
+k := substr(k,offset+1); --pass over seperator
 
 end loop;
 END LOOP;
 
 END;
 
-m_converterRules.EXTEND;
-m_converterRules(m_converterRules.LAST).KEY := 'literal';
-m_converterRules(m_converterRules.LAST).value := 'EIPatternConverter';
+--these should all be replace by individual objects
 
-m_converterRules.EXTEND;
-m_converterRules(m_converterRules.LAST).KEY := 'date';
-m_converterRules(m_converterRules.LAST).VALUE := 'EIPatternConverter';
-m_converterRules(m_converterRules.LAST).arg := 'to_char(event.getTimestamp(), ''yyyy-mm-dd hh24:mi:ss,ff3'')';
+m_converterRules('date').KEY := 'date';
+m_converterRules('date').VALUE := 'EIPatternConverter';
+m_converterRules('date').arg := 'to_char(event.getTimestamp(), ''yyyy-mm-dd hh24:mi:ss,ff3'')';
+m_converterRules('d') := m_converterRules('date');
 
-m_converterRules.EXTEND;
-m_converterRules(m_converterRules.LAST).KEY := 'message';
-m_converterRules(m_converterRules.LAST).VALUE := 'EIPatternConverter';
-m_converterRules(m_converterRules.LAST).arg := q'[(case when event is null or event.getMessage() is null then '' else event.getMessage().getFormattedMessage() end)]';
+m_converterRules('m').KEY := 'm';
+m_converterRules('m').VALUE := 'EIPatternConverter';
+m_converterRules('m').arg := q'[(case when event is null or event.getMessage() is null then '' else event.getMessage().getFormattedMessage() end)]';
+m_converterRules('msg') := m_converterRules('m');
+m_converterRules('message') := m_converterRules('m');
 
-m_converterRules.EXTEND;
-m_converterRules(m_converterRules.LAST).KEY := 'newline';
-m_converterRules(m_converterRules.LAST).VALUE := 'EIPatternConverter';
-m_converterRules(m_converterRules.LAST).arg := 'chr(13)||chr(10)';
+m_converterRules('level').KEY := 'level';
+m_converterRules('level').VALUE := 'EIPatternConverter';
+m_converterRules('level').arg := 'event.getLevel().m_Name';
+
+m_converterRules('marker').KEY := 'marker';
+m_converterRules('marker').VALUE := 'EIPatternConverter';
+m_converterRules('marker').arg := q'[(case when event is null or event.getMarker() is null then '' else event.getMarker().toString() end)]';
+
+m_converterRules('logger').KEY := 'logger';
+m_converterRules('logger').VALUE := 'EIPatternConverter';
+m_converterRules('logger').arg := 'event.getLoggername()';
+m_converterRules('c') := m_converterRules('logger');
+
+--
+m_converterRules('l').KEY := 'l';
+m_converterRules('l').VALUE := 'EIPatternConverter';
+m_converterRules('l').arg := q'[(case when event is null or event.getSource() is null then '?4' else event.getSource().toString() end)]';
+m_converterRules('location') := m_converterRules('l');
+--
 
 
 /*
 	m_globalRulesRegistry := NEW PatternConverterArray(
-		NEW EIPatternConverter('literal',  NULL),
-		new EIPatternConverter('newline',  'chr(13)||chr(10)'),
-		new EIPatternConverter('n',        'chr(13)||chr(10)'),
-		
+			
 		NEW EIPatternConverter('c',        'event.getLoggername()'),
 		new EIPatternConverter('logger',   'event.getLoggername()'),
-		
-		new EIPatternConverter('date',     'to_char(event.getTimestamp(), ''yyyy-mm-dd hh24:mi:ss,ff3'')'),
-		NEW EIPatternConverter('d',        'to_char(event.getTimestamp(), ''yyyy-mm-dd hh24:mi:ss,ff3'')'),
 		
 		NEW EIPatternConverter('exception', 'event.ExceptionString.Format()'),
 		NEW EIPatternConverter('ex',        'event.ExceptionString.Format()'),
@@ -255,20 +274,10 @@ m_converterRules(m_converterRules.LAST).arg := 'chr(13)||chr(10)';
 		NEW EIPatternConverter('L',         q'[(case when event is null or event.getSource() is null then '?2' else event.getSource().getLineNumber() end)]'),
 		NEW EIPatternConverter('line',      q'[(case when event is null or event.getSource() is null then '?3' else event.getSource().getLineNumber() end)]'),
 		NEW EIPatternConverter('l',         q'[(case when event is null or event.getSource() is null then '?4' else event.getSource().toString() end)]'),
-    
-		
-		NEW EIPatternConverter('msg',       q'[(case when event is null or event.getMessage() is null then '' else event.getMessage().getFormattedMessage() end)]'),
-		new EIPatternConverter('message',   q'[(case when event is null or event.getMessage() is null then '' else event.getMessage().getFormattedMessage() end)]'),
 
 		NEW EIPatternConverter('M',         '''Method'''),
 		NEW EIPatternConverter('method',         '''Method'''),
 		
-		NEW EIPatternConverter('marker',         q'[(case when event is null or event.getMarker() is null then '' else event.getMarker().toString() end)]'),
---need to put single char last
-		NEW EIPatternConverter('m',         q'[(case when event is null or event.getMessage() is null then '' else event.getMessage().getFormattedMessage() end)]'),
-
-
-
 		NEW EIPatternConverter('r',         '0'),
 		NEW EIPatternConverter('relative',         '0'),
 
@@ -277,14 +286,7 @@ m_converterRules(m_converterRules.LAST).arg := 'chr(13)||chr(10)';
 		NEW EIPatternConverter('utcdate',   q'[to_char(event.getTimestamp() at time zone 'UTC', 'yyyy-mm-dd hh24:mi:ss,ff3')]'),
 		NEW EIPatternConverter('utcDate',   q'[to_char(event.getTimestamp() at time zone 'UTC', 'yyyy-mm-dd hh24:mi:ss,ff3')]'),
 		new EIPatternConverter('UtcDate',   q'[to_char(event.getTimestamp() at time zone 'UTC', 'yyyy-mm-dd hh24:mi:ss,ff3')]'),
-		
-    NEW NDCPatternConverter('x'),
-    NEW NDCPatternConverter('NDC'),
-
-    NEW MDCPatternConverter('X'),
-    NEW MDCPatternConverter('MDC'),
-    NEW MDCPatternConverter('mdc'),
-    
+		    
 		new EIPatternConverter('w',         'event.UserName'),
 		NEW EIPatternConverter('username',  'event.UserName'));
 */
