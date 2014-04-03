@@ -112,6 +112,7 @@ prompt &line1
 @@Core/Log4oracleLogEvent.type.pls
 
 @@Core/Pattern/PatternConverter.sql
+@@Core/Pattern/FormattingInfo.pls
 @@Core/Pattern/PatternConverterArray.sql
 @@Core/Pattern/LogEventPatternConverter.sql
 
@@ -159,6 +160,7 @@ prompt &line1
 
 @@Appender/log_table_plain.sql
 @@Appender/TableAppender.type.pls
+@@Appender/TableAppender.type.plb
 
 prompt &line1
 prompt Package Specs

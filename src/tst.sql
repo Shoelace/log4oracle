@@ -25,7 +25,7 @@ begin
 ThreadContext.push('level1');
 ThreadContext.put('level','1');
 ThreadContext.put('batch_id','crap');
-print_call_stack;
+--print_call_stack;
 dolog;
 raise no_data_found;
 end;

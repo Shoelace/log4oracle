@@ -218,7 +218,7 @@ KEY := substr(k,1,offset-1);
 m_converterRules(key).KEY := key;
 m_converterRules(key).value := pc.type_name;
 
-dbms_output.put_line(m_converterRules(key).KEY||','||m_converterRules(key).value);
+--dbms_output.put_line(m_converterRules(key).KEY||','||m_converterRules(key).value);
 k := substr(k,offset+1); --pass over seperator
 
 end loop;
@@ -228,58 +228,16 @@ END;
 
 --these should all be replace by individual objects
 /*
-m_converterRules('date').KEY := 'date';
-m_converterRules('date').VALUE := 'EIPatternConverter';
-m_converterRules('date').arg := 'to_char(event.getTimestamp(), ''yyyy-mm-dd hh24:mi:ss,ff3'')';
-m_converterRules('d') := m_converterRules('date');
-
-m_converterRules('m').KEY := 'm';
-m_converterRules('m').VALUE := 'EIPatternConverter';
-m_converterRules('m').arg := q'[(case when event is null or event.getMessage() is null then '' else event.getMessage().getFormattedMessage() end)]';
-m_converterRules('msg') := m_converterRules('m');
-m_converterRules('message') := m_converterRules('m');
-
-m_converterRules('level').KEY := 'level';
-m_converterRules('level').VALUE := 'EIPatternConverter';
-m_converterRules('level').arg := 'event.getLevel().m_Name';
-
-m_converterRules('marker').KEY := 'marker';
-m_converterRules('marker').VALUE := 'EIPatternConverter';
-m_converterRules('marker').arg := q'[(case when event is null or event.getMarker() is null then '' else event.getMarker().toString() end)]';
-
-m_converterRules('logger').KEY := 'logger';
-m_converterRules('logger').VALUE := 'EIPatternConverter';
-m_converterRules('logger').arg := 'event.getLoggername()';
-m_converterRules('c') := m_converterRules('logger');
-
---
-m_converterRules('l').KEY := 'l';
-m_converterRules('l').VALUE := 'EIPatternConverter';
-m_converterRules('l').arg := q'[(case when event is null or event.getSource() is null then '?4' else event.getSource().toString() end)]';
-m_converterRules('location') := m_converterRules('l');
---
-*/
-
-
-/*
 	m_globalRulesRegistry := NEW PatternConverterArray(
 			
 		NEW EIPatternConverter('c',        'event.getLoggername()'),
 		new EIPatternConverter('logger',   'event.getLoggername()'),
 		
-		NEW EIPatternConverter('exception', 'event.ExceptionString.Format()'),
-		NEW EIPatternConverter('ex',        'event.ExceptionString.Format()'),
-		NEW EIPatternConverter('throwable', 'event.ExceptionString.Format()'),
-
 		NEW EIPatternConverter('f',        '''filename'''),
 
-		new EIPatternConverter('p',         'event.getLevel().m_name'),
-		NEW EIPatternConverter('level',     'event.getLevel().m_Name'),
 
-		NEW EIPatternConverter('location',  q'[(case when event is null or event.getSource() is null then '?1' else event.getSource().toString() end)]'),
 		NEW EIPatternConverter('L',         q'[(case when event is null or event.getSource() is null then '?2' else event.getSource().getLineNumber() end)]'),
 		NEW EIPatternConverter('line',      q'[(case when event is null or event.getSource() is null then '?3' else event.getSource().getLineNumber() end)]'),
-		NEW EIPatternConverter('l',         q'[(case when event is null or event.getSource() is null then '?4' else event.getSource().toString() end)]'),
 
 		NEW EIPatternConverter('M',         '''Method'''),
 		NEW EIPatternConverter('method',         '''Method'''),
