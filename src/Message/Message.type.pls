@@ -1,6 +1,6 @@
 create or replace type Message under log4_object
 (
-	member function getFormattedMessage return VARCHAR2,
+	member function getFormattedMessage(self in out nocopy Message) return VARCHAR2,
 	member function getFormat return VARCHAR2,
 	member function getParameters return log4_array,
 	member function getThrowable return GenericException

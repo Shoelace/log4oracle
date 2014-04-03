@@ -17,6 +17,8 @@ as
  PRAGMA AUTONOMOUS_TRANSACTION; 
 ll LogLevel := event.getLevel();
  t GenericException := event.getthrown();
+ m Message := event.GetMessage();
+ msg log_table.logmessage%type := m.getformattedmessage();
 BEGIN
 
     INSERT INTO log_table (
@@ -35,7 +37,7 @@ BEGIN
     ll.m_name,
 		event.getMarker().toString(),
     event.getSource().toString(),
-    event.getmessage().getFormattedMessage() ,
+    msg ,
 		--throwable.toString()
     nvl2(t, t.errorstack, NULL ) ,
     nvl2(t, t.errorbacktrace, NULL ) ,

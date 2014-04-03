@@ -28,6 +28,7 @@ as object
 	
 	
 	,member function Format(obj log4_object) return varchar2
+	,member procedure Format(obj log4_object, buffer IN OUT NOCOPY VARCHAR2)
 	,member function getName return varchar2
 	,member function getStyleClass return varchar2
 	,static function converterkeys return varchar2
@@ -50,6 +51,11 @@ as
 	is
 	begin
 		return obj.tostring();
+	end;
+	member procedure Format(obj log4_object, buffer IN OUT NOCOPY VARCHAR2) 
+	is
+	begin
+		buffer := buffer||obj.tostring();
 	end;
 
 	member function getName return varchar2

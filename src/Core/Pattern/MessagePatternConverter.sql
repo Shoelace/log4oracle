@@ -45,9 +45,10 @@ type body MessagePatternConverter as
 		return;
 	end;
 
-	overriding member function Format(event LogEvent) return varchar2 is
+	overriding MEMBER FUNCTION Format(event LogEvent) RETURN VARCHAR2 IS
+		m Message := event.getMessage();
 	begin
-		return event.getMessage().getFormattedMessage();
+		return m.getFormattedMessage();
 	end;
 end;
 /

@@ -14,7 +14,7 @@
 * limitations under the License.
 */
 
-prompt create or replace type body SimpleLayout
+--prompt create or replace type body SimpleLayout
 
 create or replace 
 type body SimpleLayout as
@@ -25,13 +25,14 @@ type body SimpleLayout as
 		null;
 	end;
 	
-	overriding member function Format(event LogEvent) return varchar2 is
-	begin
+	overriding MEMBER FUNCTION Format(event LogEvent) RETURN VARCHAR2 IS
+	 m Message := event.GetMessage();
+  begin
 		if event is null then
 			null; --raise LogUtil.ArgumentNullException;
 		end if;
 		
-		return event.getLevel().m_name||' - '||event.GetMessage().getformattedMessage();
+		return event.getLevel().m_name||' - '||m.getformattedMessage();
 	end;
 	
 	constructor function SimpleLayout return self as result is

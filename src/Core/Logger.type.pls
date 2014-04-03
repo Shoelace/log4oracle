@@ -107,6 +107,19 @@ getparent
 
 	/* end log4 2.x */
 
+  ,MEMBER PROCEDURE DEBUG(msg VARCHAR2
+                        , arg01 VARCHAR2
+                        , arg02 VARCHAR2 DEFAULT NULL
+                        , arg03 VARCHAR2 DEFAULT NULL
+                        , arg04 VARCHAR2 DEFAULT NULL
+                        , arg05 VARCHAR2 DEFAULT NULL
+                        , arg06 VARCHAR2 DEFAULT NULL
+                        , arg07 VARCHAR2 DEFAULT NULL
+                        , arg08 VARCHAR2 DEFAULT NULL
+                        , arg09 VARCHAR2 DEFAULT NULL
+                        )
+  
+
 )
 ;
 /

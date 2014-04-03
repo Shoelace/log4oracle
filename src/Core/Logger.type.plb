@@ -338,6 +338,26 @@ create or replace type body LOGGER AS
 	end;
 
 
+  MEMBER PROCEDURE DEBUG(msg VARCHAR2
+                        , arg01 VARCHAR2
+                        , arg02 VARCHAR2 DEFAULT NULL
+                        , arg03 VARCHAR2 DEFAULT NULL
+                        , arg04 VARCHAR2 DEFAULT NULL
+                        , arg05 VARCHAR2 DEFAULT NULL
+                        , arg06 VARCHAR2 DEFAULT NULL
+                        , arg07 VARCHAR2 DEFAULT NULL
+                        , arg08 VARCHAR2 DEFAULT NULL
+                        , arg09 VARCHAR2 DEFAULT NULL
+                        )
+  IS
+   prms log4_array;
+  BEGIN
+	  IF isenabled(logimpl.ll_DEBUG,NULL) THEN
+      prms := log4_array(log4_sql_object(arg01),log4_sql_object(arg02),log4_sql_object(arg03),log4_sql_object(arg04),log4_sql_object(arg05),log4_sql_object(arg06),log4_sql_object(arg07),log4_sql_object(arg08),log4_sql_object(arg09) );
+			logimpl.LOG(NULL, m_name, logimpl.ll_DEBUG,MessageFactory.newMessage(msg, prms));
+	  end if;  
+  END;
+  
 
 
 end;

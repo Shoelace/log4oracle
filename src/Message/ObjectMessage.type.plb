@@ -8,7 +8,7 @@ AS
 		self.m_obj := obj;
 		return;
 	END;
-	overriding member function getFormattedMessage return VARCHAR2
+	overriding member function getFormattedMessage(SELF IN OUT NOCOPY ObjectMessage)  return VARCHAR2
 	IS
 	BEGIN
 		return m_obj.toString();

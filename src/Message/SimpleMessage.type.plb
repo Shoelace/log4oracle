@@ -8,7 +8,7 @@ AS
 		self.m_message := msg;
 		return;
 	END;
-	overriding member function getFormattedMessage return VARCHAR2
+	overriding member function getFormattedMessage(SELF IN OUT NOCOPY SimpleMessage) return VARCHAR2
 	IS
 	BEGIN
 		return m_message;

@@ -11,11 +11,11 @@ as
 	BEGIN
 		return ObjectMessage(msg);
 	end;
+
 	function newMessage(msg VARCHAR2, params log4_array) RETURN Message
 	IS
 	begin
---        return new ParameterizedMessage(message, params);
-		return SimpleMessage('newmessage(array) not impletemeted');
+    return new ParameterizedMessage(msg, params);
 	END;
 
 END;

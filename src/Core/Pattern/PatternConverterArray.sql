@@ -22,3 +22,6 @@ create or replace
 type FormattingInfoArray is table of FormattingInfo;
 /
 
+create or replace
+type PatternFormatterArray is table of PatternFormatter;
+/
