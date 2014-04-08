@@ -7,14 +7,10 @@ package body LOGMANAGER as
 	--essentially who called me at depth
 	FUNCTION getClassName(depth NUMBER) RETURN VARCHAR2
 	IS
-	--loc LocationInfo := LocationInfo();
 	begin
 	--k_logger.entry('getClassName');
-	--log4util.who_called_me( loc.owner, loc.name, loc.lineno, loc.caller_type ,depth );
-	--dbms_output.put_line($$PLSQL_UNIT ||':'||loc.lineno);
-	--dbms_output.put_line($$PLSQL_UNIT ||':'||loc.toString());
 	--return k_logger.exit('getClassName',loc.getfqcn);
-	return utl_call_stack.concatenate_subprogram(utl_call_stack.subprogram(depth+1));
+	return utl_call_stack.owner(depth+1)||'.'|| utl_call_stack.concatenate_subprogram(utl_call_stack.subprogram(depth+1));
 	END;
 
 
