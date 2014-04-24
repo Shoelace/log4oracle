@@ -51,13 +51,27 @@ AS
 	MEMBER FUNCTION containsKey(KEY VARCHAR2) RETURN boolean
 	IS
 	BEGIN
+		IF m_index IS NOT NULL AND m_index.first IS NOT NULL THEN
+			FOR i IN  m_index.FIRST .. m_index.LAST LOOP
+				IF m_index.exists(i) AND m_index(i).KEY = KEY THEN
+					RETURN TRUE;
+				END IF;
+			END LOOP;
+		END IF;  
 	RETURN FALSE;
 	END;
 
 	MEMBER FUNCTION get(KEY VARCHAR2) RETURN VARCHAR2
 	IS
 	BEGIN
-		RETURN NULL;
+		IF m_index IS NOT NULL AND m_index.first IS NOT NULL THEN
+			FOR i IN  m_index.FIRST .. m_index.LAST LOOP
+				IF m_index.exists(i) AND m_index(i).KEY = KEY THEN
+					RETURN m_index(i).value;
+				END IF;
+			END LOOP;
+		END IF;
+    return NULL; ---or shoudl this thro no data found?
 	END;
 
 	MEMBER PROCEDURE put(KEY VARCHAR2, value VARCHAR2) 
@@ -67,13 +81,15 @@ AS
 	--chekc for existign value
 	IF m_index.first IS NOT NULL THEN
 	FOR i IN  m_index.FIRST .. m_index.LAST LOOP
-	IF m_index(i).KEY = KEY THEN
+	IF m_index.EXISTS(i) AND m_index(i).KEY = KEY THEN
+    --update and return
 		m_index(i)  := ThreadContextMapEntry(KEY,VALUE);
 		return;
 	END IF;
 	END LOOP;
 	END IF;
 
+  --not found add new entry
 	m_index.EXTEND;
 	m_index(m_index.last)  := ThreadContextMapEntry(key,value);
 
@@ -84,9 +100,9 @@ AS
 	IS
 		retval VARCHAR2(32000);
 	BEGIN
-		IF m_index.first IS NOT NULL THEN
+		IF m_index IS NOT NULL AND m_index.first IS NOT NULL THEN
 			FOR i IN  m_index.FIRST .. m_index.LAST LOOP
-				IF m_index(i).KEY = KEY THEN
+				IF m_index.exists(i) AND m_index(i).KEY = KEY THEN
 					retval := m_index(i).value;
 					m_index.delete(i);
 					RETURN retval;
@@ -100,7 +116,7 @@ AS
 	BEGIN
 		IF m_index.first IS NOT NULL THEN
 			FOR i IN  m_index.FIRST .. m_index.LAST LOOP
-				IF m_index(i).KEY = KEY THEN
+				IF m_index.exists(i) AND m_index(i).KEY = KEY THEN
 					m_index.delete(i);
 					RETURN ;
 				END IF;
@@ -128,8 +144,10 @@ AS
 		IF isEmpty() THEN RETURN '{}'; END IF;
 
 		retval := '';
-		FOR i in m_index.first .. m_index.last LOOP
-			retval := retval||', '||m_index(i).key||'='||m_index(i).value;
+		FOR i IN m_index.FIRST .. m_index.LAST LOOP
+      IF m_index.EXISTS(i) THEN
+			  retval := retval||', '||m_index(i).KEY||'='||m_index(i).VALUE;
+      END IF;
 		END LOOP;
 
 		RETURN '{'||ltrim(retval,', ')||'}';

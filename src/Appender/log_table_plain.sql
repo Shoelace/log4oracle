@@ -7,9 +7,12 @@ CREATE TABLE log_table
 	logmarker VARCHAR2(200) ,
 	loglocation VARCHAR2(200) ,
 	logmessage VARCHAR2(4000 ),
+	loguser VARCHAR2(32),
 	logthrowable clob,
 	logstacktrace clob,
 	logcontext clob
 )
 /
+
+
 
