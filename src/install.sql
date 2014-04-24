@@ -61,10 +61,6 @@ create type SIMPLEMESSAGE;
 /
 create type MESSAGE;
 /
---create type SYSTEM_INFO;
---/
---create type SESSION_INFO;
---/
 create type PATTERNCONVERTER;
 /
 create type GENERICEXCEPTION;
@@ -75,8 +71,6 @@ create type LOG4_SQL_OBJECT;
 /
 create type LOG4_OBJECT;
 /
---create type LOCATIONINFO;
---/
 create type LOGLEVEL;
 /
 create type MARKER;
@@ -85,7 +79,10 @@ create type MARKERIMPL;
 /
 create type LOGGER;
 /
+create type PATTERNFORMATTER;
+/
 
+@@Util/Log4Util.sql
 
 prompt &line1
 prompt Object Types
@@ -101,6 +98,9 @@ prompt &line1
 @@Core/Marker.type.pls
 
 @@Message/Message.type.pls
+@@Message/SimpleMessage.type.pls
+@@Message/ObjectMessage.type.pls
+@@Message/ParameterizedMessage.type.pls
 @@Core/LogLevel.type.pls
 
 @@Core/LogEvent.type.pls
@@ -113,8 +113,12 @@ prompt &line1
 
 @@Core/Pattern/PatternConverter.sql
 @@Core/Pattern/FormattingInfo.pls
-@@Core/Pattern/PatternConverterArray.sql
 @@Core/Pattern/LogEventPatternConverter.sql
+@@Core/Pattern/PatternFormatter.pls
+
+@@Core/Pattern/PatternConverterArray.sql
+
+prompt pattern converters
 
 @@Core/Pattern/DatePatternConverter.sql
 @@Core/Pattern/EIPatternConverter.sql
@@ -123,6 +127,7 @@ prompt &line1
 @@Core/Pattern/LevelPatternConverter.sql
 @@Core/Pattern/LineSeparatorPatternConverter.sql
 @@Core/Pattern/LiteralPatternConverter.sql
+@@Core/Pattern/LoggerPatternConverter.sql
 @@Core/Pattern/MarkerPatternConverter.sql
 @@Core/Pattern/MDCPatternConverter.sql
 @@Core/Pattern/MessagePatternConverter.sql
@@ -133,15 +138,12 @@ prompt &line1
 @@Core/Pattern/PatternParserBody.sql
 
 @@Message/MessageFactory.pks
-@@Message/ObjectMessage.type.pls
-@@Message/SimpleMessage.type.pls
 
 @@Layout/PatternLayout.pls
 @@Layout/SimpleLayout.pls
 
 
 @@Util/UTL_CALL_STACK.pks
-@@Util/Log4Util.sql
 
 
 --logger must be last
@@ -184,6 +186,7 @@ prompt &line1
 --@@Types\Logger.type.plb
 @@Message/SimpleMessage.type.plb
 @@Message/ObjectMessage.type.plb
+@@Message/ParameterizedMessage.type.plb
 @@Core/Log4oracleLogEvent.type.plb
 @@Util/StackTraceElement.type.plb
 

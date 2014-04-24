@@ -58,6 +58,5 @@ as
 		return false;
 	end;
 end;
-	
 /
 show errors
