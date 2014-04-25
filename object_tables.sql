@@ -20,3 +20,25 @@ create table allloggers of logger(primary key (m_name) );
 
 select * from allloggers;
 
+
+desc utl_ref
+
+set serveroutput on
+DECLARE
+f REF formattinginfo;
+fo formattinginfo;
+BEGIN
+SELECT REF(e) INTO f FROM fi_tab e;
+
+
+utl_ref.select_object(f,fo);
+
+dbms_output.put_line('ref:'||fo.minlength);
+fo.minLength := 6;
+
+UTL_REF.UPDATE_OBJECT(f, fo); 
+
+END;
+/
+
+select ref(e) from fi_tab e;

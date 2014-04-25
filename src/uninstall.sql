@@ -81,3 +81,6 @@ drop type PATTERNFORMATTERARRAY force;
 drop type PARAMETERIZEDMESSAGE;
 drop type LOGGERPATTERNCONVERTER;
 drop type PATTERNFORMATTER;
+
+
+prompt you can now run: purge recyclebin;;
