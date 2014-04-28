@@ -146,15 +146,28 @@ create or replace type body LOGGER AS
 	if isenabled(logimpl.ll_DEBUG,NULL) THEN
 			logimpl.log(NULL, m_name, logimpl.ll_DEBUG,MessageFactory.newMessage(msg));
 	end if;
-	end;
+	END;
+	member procedure debug(MSG varchar2, throwable GenericException)
+	is
+	begin
+	IF isenabled(logimpl.ll_DEBUG,NULL) THEN
+			logimpl.log(NULL, m_name, logimpl.ll_DEBUG,MessageFactory.newMessage(msg),throwable);
+	END IF;
+	end;  
 	member procedure debug(m Marker,MSG varchar2)
 	is
 	begin
 	if isenabled(logimpl.ll_DEBUG,m) THEN
 			logimpl.log(m, m_name, logimpl.ll_DEBUG,MessageFactory.newMessage(msg));
 	end if;
+	END;
+	member procedure debug(m Marker,MSG varchar2, throwable GenericException)
+	is
+	begin
+	IF isenabled(logimpl.ll_DEBUG,m) THEN
+			logimpl.log(m, m_name, logimpl.ll_DEBUG,MessageFactory.newMessage(msg),throwable);
+	END IF;
 	end;
-
 	member procedure info(MSG varchar2)
 	is
 	begin

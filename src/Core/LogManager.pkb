@@ -13,7 +13,7 @@ package body LOGMANAGER as
 	return utl_call_stack.owner(depth+1)||'.'|| utl_call_stack.concatenate_subprogram(utl_call_stack.subprogram(depth+1));
 	END;
 
-   PROCEDURE insertlogger(l logger)
+/*   PROCEDURE insertlogger(l logger)
    IS
       PRAGMA AUTONOMOUS_TRANSACTION;
     BEGIN
@@ -21,25 +21,27 @@ package body LOGMANAGER as
       commit;
     exception WHEN others THEN NULL;
     END;
+*/
     
 	FUNCTION GetLogger(NAME VARCHAR2) RETURN LOGGER IS
-   l Logger;
+   --l Logger;
 	BEGIN
 	--k_logger.entry('GetLogger');
 	--needs to come from logger context
-    SELECT VALUE(e) INTO l FROM allloggers e WHERE m_name = NAME;
+    --SELECT VALUE(e) INTO l FROM allloggers e WHERE m_name = NAME;
 	--K_LOGGER.debug('create simple logger');
-	return l;
+	--return l;
+    return LOGGER(NAME,999);
 
 	--return TREAT( k_logger.exit('GetLogger',m_log) as Logger);
-  EXCEPTION
-    WHEN NO_DATA_FOUND THEN
-   -- dbms_output.put_line('creating:'||name);
-    l := LOGGER(NAME,999);
-    insertlogger(l);
-
-    return l;
-    
+  --EXCEPTION
+    --WHEN NO_DATA_FOUND THEN
+   ---- dbms_output.put_line('creating:'||name);
+    --l := LOGGER(NAME,999);
+    --insertlogger(l);
+--
+    --return l;
+    --
 	end;
 
 	function GetLogger return LOGGER is

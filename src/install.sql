@@ -283,7 +283,7 @@ prompt &line1
 
 @@Util/Log4UtilBody.sql
 
-@@grants.sql
+-- @@grants.sql
 
 prompt &finished
 set feedback on
