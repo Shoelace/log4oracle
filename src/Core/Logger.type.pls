@@ -12,8 +12,8 @@ AS OBJECT
 
   ,member procedure trace(msg varchar2)
   --,member procedure trace(msg varchar2, throwable)
-  ,member procedure debug(msg varchar2)
-  --,member procedure debug(msg varchar2, throwable)
+  ,MEMBER PROCEDURE DEBUG(msg VARCHAR2)
+  ,MEMBER PROCEDURE DEBUG(msg VARCHAR2, throwable GenericException)
   ,member procedure info(msg varchar2)
   --,member procedure info(msg varchar2, throwable)
   ,member procedure warn(msg varchar2)
@@ -49,8 +49,8 @@ getparent
   ,member procedure catching(throwable GenericException DEFAULT GenericException() )
   ,member procedure catching(lvl LogLevel, throwable GenericException DEFAULT GenericException() )
 
-  ,member procedure debug(m Marker, msg varchar2)
-  --,member procedure debug(m Marker, msg varchar2, throwable)
+  ,MEMBER PROCEDURE DEBUG(m Marker, msg VARCHAR2)
+  ,member procedure debug(m Marker, msg varchar2, throwable GenericException)
 
   ,member procedure entry
   --,member procedure entry(params varchar2)
@@ -106,19 +106,12 @@ getparent
   --,member procedure warn(m Marker, msg varchar2, throwable)
 
 	/* end log4 2.x */
-
-  ,MEMBER PROCEDURE DEBUG(msg VARCHAR2
-                        , arg01 VARCHAR2
-                        , arg02 VARCHAR2 DEFAULT NULL
-                        , arg03 VARCHAR2 DEFAULT NULL
-                        , arg04 VARCHAR2 DEFAULT NULL
-                        , arg05 VARCHAR2 DEFAULT NULL
-                        , arg06 VARCHAR2 DEFAULT NULL
-                        , arg07 VARCHAR2 DEFAULT NULL
-                        , arg08 VARCHAR2 DEFAULT NULL
-                        , arg09 VARCHAR2 DEFAULT NULL
-                        )
   
+  --parameterisedmessage overloads
+
+  ,MEMBER PROCEDURE trace(msg VARCHAR2 , arg01 VARCHAR2 , arg02 VARCHAR2 DEFAULT NULL , arg03 VARCHAR2 DEFAULT NULL , arg04 VARCHAR2 DEFAULT NULL , arg05 VARCHAR2 DEFAULT NULL , arg06 VARCHAR2 DEFAULT NULL , arg07 VARCHAR2 DEFAULT NULL , arg08 VARCHAR2 DEFAULT NULL , arg09 VARCHAR2 DEFAULT NULL) 
+  ,MEMBER PROCEDURE debug(msg VARCHAR2 , arg01 VARCHAR2 , arg02 VARCHAR2 DEFAULT NULL , arg03 VARCHAR2 DEFAULT NULL , arg04 VARCHAR2 DEFAULT NULL , arg05 VARCHAR2 DEFAULT NULL , arg06 VARCHAR2 DEFAULT NULL , arg07 VARCHAR2 DEFAULT NULL , arg08 VARCHAR2 DEFAULT NULL , arg09 VARCHAR2 DEFAULT NULL) 
+  --,MEMBER PROCEDURE info (msg VARCHAR2 , arg01 VARCHAR2 , arg02 VARCHAR2 DEFAULT NULL , arg03 VARCHAR2 DEFAULT NULL , arg04 VARCHAR2 DEFAULT NULL , arg05 VARCHAR2 DEFAULT NULL , arg06 VARCHAR2 DEFAULT NULL , arg07 VARCHAR2 DEFAULT NULL , arg08 VARCHAR2 DEFAULT NULL , arg09 VARCHAR2 DEFAULT NULL) 
 
 )
 ;

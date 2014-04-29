@@ -1,9 +1,8 @@
 create or replace
 TYPE BODY TableAppender 
-as
-	
- --constructor function Appender(name VARCHAR2, filter Filter, layout Layout,ignoreExceptions boolean ) return self as result,
- constructor function TableAppender(name VARCHAR2, filter varchar2, layout Layout,ignoreExceptions boolean ) return self as result
+AS
+
+  constructor function TableAppender(name VARCHAR2, filter varchar2, layout Layout,ignoreExceptions boolean ) return self as result
 	IS
 	BEGIN
 		self.m_name := name;
@@ -14,42 +13,45 @@ as
 
 	overriding member procedure append(event LogEvent) 
 	IS
- PRAGMA AUTONOMOUS_TRANSACTION; 
-ll LogLevel := event.getLevel();
- t GenericException := event.getthrown();
- m Message := event.GetMessage();
- msg log_table.logmessage%type := m.getformattedmessage();
-BEGIN
+    PRAGMA AUTONOMOUS_TRANSACTION; 
+    
+    ll    LogLevel := event.getLevel();
+    t     GenericException := event.getthrown();
+    m     Message := event.GetMessage();
+    msg   log_table.logmessage%TYPE := m.getformattedmessage();
+    cm    ThreadContextContextMap := event.getContextMap();
+  BEGIN
+
 
     INSERT INTO log_table (
         	logtimestamp ,
-	loggername ,
-	loglevel ,
-	logmarker,
-	loglocation,
-	logmessage,
-	logthrowable ,
-	logstacktrace ,
-	logcontext 
+          loggername ,
+          loglevel ,
+          logmarker,
+          loglocation,
+          logmessage,
+          loguser,
+          logthrowable ,
+          logstacktrace ,
+          logcontext 
     ) VALUES (
-    event.getTimestamp(),
-    event.getLoggerName(),
-    ll.m_name,
-		event.getMarker().toString(),
-    event.getSource().toString(),
-    msg ,
-		--throwable.toString()
-    nvl2(t, t.errorstack, NULL ) ,
-    nvl2(t, t.errorbacktrace, NULL ) ,
-		nvl2(event.getContextMap(), event.getContextMap().tostring(), NULL)
-		--system_info(), --can be static
+          event.getTimestamp(),
+          event.getLoggerName(),
+          ll.m_name,
+          event.getMarker().toString(),
+          event.getSource().toString(),
+          msg ,
+          --throwable.toString()
+          nvl2(cm, cm.get('os_user'), NULL),
+          nvl2(t, t.errorstack, NULL ) ,
+          nvl2(t, t.errorbacktrace, NULL ) ,
+          nvl2(cm, cm.tostring(), NULL)
     ); 
     
-	commit;
-	END;
+	COMMIT;
+	END append;
 
-end;
-
+END;
 /
 show errors
 

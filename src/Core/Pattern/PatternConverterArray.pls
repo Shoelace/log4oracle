@@ -17,11 +17,14 @@
 create or replace
 type PatternConverterArray is table of PatternConverter;
 /
+show errors
 
 create or replace
 type FormattingInfoArray is table of FormattingInfo;
 /
+show errors
 
 create or replace
 type PatternFormatterArray is table of PatternFormatter;
 /
+show errors

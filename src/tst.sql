@@ -1,7 +1,7 @@
 set serveroutput on size unlimited
-alter package logimpl compile;
-alter package threadcontext compile;
-alter package patternparser compile;
+--alter package logimpl compile;
+--alter package threadcontext compile;
+--alter package patternparser compile;
 
 declare
     --get instance of logger
@@ -14,6 +14,7 @@ begin
     l.entry;
     l.trace('hello world trace');
     L.debug('hello world debug');
+    L.debug('{} {} {}', 'hello' ,'parameter','world');
     l.INFO('hello world info');
     l.WARN('hello world warn');
     l.error('hello world error');

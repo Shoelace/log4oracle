@@ -7,25 +7,41 @@ package body LOGMANAGER as
 	--essentially who called me at depth
 	FUNCTION getClassName(depth NUMBER) RETURN VARCHAR2
 	IS
-	--loc LocationInfo := LocationInfo();
 	begin
 	--k_logger.entry('getClassName');
-	--log4util.who_called_me( loc.owner, loc.name, loc.lineno, loc.caller_type ,depth );
-	--dbms_output.put_line($$PLSQL_UNIT ||':'||loc.lineno);
-	--dbms_output.put_line($$PLSQL_UNIT ||':'||loc.toString());
 	--return k_logger.exit('getClassName',loc.getfqcn);
-	return utl_call_stack.concatenate_subprogram(utl_call_stack.subprogram(depth+1));
+	return utl_call_stack.owner(depth+1)||'.'|| utl_call_stack.concatenate_subprogram(utl_call_stack.subprogram(depth+1));
 	END;
 
-
-	function GetLogger(name varchar2) return LOGGER is
-	begin
+/*   PROCEDURE insertlogger(l logger)
+   IS
+      PRAGMA AUTONOMOUS_TRANSACTION;
+    BEGIN
+      INSERT INTO allloggers VALUES(l);
+      commit;
+    exception WHEN others THEN NULL;
+    END;
+*/
+    
+	FUNCTION GetLogger(NAME VARCHAR2) RETURN LOGGER IS
+   --l Logger;
+	BEGIN
 	--k_logger.entry('GetLogger');
 	--needs to come from logger context
+    --SELECT VALUE(e) INTO l FROM allloggers e WHERE m_name = NAME;
 	--K_LOGGER.debug('create simple logger');
-	return LOGGER(name,999);
+	--return l;
+    return LOGGER(NAME,999);
 
 	--return TREAT( k_logger.exit('GetLogger',m_log) as Logger);
+  --EXCEPTION
+    --WHEN NO_DATA_FOUND THEN
+   ---- dbms_output.put_line('creating:'||name);
+    --l := LOGGER(NAME,999);
+    --insertlogger(l);
+--
+    --return l;
+    --
 	end;
 
 	function GetLogger return LOGGER is

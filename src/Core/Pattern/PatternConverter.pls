@@ -71,4 +71,4 @@ as
 	
 end;
 /
-
+show errors
