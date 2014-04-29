@@ -30,6 +30,7 @@ define finished='.                            Finished'
 
 prompt [ I N S T A L L A T I O N ]
 
+set timing off
 set termout on
 
 
@@ -111,30 +112,30 @@ prompt &line1
 
 @@Core/Log4oracleLogEvent.type.pls
 
-@@Core/Pattern/PatternConverter.sql
+@@Core/Pattern/PatternConverter.pls
 @@Core/Pattern/FormattingInfo.pls
-@@Core/Pattern/PatternConverterArray.sql
-@@Core/Pattern/LogEventPatternConverter.sql
+@@Core/Pattern/PatternFormatter.pls
+@@Core/Pattern/PatternConverterArray.pls
+@@Core/Pattern/LogEventPatternConverter.pls
 
-@@Core/Pattern/DatePatternConverter.sql
-@@Core/Pattern/EIPatternConverter.sql
-@@Core/Pattern/EIPatternConverterBody.sql
-@@Core/Pattern/FullLocationPatternConverter.sql
-@@Core/Pattern/LevelPatternConverter.sql
-@@Core/Pattern/LineSeparatorPatternConverter.sql
-@@Core/Pattern/LiteralPatternConverter.sql
-@@Core/Pattern/MarkerPatternConverter.sql
-@@Core/Pattern/MDCPatternConverter.sql
-@@Core/Pattern/MessagePatternConverter.sql
-@@Core/Pattern/NDCPatternConverter.sql
-@@Core/Pattern/ThrowablePatternConverter.sql
+@@Core/Pattern/DatePatternConverter.pls
+@@Core/Pattern/FullLocationPatternConverter.pls
+@@Core/Pattern/LevelPatternConverter.pls
+@@Core/Pattern/LineSeparatorPatternConverter.pls
+@@Core/Pattern/LiteralPatternConverter.pls
+@@Core/Pattern/MarkerPatternConverter.pls
+@@Core/Pattern/MDCPatternConverter.pls
+@@Core/Pattern/MessagePatternConverter.pls
+@@Core/Pattern/NDCPatternConverter.pls
+@@Core/Pattern/ThrowablePatternConverter.pls
 
-@@Core/Pattern/PatternParser.sql
-@@Core/Pattern/PatternParserBody.sql
+@@Core/Pattern/PatternParser.pls
+@@Core/Pattern/PatternParserBody.pls
 
 @@Message/MessageFactory.pks
 @@Message/ObjectMessage.type.pls
 @@Message/SimpleMessage.type.pls
+@@Message/ParameterizedMessage.type.pls
 
 @@Layout/PatternLayout.pls
 @@Layout/SimpleLayout.pls
@@ -184,6 +185,7 @@ prompt &line1
 --@@Types\Logger.type.plb
 @@Message/SimpleMessage.type.plb
 @@Message/ObjectMessage.type.plb
+@@Message/ParameterizedMessage.type.plb
 @@Core/Log4oracleLogEvent.type.plb
 @@Util/StackTraceElement.type.plb
 
