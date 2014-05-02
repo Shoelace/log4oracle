@@ -15,6 +15,7 @@ grant execute on ThreadContext to public;
 
 
 create public synonym Logger for log4.Logger;
+create public synonym LogLevel for log4.Logger;
 create public synonym LogManager for log4.LogManager;
 create public synonym MarkerManager for log4.MarkerManager;
 create public synonym ThreadContext for log4.ThreadContext;

@@ -112,6 +112,9 @@ k_appenders(k_appenders.last) := dbmsOutputAppender('dbmsoutput',null, k_layout,
 k_appenders.EXTEND;
 k_appenders(k_appenders.LAST) := TableAppender('tableoutput',NULL, NULL, FALSE);
 
+k_appenders.EXTEND;
+k_appenders(k_appenders.LAST) := SMTPAppender('SMTPoutput',ThresholdFilter(LogLevel.ERROR,null,null), k_layout, FALSE);
+
 
 END;
 /
