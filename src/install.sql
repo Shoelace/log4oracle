@@ -245,6 +245,8 @@ prompt &line1
 @@Core/MarkerManager.pks
 @@Core/ThreadContext.pks
 
+@@Util/get_log_level.fnc.plb
+
 prompt &line1
 prompt Object Bodies
 prompt &line1
@@ -277,7 +279,6 @@ prompt &line1
 
 @@Util/UTL_CALL_STACK.pkb
 
-@@Util/get_log_level.fnc.plb
 
 @@Message/MessageFactory.pkb
 

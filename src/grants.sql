@@ -12,3 +12,13 @@ grant select,insert,update,delete on log_levels to public;
 grant execute on LogManager to public;
 grant execute on MarkerManager to public;
 grant execute on ThreadContext to public;
+
+
+create public synonym Logger for Logger;
+create public synonym LogManager for LogManager;
+create public synonym MarkerManager for MarkerManager;
+create public synonym ThreadContext for ThreadContext;
+
+create public synonym log_table for log_table;
+create public synonym log_levels for log_levels;
+
