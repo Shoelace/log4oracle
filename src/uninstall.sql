@@ -1,7 +1,6 @@
 drop table log_table;
 drop table log_levels;
 
-drop type log4_object force;
 drop type log4_array force;
 drop type logger force;
 drop type Marker force;
@@ -51,7 +50,14 @@ drop TYPE BODY TABLEAPPENDER;
 drop TYPE TABLEAPPENDER;
 drop TYPE BODY DBMSOUTPUTAPPENDER;
 drop TYPE DBMSOUTPUTAPPENDER;
+drop TYPE SMTPAPPENDER;
 drop TYPE APPENDER;
+
+drop TYPE THRESHOLDFILTER;
+drop TYPE COMPOSITEFILTER;
+drop TYPE FILTERARRAY;
+drop TYPE FILTER;
+drop TYPE RESULT;
 
 drop type THREADCONTEXTCONTEXTMAP;
 drop type THREADCONTEXTCONTEXTSTACK;
@@ -82,5 +88,6 @@ drop type PARAMETERIZEDMESSAGE;
 drop type LOGGERPATTERNCONVERTER;
 drop type PATTERNFORMATTER;
 
+drop type log4_object;
 
 prompt you can now run: purge recyclebin;;

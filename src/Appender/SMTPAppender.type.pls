@@ -39,11 +39,9 @@ as
 
 		dolog boolean := true;
 		
-
 	BEGIN
-		if isfiltered() then
-			IF
-		end if;
+		--if isfiltered() then
+		--end if;
 		if dolog THEN
 			dbms_output.put_line('EMAIL');
 			send_mail(p_to   => 'dsplbrun@abdn.ac.uk'
