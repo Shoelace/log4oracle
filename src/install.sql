@@ -178,8 +178,6 @@ prompt &line1
 @@Layout/Layout.pls
 
 
-@@Appender/Appender.type.pls
-
 @@Core/Log4oracleLogEvent.type.pls
 
 @@Core/Pattern/PatternConverter.pls
@@ -247,6 +245,12 @@ prompt &line1
 --logger must be last
 @@Core/Logger.type.pls
 
+@@Core/Result.type.pls
+@@Core/Filter.type.pls
+@@Core/ThresholdFilter.type.pls
+@@Core/CompositeFilter.type.pls
+
+@@Appender/Appender.type.pls
 
 --
 
@@ -257,6 +261,7 @@ prompt &line1
 @@Config/log_levels.sql
 
 @@Appender/DBMSOutputAppender.type.pls
+@@Appender/SMTPAppender.type.pls
 
 @@Appender/log_table_plain.sql
 @@Appender/TableAppender.type.pls
@@ -270,6 +275,8 @@ prompt &line1
 @@Core/LogManager.pks
 @@Core/MarkerManager.pks
 @@Core/ThreadContext.pks
+
+@@Util/get_log_level.fnc.plb
 
 prompt &line1
 prompt Object Bodies
@@ -290,6 +297,7 @@ prompt &line1
 @@Core/LogImpl.pkb
 @@Core/ThreadContext.pkb
 
+@@Appender/Appender.type.plb
 
 @@Layout/LayoutBody.pls
 @@Layout/PatternLayoutBody.pls
@@ -303,7 +311,6 @@ prompt &line1
 
 @@Util/UTL_CALL_STACK.pkb
 
-@@Util/get_log_level.fnc.plb
 
 @@Message/MessageFactory.pkb
 

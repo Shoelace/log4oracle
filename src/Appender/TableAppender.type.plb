@@ -2,7 +2,7 @@ create or replace
 TYPE BODY TableAppender 
 AS
 
-  constructor function TableAppender(name VARCHAR2, filter varchar2, layout Layout,ignoreExceptions boolean ) return self as result
+  constructor function TableAppender(name VARCHAR2, filter Filter, layout Layout,ignoreExceptions boolean ) return self as result
 	IS
 	BEGIN
 		self.m_name := name;
