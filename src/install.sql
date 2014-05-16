@@ -31,6 +31,7 @@ define finished='.                            Finished'
 
 prompt [ I N S T A L L A T I O N ]
 
+set timing off
 set termout on
 
 
@@ -179,8 +180,32 @@ prompt &line1
 
 @@Core/Log4oracleLogEvent.type.pls
 
-@@Core/Pattern/PatternConverter.sql
+@@Core/Pattern/PatternConverter.pls
 @@Core/Pattern/FormattingInfo.pls
+<<<<<<< HEAD
+@@Core/Pattern/PatternFormatter.pls
+@@Core/Pattern/PatternConverterArray.pls
+@@Core/Pattern/LogEventPatternConverter.pls
+
+@@Core/Pattern/DatePatternConverter.pls
+@@Core/Pattern/FullLocationPatternConverter.pls
+@@Core/Pattern/LevelPatternConverter.pls
+@@Core/Pattern/LineSeparatorPatternConverter.pls
+@@Core/Pattern/LiteralPatternConverter.pls
+@@Core/Pattern/MarkerPatternConverter.pls
+@@Core/Pattern/MDCPatternConverter.pls
+@@Core/Pattern/MessagePatternConverter.pls
+@@Core/Pattern/NDCPatternConverter.pls
+@@Core/Pattern/ThrowablePatternConverter.pls
+
+@@Core/Pattern/PatternParser.pls
+@@Core/Pattern/PatternParserBody.pls
+
+@@Message/MessageFactory.pks
+@@Message/ObjectMessage.type.pls
+@@Message/SimpleMessage.type.pls
+@@Message/ParameterizedMessage.type.pls
+=======
 @@Core/Pattern/LogEventPatternConverter.sql
 @@Core/Pattern/PatternFormatter.pls
 
@@ -208,6 +233,7 @@ prompt &line1
 @@Core/Pattern/PatternParserBody.sql
 
 @@Message/MessageFactory.pks
+>>>>>>> FETCH_HEAD
 
 @@Layout/PatternLayout.pls
 @@Layout/SimpleLayout.pls
