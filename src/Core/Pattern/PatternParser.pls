@@ -15,7 +15,9 @@
 */
 
 create or replace 
-package PatternParser as
+package PatternParser
+AUTHID DEFINER
+as
 	/** 
 	* Most of the work of the <see cref="PatternLayout"/> class
 	* is delegated to the PatternParser class.

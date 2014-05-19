@@ -15,7 +15,9 @@
 */
 
 create or replace 
-package Log4Util as
+package Log4Util
+AUTHID DEFINER
+AS
 	/** 
 	* LogUtil
 	* @headcom

@@ -1,5 +1,6 @@
 
 CREATE OR REPLACE TYPE ThreadContextMapEntry 
+AUTHID DEFINER
 AS OBJECT
 (
 KEY VARCHAR2(32000),
@@ -11,6 +12,7 @@ CREATE OR REPLACE TYPE ThreadContextContextMapIndex AS TABLE OF ThreadContextMap
 /
 
 CREATE OR REPLACE TYPE ThreadContextContextMap 
+AUTHID DEFINER
 AS OBJECT
 (
 m_index ThreadContextContextMapIndex

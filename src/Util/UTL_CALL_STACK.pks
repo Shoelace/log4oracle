@@ -1,4 +1,6 @@
-create or replace PACKAGE utl_call_stack IS
+create or replace PACKAGE utl_call_stack
+AUTHID CURRENT_USER
+IS
 
 TYPE stackline IS record  (
 handle VARCHAR2(30),

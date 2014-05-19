@@ -41,7 +41,6 @@ AS
           event.getMarker().toString(),
           event.getSource().toString(),
           msg ,
-          --throwable.toString()
           nvl2(cm, cm.get('os_user'), NULL),
           nvl2(t, t.errorstack, NULL ) ,
           nvl2(t, t.errorbacktrace, NULL ) ,
