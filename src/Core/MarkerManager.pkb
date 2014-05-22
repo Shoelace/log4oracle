@@ -3,6 +3,14 @@
 create or replace package BODY MarkerManager
 AS
 	k_log Logger;
+  
+  FUNCTION getMarkerRef(NAME VARCHAR2) RETURN REF Marker
+  IS
+   mr Ref Marker;
+  BEGIN
+    SELECT REF(m) INTO mr FROM all_markers m WHERE m_name = NAME;
+    return mr;
+  END;
 
 	FUNCTION getMarker(name VARCHAR2) RETURN Marker
 	IS
@@ -13,7 +21,8 @@ AS
             m_all_markers(name) :=  MarkerImpl(name);
         end if;
 
-		RETURN TREAT(k_log.exit(m_all_markers(name)) AS Marker);
+		--RETURN TREAT(k_log.exit(m_all_markers(name)) AS Marker);
+		RETURN m_all_markers(name);
 
 	END;
 	FUNCTION getMarker(name VARCHAR2, parent VARCHAR2) RETURN Marker
@@ -26,8 +35,9 @@ AS
 			RAISE NO_DATA_FOUND;
 		END IF;
 
-		p_marker := getMarker(parent);
-		RETURN TREAT(k_log.exit(getMarker(name,p_marker)) AS Marker);
+		p_marker := getMarker(PARENT);
+		--RETURN TREAT(k_log.exit() AS Marker);
+    RETURN getMarker(NAME,p_marker);
 	END;
 
 	FUNCTION getMarker(name VARCHAR2, parent IN OUT NOCOPY Marker) RETURN Marker
@@ -40,7 +50,8 @@ k_log.trace('getMarker(name,parent)'||name||','||parent.getname());
             m_all_markers(name) :=  MarkerImpl(name,parent);
         end if;
 
-		RETURN TREAT(k_log.exit(m_all_markers(name)) AS Marker);
+		--RETURN TREAT(k_log.exit(m_all_markers(NAME)) AS Marker);
+    RETURN m_all_markers(name);
 	END;
 
 BEGIN

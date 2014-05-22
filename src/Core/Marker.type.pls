@@ -3,8 +3,8 @@ TYPE Marker
 under log4_object
 (
 	/* The name of this level. */
-	m_name varchar2(255),
-	m_parent_name varchar2(255),
+	m_name VARCHAR2(255),
+	m_parent REF Marker,
 
 	member function getName return varchar2,
 	member function getParent return Marker,
@@ -24,8 +24,8 @@ show errors
 create or replace
 TYPE MarkerImpl under Marker
 (
-  constructor function MarkerImpl(name VARCHAR2) return self as result,
-  constructor function MarkerImpl(name VARCHAR2, parent Marker) return self as result
+  constructor FUNCTION MarkerImpl(NAME VARCHAR2) RETURN self AS result,
+  constructor function MarkerImpl(name VARCHAR2, parent Ref Marker) return self as result
 )
 instantiable final;
 /

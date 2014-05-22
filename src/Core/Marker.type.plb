@@ -8,18 +8,23 @@ AS
 	end;
 
 	member FUNCTION getParent RETURN Marker
-	as
+	AS
+   mkr Marker;
 	begin
-		IF m_parent_name IS NULL THEN
+		IF m_parent IS NULL THEN
 			RETURN NULL;
 		END IF;
-		--need to avoid getmarker as it causes infinite loop
-		IF NOT MarkerManager.m_all_markers.EXISTS(m_parent_name)  THEN
---dbms_output.put_line('parent not exist:'||m_parent_name);      
-					return null;
-		END IF;
     
-		return MarkerManager.m_all_markers(m_parent_name);--0treat(m_parent as Marker);
+    SELECT DEREF(m_parent) INTO mkr FROM dual;
+    
+    return mkr;
+		--need to avoid getmarker as it causes infinite loop
+		--IF NOT MarkerManager.m_all_markers.EXISTS(m_parent_name)  THEN
+--dbms_output.put_line('parent not exist:'||m_parent_name);      
+--					return null;
+		--END IF;
+    
+		--return MarkerManager.m_all_markers(m_parent_name);--0treat(m_parent as Marker);
 	end;
 
 
@@ -78,19 +83,20 @@ AS
 	BEGIN
 		--dbms_output.put_line('MarkerImpl(name):'||name);
 		self.m_name := name;
-		self.m_parent_name := NULL;
+		self.m_parent := NULL;
 		return;
 	end;
 
-  constructor function MarkerImpl(name VARCHAR2, parent Marker) return self as result
+  constructor function MarkerImpl(name VARCHAR2, parent Ref Marker) return self as result
 	as
 	begin
 		IF parent IS NULL THEN
 			RAISE NO_DATA_FOUND;
 		END IF;
 --dbms_output.put_line('MarkerImpl(name,parent)');
-		self.m_name := name;
-		self.m_parent_name := parent.m_name;
+		self.m_name := NAME;
+    --SELECT REF(am) INTO self.m_parent FROM all_markers am WHERE VALUE(am) = PARENT;
+		-elf.m_parent := parent;
 		return;
 	end;
 end;
