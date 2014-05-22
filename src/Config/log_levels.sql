@@ -56,8 +56,8 @@ ALTER TABLE LOG_LEVELs ADD (
 MERGE INTO log_levels ll
 USING (SELECT 
 '.' logger_name,
-1 trace,
-1 debug,
+0 trace,
+0 debug,
 1 info,
 1 warn,
 1 error,
