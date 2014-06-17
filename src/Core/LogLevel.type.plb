@@ -99,104 +99,61 @@ constructor function LogLevel(self in out nocopy LogLevel, logLevel BINARY_INTEG
     return LogLevel(0);
   end;
 
+-- Compares this level against the level passed as an argument and returns true if this level is the same or more specific.
+  MEMBER FUNCTION isAtLeastAsSpecificAs(lvl INTEGER) RETURN boolean as
+  BEGIN
+    return self.intLevel <= lvl;
+  END;
+
+  --Compares this level against the level passed as an argument and returns true if this level is the same or more specific.
+  member function isAtLeastAsSpecificAs(lvl LogLevel) return boolean as
+  begin
+    return self.intLevel <= lvl.intLevel;
+  end;
+          
+  --Compares the specified Level against this one.          
+  member function lessOrEqual(lvl integer) return boolean as
+  begin
+    return self.intLevel <= lvl;
+  end;
+  
+  --Compares the specified Level against this one.          
+  member function lessOrEqual(lvl  LogLevel) return boolean as
+  begin
+    return self.intLevel <= lvl.intLevel;
+  end;
+
+  STATIC FUNCTION getLevel( NAME VARCHAR2)  RETURN LogLevel AS
+  BEGIN
+    return null;
+  end;
+
+  /** Converts the string passed as argument to a level. */
+  STATIC FUNCTION toLevel( sArg VARCHAR2)  RETURN LogLevel as
+    BEGIN
+    RETURN toLevel(sArg, logLevel.DEBUG);
+  end;
+  --Converts the string passed as argument to a level.
+  STATIC FUNCTION toLevel(NAME VARCHAR2, defaultLevel LogLevel)  RETURN LogLevel AS
+  BEGIN
+    IF name IS NULL THEN
+            RETURN defaultLevel;
+    END IF;
+    
+    return (case UPPER(name)
+                   when 'OFF' then loglevel.off
+                   when 'FATAL' then loglevel.fatal
+                   when 'ERROR' then loglevel.error
+                   when 'WARN' then loglevel.warn
+                   when 'INFO' then loglevel.info
+                   when 'DEBUG' then loglevel.debug 
+                   when 'TRACE' then loglevel.trace
+                   when 'ALL' then loglevel.ll_all
+				else defaultLevel
+                 end);
+
+  end;
 
 end;
 /
-show errors
-
-
-/*
-create or replace package ut_LogLevel
-AUTHID DEFINER
-AS
-$IF $$UTPLSQL_ENABLE $THEN
-   PROCEDURE ut_setup;
-   PROCEDURE ut_teardown;
- 
-   PROCEDURE ut_LogLevel_1;
-   PROCEDURE ut_LogLevel_2;
-   PROCEDURE ut_LogLevel_3;
-$END
-
-END;
-/
-show errors
-
-create or replace package body ut_LogLevel
-AS
-$IF $$UTPLSQL_ENABLE $THEN
- PROCEDURE ut_setup IS
-   BEGIN
-      NULL;
-   END;
- 
-   PROCEDURE ut_teardown
-   IS
-   BEGIN
-      NULL;
-   END;
-   PROCEDURE ut_LogLevel_1
-	IS
-	BEGIN
-		utassert.objexists('test','LogLevel');
-	END;
-   
-   PROCEDURE ut_LogLevel_2
-	IS
-		ll LogLevel;
-		ll2 LogLevel;
-
-	BEGIN
-		utassert.this('null',ll is null);
-		ll := LogLevel(5);
-		utassert.this('notnull',ll is not null);
-
-		utassert.eq('check value', ll.intLevel , 5);
-
-	END;
-
-	PROCEDURE ut_LogLevel_3
-	IS
-		ll LogLevel;
-		prev_ll LogLevel;
-		l_vals log4_array;
-		i integer;
-
-	BEGIN
-		l_vals := LogLevel.vals();
-
-		utassert.this('vals returns array',l_vals is not null);
-
-		i := l_vals.count;
-
-		utassert.this('levels defined',i > 0);
-		i := l_vals.FIRST;  -- get subscript of first element
-		WHILE i IS NOT NULL LOOP
-		   ---- do something with courses(i) 
-			ll := treat ( l_vals(i) as loglevel);
-			if prev_ll is not null THEN
-				utassert.this('incrementing levels:'||ll.tostring||' > '||prev_ll.tostring, ll > prev_ll);
-			END IF;
---
-			prev_ll :=  ll;
-		   i := l_vals.NEXT(i);  -- get subscript of next element
-		END LOOP;
-
-	END;
-   
-$END
-
-END;
-/
-show errors
-
-BEGIN
-$IF $$UTPLSQL_ENABLE $THEN
-	utconfig.showconfig;
-	utplsql.TEST ('LogLevel', samepackage_in => FALSE , recompile_in => FALSE);
-$END
-NULL;
-END;
-/
-
-*/
+show errors type body LogLevel

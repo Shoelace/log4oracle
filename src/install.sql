@@ -165,6 +165,7 @@ prompt &line1
 
 @@Util/GenericException.type.pls
 @@Core/Marker.type.pls
+@@Core/MarkerImpl.type.pls
 
 @@Message/Message.type.pls
 @@Message/SimpleMessage.type.pls
@@ -193,6 +194,7 @@ prompt &line1
 @@Core/Pattern/LevelPatternConverter.pls
 @@Core/Pattern/LineSeparatorPatternConverter.pls
 @@Core/Pattern/LiteralPatternConverter.pls
+@@Core/Pattern/LoggerPatternConverter.pls
 @@Core/Pattern/MarkerPatternConverter.pls
 @@Core/Pattern/MDCPatternConverter.pls
 @@Core/Pattern/MessagePatternConverter.pls
@@ -270,6 +272,10 @@ prompt &line1
 @@Core/LogManager.pkb
 @@Core/MarkerManager.pkb
 @@Core/Marker.type.plb
+@@Core/MarkerImpl.type.plb
+
+@@Core/all_markers.tab.sql
+
 @@Core/LogImpl.pkb
 @@Core/ThreadContext.pkb
 
@@ -291,6 +297,9 @@ prompt &line1
 @@Message/MessageFactory.pkb
 
 @@Util/Log4UtilBody.sql
+
+--other stuff
+@@Appender/log_table_trim.prc
 
 -- @@grants.sql
 
