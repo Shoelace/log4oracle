@@ -10,6 +10,10 @@ grant create table to log4;
 grant create type to log4;
 grant create view to log4;
 
+--some system grants
+grant under on uritype to log4;
+
+
 -- optional grants
 grant SELECT ANY DICTIONARY to log4;
 

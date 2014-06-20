@@ -3,7 +3,9 @@
 create or replace 
 package body LOGMANAGER as
 
-
+ --private static LoggerContextFactory factory;
+ ROOT_LOGGER_NAME CONSTANT VARCHAR2(30) := '.';
+ 
 	--essentially who called me at depth
 	FUNCTION getClassName(depth NUMBER) RETURN VARCHAR2
 	IS
@@ -26,12 +28,15 @@ package body LOGMANAGER as
 	FUNCTION GetLogger(NAME VARCHAR2) RETURN LOGGER IS
    --l Logger;
 	BEGIN
+ --FINAL String actualName = NAME != NULL ? NAME : getClassName(2);
+--return factory.getContext(LogManager.class.getName(), null, null, false).getLogger(actualName);  
+
 	--k_logger.entry('GetLogger');
 	--needs to come from logger context
     --SELECT VALUE(e) INTO l FROM allloggers e WHERE m_name = NAME;
 	--K_LOGGER.debug('create simple logger');
 	--return l;
-    return LOGGER(NAME,999);
+    return loggerimpl(NAME,999);
 
 	--return TREAT( k_logger.exit('GetLogger',m_log) as Logger);
   --EXCEPTION
@@ -45,7 +50,8 @@ package body LOGMANAGER as
 	end;
 
 	function GetLogger return LOGGER is
-	begin
+	BEGIN
+  --  return factory.getContext(LogManager.class.getName(), null, null, true);
 	return getLogger(getClassName(2));
 	end;
 
@@ -53,6 +59,13 @@ package body LOGMANAGER as
 	begin
 	return getLogger(ROOT_LOGGER_NAME);
 	end;
+  
+  
+  FUNCTION getContext RETURN LoggerContext IS
+  BEGIN
+    return null;
+  END;
+    
 
 end;
 /

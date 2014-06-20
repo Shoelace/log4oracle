@@ -7,6 +7,13 @@ FOREIGN KEY (m_parent) REFERENCES all_markers
 OBJECT IDENTIFIER IS PRIMARY KEY;
 
 
+create table all_loggers of Logger
+(
+CONSTRAINT pk_logger
+PRIMARY KEY (m_NAME)
+)
+OBJECT IDENTIFIER IS PRIMARY KEY;
+
 
 
 DESC formattinginfo

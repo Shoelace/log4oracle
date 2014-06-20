@@ -1,7 +1,7 @@
 set serveroutput on size unlimited
---alter package logimpl compile;
---alter package threadcontext compile;
---alter package patternparser compile;
+alter package logimpl compile;
+alter package threadcontext compile;
+alter package patternparser compile;
 
 declare
     --get instance of logger
