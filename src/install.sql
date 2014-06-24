@@ -182,10 +182,9 @@ prompt &line1
 
 @@Core/Pattern/PatternConverter.pls
 @@Core/Pattern/FormattingInfo.pls
-<<<<<<< HEAD
+@@Core/Pattern/LogEventPatternConverter.pls
 @@Core/Pattern/PatternFormatter.pls
 @@Core/Pattern/PatternConverterArray.pls
-@@Core/Pattern/LogEventPatternConverter.pls
 
 @@Core/Pattern/DatePatternConverter.pls
 @@Core/Pattern/FullLocationPatternConverter.pls
@@ -205,35 +204,6 @@ prompt &line1
 @@Message/ObjectMessage.type.pls
 @@Message/SimpleMessage.type.pls
 @@Message/ParameterizedMessage.type.pls
-=======
-@@Core/Pattern/LogEventPatternConverter.sql
-@@Core/Pattern/PatternFormatter.pls
-
-@@Core/Pattern/PatternConverterArray.sql
-
-prompt &line1
-prompt pattern converters
-prompt &line1
-
-@@Core/Pattern/DatePatternConverter.sql
-@@Core/Pattern/EIPatternConverter.sql
-@@Core/Pattern/EIPatternConverterBody.sql
-@@Core/Pattern/FullLocationPatternConverter.sql
-@@Core/Pattern/LevelPatternConverter.sql
-@@Core/Pattern/LineSeparatorPatternConverter.sql
-@@Core/Pattern/LiteralPatternConverter.sql
-@@Core/Pattern/LoggerPatternConverter.sql
-@@Core/Pattern/MarkerPatternConverter.sql
-@@Core/Pattern/MDCPatternConverter.sql
-@@Core/Pattern/MessagePatternConverter.sql
-@@Core/Pattern/NDCPatternConverter.sql
-@@Core/Pattern/ThrowablePatternConverter.sql
-
-@@Core/Pattern/PatternParser.sql
-@@Core/Pattern/PatternParserBody.sql
-
-@@Message/MessageFactory.pks
->>>>>>> FETCH_HEAD
 
 @@Layout/PatternLayout.pls
 @@Layout/SimpleLayout.pls
