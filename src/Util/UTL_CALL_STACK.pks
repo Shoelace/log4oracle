@@ -1,4 +1,6 @@
-create or replace PACKAGE utl_call_stack IS
+create or replace PACKAGE utl_call_stack
+AUTHID CURRENT_USER
+IS
 
 TYPE stackline IS record  (
 handle VARCHAR2(30),
@@ -8,10 +10,10 @@ caller_type varchar2(50));
 
 TYPE callstack IS TABLE OF stackline;
 
-FUNCTION getCallStack RETURN callstack;
+FUNCTION getCallStack(pskip number default 0) RETURN callstack;
 
 /** 
-* this is a pre 12c implementauyion of utl_call_stack.
+* this is a pre 12c implementation of utl_call_stack.
 *
 * @headcom
 */
