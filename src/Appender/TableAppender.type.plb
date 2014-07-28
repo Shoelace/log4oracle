@@ -31,8 +31,10 @@ AS
           loglocation,
           logmessage,
           loguser,
+          logid,
           logthrowable ,
           logstacktrace ,
+          logcallstack ,
           logcontext 
     ) VALUES (
           event.getTimestamp(),
@@ -43,8 +45,10 @@ AS
           msg ,
           --throwable.toString()
           nvl2(cm, cm.get('os_user'), NULL),
+          nvl2(cm, cm.get('LOG_ID'), NULL),
           nvl2(t, t.errorstack, NULL ) ,
           nvl2(t, t.errorbacktrace, NULL ) ,
+          nvl2(t, t.callstack, NULL ) ,
           nvl2(cm, cm.tostring(), NULL)
     ); 
     

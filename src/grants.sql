@@ -1,40 +1,44 @@
---types
-grant execute on log4_object to public;
-grant execute on Logger to public;
-grant execute on Marker to public;
-grant execute on Result to public;
-grant execute on LogLevel to public;
-grant execute on GenericException to public;
+accept grantname default "PUBLIC" prompt "Enter username to assign grants[PUBLIC]:"
 
-grant execute on LogEvent to public;
-grant execute on Log4oracleLogEvent to public;
+set verify on
+
+--types
+grant execute on log4_object to &grantname;
+grant execute on Logger to &grantname;
+grant execute on Marker to &grantname;
+grant execute on Result to &grantname;
+grant execute on LogLevel to &grantname;
+grant execute on GenericException to &grantname;
+
+grant execute on LogEvent to &grantname;
+grant execute on Log4oracleLogEvent to &grantname;
 
 --layouts
-grant execute on Layout to public;
-grant execute on PatternLayout to public;
-grant execute on SimpleLayout to public;
+grant execute on Layout to &grantname;
+grant execute on PatternLayout to &grantname;
+grant execute on SimpleLayout to &grantname;
 
 --Message
-grant execute on Message to public;
-grant execute on ObjectMessage to public;
-grant execute on ParameterizedMessage to public;
-grant execute on SimpleMessage to public;
+grant execute on Message to &grantname;
+grant execute on ObjectMessage to &grantname;
+grant execute on ParameterizedMessage to &grantname;
+grant execute on SimpleMessage to &grantname;
 
 --appender types
-grant execute on DBMSOutputAppender to public;
-grant execute on SMTPAppender to public;
-grant execute on TableAppender to public;
+grant execute on DBMSOutputAppender to &grantname;
+--grant execute on SMTPAppender to &grantname;
+grant execute on TableAppender to &grantname;
 
 --Filters
-grant execute on Filter to public;
-grant execute on ThresholdFilter to public;
+grant execute on Filter to &grantname;
+grant execute on ThresholdFilter to &grantname;
 
 --tables
-grant select,delete  on log_table to public;
-grant select,insert,update,delete on log_levels to public;
+grant select,delete  on log_table to &grantname;
+grant select,insert,update,delete on log_levels to &grantname;
 
 --packages
-grant execute on LogManager to public;
-grant execute on MarkerManager to public;
-grant execute on ThreadContext to public;
+grant execute on LogManager to &grantname;
+grant execute on MarkerManager to &grantname;
+grant execute on ThreadContext to &grantname;
 

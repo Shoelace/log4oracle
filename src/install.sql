@@ -191,6 +191,7 @@ prompt &line1
 @@Core/Pattern/LevelPatternConverter.pls
 @@Core/Pattern/LineSeparatorPatternConverter.pls
 @@Core/Pattern/LiteralPatternConverter.pls
+@@Core/Pattern/LoggerPatternConverter.pls
 @@Core/Pattern/MarkerPatternConverter.pls
 @@Core/Pattern/MDCPatternConverter.pls
 @@Core/Pattern/MessagePatternConverter.pls
@@ -231,7 +232,7 @@ prompt &line1
 @@Config/log_levels.sql
 
 @@Appender/DBMSOutputAppender.type.pls
-@@Appender/SMTPAppender.type.pls
+--@@Appender/SMTPAppender.type.pls
 
 @@Appender/log_table_plain.sql
 @@Appender/TableAppender.type.pls
