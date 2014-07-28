@@ -8,8 +8,10 @@ CREATE TABLE log_table
 	loglocation VARCHAR2(200) ,
 	logmessage VARCHAR2(4000 ),
 	loguser VARCHAR2(32),
+	logid NUMBER,
 	logthrowable clob,
 	logstacktrace clob,
+	logcallstack clob,
 	logcontext clob
 )
 /

@@ -86,7 +86,6 @@ as
     member function isFiltered(event LogEvent) return boolean
 	IS BEGIN
 		return m_filter is not null AND m_filter.dofilter(event) = Result.DENY;
-        --return filter != null && filter.filter(event) == Filter.Result.DENY;
 	END;
 end;
 /

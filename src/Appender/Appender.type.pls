@@ -1,7 +1,6 @@
 prompt create or replace TYPE Appender 
 create or replace
 TYPE Appender 
-AUTHID DEFINER
 as object
 (
 	/* The name of this Appender. */
