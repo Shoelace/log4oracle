@@ -239,7 +239,7 @@ prompt &line1
 @@Config/log_levels.sql
 
 @@Appender/DBMSOutputAppender.type.pls
-@@Appender/SMTPAppender.type.pls
+--@@Appender/SMTPAppender.type.pls
 
 @@Appender/log_table_plain.sql
 @@Appender/TableAppender.type.pls
