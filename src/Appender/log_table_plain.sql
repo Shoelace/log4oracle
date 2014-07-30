@@ -15,6 +15,3 @@ CREATE TABLE log_table
 	logcontext clob
 )
 /
-
-
-

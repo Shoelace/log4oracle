@@ -1,3 +1,5 @@
+prompt CREATE OR REPLACE TYPE UTLFILEURITYPE
+
 CREATE OR REPLACE TYPE UTLFILEURITYPE
 authid current_user under UriType
 (
@@ -31,6 +33,7 @@ authid current_user under UriType
     */
 );
 /
+show errors
 
 CREATE OR REPLACE TYPE BODY UTLFILEURITYPE
 AS
@@ -134,5 +137,6 @@ AS
   END;
 end;
 /
+show errors
 
 exec SYS.URIFACTORY.registerurlhandler('utlfile://',USER,'UTLFILEURITYPE');

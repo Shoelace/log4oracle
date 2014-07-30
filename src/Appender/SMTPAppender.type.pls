@@ -1,3 +1,5 @@
+prompt create or replace TYPE SMTPAppender 
+
 create or replace
 TYPE SMTPAppender 
 under Appender

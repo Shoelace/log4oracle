@@ -1,3 +1,4 @@
+prompt CREATE OR REPLACE TYPE Configuration 
 
 CREATE OR REPLACE TYPE Configuration 
 UNDER log4_object
@@ -95,5 +96,6 @@ UNDER log4_object
     ,member function  isFiltered( event LogEvent) return boolean
 
 
-);
+) not final not instantiable;
 /
+show errors

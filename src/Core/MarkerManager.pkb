@@ -8,17 +8,19 @@ AS
 
 	FUNCTION getMarker(name VARCHAR2) RETURN Marker
 	IS
-    m marker;
+  --PRAGMA AUTONOMOUS_TRANSACTION;
+
+		m marker;
 	BEGIN
 		k_log.entry();
 
-    BEGIN
-      SELECT VALUE(am) INTO m FROM all_markers am WHERE am.m_name = NAME;
-    exception
-      WHEN no_data_found THEN
-        INSERT INTO all_markers am values (MarkerImpl(NAME)) returning VALUE(am) into m;
-    END;
-   
+		BEGIN
+			SELECT VALUE(am) INTO m FROM all_markers am WHERE am.m_name = NAME;
+		exception
+			WHEN no_data_found THEN
+				INSERT INTO all_markers am values (MarkerImpl(NAME)) returning VALUE(am) into m;
+		END;
+
 		RETURN TREAT(k_log.exit(m) AS Marker);
 	END getMarker;
   
@@ -29,7 +31,6 @@ AS
 	BEGIN
 		k_log.ENTRY();
     --k_log.trace('getMarker(name,parent)'||name||','||parent);    
-    
 
 		p_marker := getMarker(PARENT);
 		RETURN TREAT(k_log.exit(getMarker(NAME,p_marker)) AS Marker);
@@ -39,23 +40,24 @@ AS
 	FUNCTION getMarker(name VARCHAR2, parent IN OUT NOCOPY Marker) RETURN Marker
 	IS
   
-    v_marker Marker;
-    v_parent_ref Ref Marker;
+--  PRAGMA AUTONOMOUS_TRANSACTION;
+
+		v_marker Marker;
+		v_parent_ref Ref Marker;
 	BEGIN
 		k_log.ENTRY();
     --k_log.trace('getMarker(name,parent)'||name||','||parent.getname());
 
 
-    BEGIN
-      SELECT VALUE(am) INTO v_marker FROM all_markers am WHERE am.m_name = NAME;
-    exception
-      WHEN no_data_found THEN
+		BEGIN
+			SELECT VALUE(am) INTO v_marker FROM all_markers am WHERE am.m_name = NAME;
+		exception
+			WHEN no_data_found THEN
 
-       SELECT REF(m) INTO v_parent_ref FROM all_markers m WHERE VALUE(m) = PARENT;
-        v_marker := MarkerImpl(NAME,v_parent_ref);
-       INSERT INTO all_markers am VALUES (v_marker);
-
-    END;
+				SELECT REF(m) INTO v_parent_ref FROM all_markers m WHERE VALUE(m) = PARENT;
+				v_marker := MarkerImpl(NAME,v_parent_ref);
+				INSERT INTO all_markers am VALUES (v_marker);
+		END;
 
 		RETURN TREAT(k_log.exit(v_marker) AS Marker);
 

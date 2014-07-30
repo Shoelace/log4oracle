@@ -1,3 +1,5 @@
+prompt CREATE OR REPLACE PROCEDURE log_table_trim
+
 CREATE OR REPLACE PROCEDURE log_table_trim(p_retention INTERVAL DAY TO SECOND, p_loglevel loglevel DEFAULT NULL, p_loguser log_table.loguser%TYPE DEFAULT NULL)
 AUTHID CURRENT_USER
 AS
@@ -36,5 +38,4 @@ k_log.exit;
 
 END;
 /
-
 show errors procedure log_table_trim
