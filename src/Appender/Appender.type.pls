@@ -1,4 +1,5 @@
 prompt create or replace TYPE Appender 
+
 create or replace
 TYPE Appender 
 as object

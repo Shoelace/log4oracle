@@ -1,3 +1,5 @@
+prompt create or replace TYPE TableAppender 
+
 create or replace
 TYPE TableAppender 
 under Appender

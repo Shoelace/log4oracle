@@ -10,7 +10,7 @@ grant create table to log4;
 grant create type to log4;
 grant create view to log4;
 
---some system grants
+--some system grants as DBA or SYSDBA
 grant under on uritype to log4;
 
 

@@ -1,3 +1,5 @@
+prompt create or replace TYPE DBMSOutputAppender 
+
 create or replace
 TYPE DBMSOutputAppender 
 under Appender
@@ -12,6 +14,8 @@ final instantiable ;
 /
 show errors
 
+
+prompt create or replace TYPE BODY DBMSOutputAppender 
 
 create or replace
 TYPE BODY DBMSOutputAppender 
@@ -34,7 +38,6 @@ as
 	END;
 
 end;
-
 /
 show errors
 

@@ -1,4 +1,4 @@
---prompt create or replace package body LOGMANAGER 
+prompt create or replace package body LOGMANAGER 
 
 create or replace 
 package body LOGMANAGER as

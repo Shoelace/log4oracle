@@ -1,5 +1,4 @@
 /** 
-* Copyright 2011 Juergen Lipp
 *  
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -14,6 +13,14 @@
 * limitations under the License.
 */
 
+column warnval new_value warning_value noprint
+select regexp_substr(dbms_warning.get_warning_setting_num(05021),'(.*):',1,1,'',1) warnval from dual;
+
+--disable warning about not setting a pragma for exceptions
+exec dbms_warning.add_warning_setting_num(05021,'DISABLE','SESSION');
+
+
+prompt create or replace package Log4Util
 create or replace 
 package Log4Util
 AUTHID DEFINER
@@ -40,3 +47,7 @@ PROCEDURE who_called_me
 	
 end Log4Util;
 /
+show errors
+
+--reset warnings
+exec dbms_warning.add_warning_setting_num(05021,'&warning_value','SESSION');

@@ -38,3 +38,5 @@ String	toString()
 Returns a String representation of this instance in the form "name:level[ in context_name]".
 */
 );
+/
+show errors

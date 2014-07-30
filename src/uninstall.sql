@@ -15,15 +15,11 @@ drop package markermanager;
 drop function get_log_level;
 
 drop PACKAGE UTL_CALL_STACK;
-drop PACKAGE BODY PATTERNPARSER;
 drop PACKAGE PATTERNPARSER;
-<<<<<<< HEAD
-=======
-drop TYPE BODY PATTERNCONVERTER;
+
 drop TYPE PATTERNCONVERTERARRAY force;
 drop TYPE PATTERNCONVERTER force;
-drop PACKAGE BODY LOG4UTIL;
->>>>>>> 6b591b54793d1683f31d9c70a756e0a80f2bd8bd
+
 drop PACKAGE LOG4UTIL;
 drop TYPE LOG4_SQL_OBJECT;
 drop PACKAGE MESSAGEFACTORY;
@@ -85,5 +81,5 @@ prompt if you want to remove your data
 prompt drop table log_table;
 prompt drop table log_levels;
 
-prompt you can now run: 
+prompt you can now run 
 prompt purge recyclebin;;

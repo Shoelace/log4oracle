@@ -1,4 +1,6 @@
-drop table all_markers;
+--drop table all_markers;
+
+prompt create table all_markers 
 
 create table all_markers of marker
 (

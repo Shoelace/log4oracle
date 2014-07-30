@@ -1,3 +1,5 @@
+prompt create or replace TYPE BODY TableAppender 
+
 create or replace
 TYPE BODY TableAppender 
 AS
@@ -43,12 +45,12 @@ AS
           event.getMarker().toString(),
           event.getSource().toString(),
           msg ,
-          nvl2(cm, cm.get('os_user'), NULL),
-          nvl2(cm, cm.get('LOG_ID'), NULL),
-          nvl2(t, t.errorstack, NULL ) ,
-          nvl2(t, t.errorbacktrace, NULL ) ,
-          nvl2(t, t.callstack, NULL ) ,
-          nvl2(cm, cm.tostring(), NULL)
+        nvl2(cm, cm.get('os_user'), NULL),
+        nvl2(cm, to_number(cm.get('LOG_ID')), NULL),
+        nvl2(t, t.errorstack, NULL ) ,
+        nvl2(t, t.errorbacktrace, NULL ) ,
+        nvl2(t, t.callstack, NULL ) ,
+	nvl2(cm, cm.tostring(), NULL)
     ); 
     
 	COMMIT;

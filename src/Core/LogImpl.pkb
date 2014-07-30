@@ -14,7 +14,8 @@ k_layout layout;
 	begin
 		rLog_level := get_log_level(self.m_name);
 		IF rLog_level.logger_name IS NULL THEN         
-			rLog_level := get_log_level(logmanager.root_logger_name);        
+			--rLog_level := get_log_level(logmanager.root_logger_name);        
+			rLog_level := get_log_level('.');        
 			if rlog_level.logger_name is null then raise no_data_found; end if;
 		END IF;
 

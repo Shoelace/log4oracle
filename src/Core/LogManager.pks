@@ -1,4 +1,5 @@
---prompt create or replace package LogManager 
+prompt create or replace package LogManager 
+
 create or replace package LogManager 
 AUTHID DEFINER
 as
