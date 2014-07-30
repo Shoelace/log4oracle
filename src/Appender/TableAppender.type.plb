@@ -22,6 +22,9 @@ AS
     cm    ThreadContextContextMap := event.getContextMap();
   BEGIN
 
+dbms_output.put_line('USER:'||sys_context('USERENV','CURRENT_USER'));
+dbms_output.put_line('SESSION_USER:'||sys_context('USERENV','SESSION_USER'));
+
 
     INSERT INTO log_table (
         	logtimestamp ,
@@ -31,8 +34,10 @@ AS
           loglocation,
           logmessage,
           loguser,
+          logid,
           logthrowable ,
           logstacktrace ,
+          logcallstack ,
           logcontext 
     ) VALUES (
           event.getTimestamp(),
@@ -42,8 +47,10 @@ AS
           event.getSource().toString(),
           msg ,
           nvl2(cm, cm.get('os_user'), NULL),
+          nvl2(cm, cm.get('LOG_ID'), NULL),
           nvl2(t, t.errorstack, NULL ) ,
           nvl2(t, t.errorbacktrace, NULL ) ,
+          nvl2(t, t.callstack, NULL ) ,
           nvl2(cm, cm.tostring(), NULL)
     ); 
     

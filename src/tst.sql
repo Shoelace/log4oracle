@@ -1,12 +1,13 @@
 set serveroutput on size unlimited
-alter package logimpl compile;
-alter package threadcontext compile;
-alter package patternparser compile;
+--alter package logimpl compile;
+--alter package threadcontext compile;
+--alter package patternparser compile;
+--exec dbms_session.modify_package_state(DBMS_SESSION.REINITIALIZE);
 
 declare
     --get instance of logger
     l Logger := logmanager.getlogger('mytestlogger');
-    
+    m log4.Marker := log4.markermanager.getmarker('lastrundate');
 procedure mydolog is
 procedure dolog is
 v number;
@@ -14,29 +15,35 @@ begin
     l.entry;
     l.trace('hello world trace');
     L.debug('hello world debug');
-    L.debug('{} {} {}', 'hello' ,'parameter','world');
+    L.DEBUG('{} {} {}', 'hello' ,'parameter','world');
     l.INFO('hello world info');
+    l.INFO(m,'hello world info with a marker');
     l.WARN('hello world warn');
     l.error('hello world error');
     l.FATAL('hello world fatal');
     L.DEBUG('hello world debug');
+    L.DEBUG(m,'hello world debug with a marker');
     v := l.exit(3);
 end;
-begin
+BEGIN
 ThreadContext.push('level1');
 ThreadContext.put('level','1');
 ThreadContext.put('batch_id','crap');
 --print_call_stack;
 dolog;
-raise no_data_found;
+--raise no_data_found;
 end;
 
 BEGIN
+dbms_output.put_line('begin'); 
 --  dolog;
   mydolog;
+dbms_output.put_line('end'); 
+
 exception
 when others then
 l.catching();
+ dbms_output.put_line(SQLERRM); 
 end;
 /
 /*

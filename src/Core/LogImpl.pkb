@@ -106,11 +106,29 @@ k_layout := PatternLayout('%date %5level %logger - %marker - %l - %m %ex%n');
 
 k_layout.ActivateOptions;
 
-k_appenders.EXTEND;
-k_appenders(k_appenders.last) := dbmsOutputAppender('dbmsoutput',null, k_layout, false);
+for x in (SELECT owner,type_name
+FROM all_types
+WHERE INSTANTIABLE = 'YES'
+CONNECT BY  supertype_name = PRIOR type_name
+START WITH type_name = 'APPENDER') LOOP
 
 k_appenders.EXTEND;
-k_appenders(k_appenders.LAST) := TableAppender('tableoutput',NULL, NULL, FALSE);
+dbms_output.put_line('createing appender:'||x.type_name);
+
+execute immediate 'begin :k := '||x.owner||'.'||x.type_name||'('''||x.type_name||''' , null, :l, false); end;' using out k_appenders(k_appenders.last) , k_layout;
+
+if ( k_appenders(k_appenders.last)  IS NULL) THEN
+dbms_output.put_line('FAILED appender:'||x.type_name);
+END IF;
+
+--k_appenders(k_appenders.last) := dbmsOutputAppender('dbmsoutput',null, k_layout, false);
+
+END LOOP;
+--k_appenders.EXTEND;
+--k_appenders(k_appenders.last) := dbmsOutputAppender('dbmsoutput',null, k_layout, false);
+
+--k_appenders.EXTEND;
+--k_appenders(k_appenders.LAST) := TableAppender('tableoutput',NULL, NULL, FALSE);
 
 --k_appenders.EXTEND;
 --k_appenders(k_appenders.LAST) := SMTPAppender('SMTPoutput',ThresholdFilter(LogLevel.ERROR,null,null), k_layout, FALSE);
