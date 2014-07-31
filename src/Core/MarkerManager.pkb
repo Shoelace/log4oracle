@@ -31,6 +31,9 @@ AS
 	BEGIN
 		k_log.ENTRY();
     --k_log.trace('getMarker(name,parent)'||name||','||parent);    
+		if parent IS NULL THEN
+			RAISE NO_DATA_FOUND;
+		END IF;
 
 		p_marker := getMarker(PARENT);
 		RETURN TREAT(k_log.exit(getMarker(NAME,p_marker)) AS Marker);

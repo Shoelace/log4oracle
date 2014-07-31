@@ -6,7 +6,7 @@ IS
    -- For each program to test...
    PROCEDURE ut_NEWMESSAGE;
    PROCEDURE ut_NEWMESSAGE2;
-   PROCEDURE ut_NEWMESSAGE3;
+--   PROCEDURE ut_NEWMESSAGE3;
 END ut_messagefactory;
 /
 show errors
@@ -62,7 +62,7 @@ IS
 
       check_this :=
       MESSAGEFACTORY.NEWMESSAGE (
-         MSG => ''
+         MSG => Log4_sql_object('objectmessage')
        );
 
       -- Assert success
@@ -70,13 +70,14 @@ IS
       -- Compare the two values.
       utAssert.eq (
          'Test of NEWMESSAGE',
-         1,
-         2
+         check_this.getformattedmessage,
+         'objectmessage'
          );
 
       -- End of test
    END ut_NEWMESSAGE2;
 
+/*
    PROCEDURE ut_NEWMESSAGE3
    IS
       -- Verify and complete data types.
@@ -108,6 +109,7 @@ IS
 
       -- End of test
    END ut_NEWMESSAGE3;
+*/
 
 END ut_messagefactory;
 /
