@@ -14,49 +14,55 @@
 * limitations under the License.
 */
 
-create or replace 
-package body PatternParser as
-	
+create or replace package body PatternParser as
+
 	m_converterRules PatternConverterMap;
-  
-	m_converters PatternConverterArray;
-	
+
+	m_PatternFormatters PatternFormatterArray;
+
 
 	procedure ProcessConverter(converter map_entry, options varchar2, leftAlign boolean, minLength number, maxLength number) is
 	  i number;
-	  align number;
+	  align NUMBER;
+    fi formattinginfo;
 	BEGIN
 
 		if leftAlign then
 			align := 1;
 		else
 			align := 0;
-		end if;
-    
---dbms_output.put_line('create instance of:'||converter.VALUE ||' for '||converter.key ||'opt:'||options||' arg:'||converter.arg);
-	  m_converters.EXTEND(1);
-EXECUTE IMMEDIATE 'begin :a := '||converter.VALUE||'(:b); end;' USING IN OUT m_converters(m_converters.LAST), options;
+		END IF;
+fi := formattinginfo(leftAlign,minlength,maxlength);
+
+--dbms_output.put_line('create instance of:'||converter.VALUE ||' for '||converter.KEY ||' '||fi.toString());
+	  --m_converters.EXTEND(1);
+    m_PatternFormatters.EXTEND(1);
+--dbms_output.put_line('begin :a := PatternFormatter('||converter.VALUE||'(:b) , :c); end;');
+
+EXECUTE IMMEDIATE 'begin :a := PatternFormatter('||converter.VALUE||'(:b) , :c); end;' USING IN OUT m_PatternFormatters(m_PatternFormatters.LAST), options, fi;
+
+--patternFormatter( converter, formatting info)
 
 --TODO create format info
 
 --								ProcessConverter(matches(m).Key, matches(m).Value, LeftAlign, MinTextWidth, MaxTextWidth);
 --		i := m_converters.LAST;
 		--m_converters(i) := m_converterRules(m);
-		
+
 		--m_converters(i).m_min := MinTextWidth;
 		--m_converters(i).m_max := MaxTextWidth;
 		--m_converters(i).m_leftAlign := LeftAlign;
 
 	end;
-  
+
 	procedure ProcessLiteral(text varchar2) is
 	begin
 		IF LENGTH(text) > 0 THEN
 			ProcessConverter(m_converterRules('literal'),text, false, 0, 2147483647);
 		end if;
 	end;
-	
-	function ParseInternal(pattern varchar2) return PatternConverterArray is
+
+	function ParseInternal(pattern varchar2) return PatternFormatterArray is
 		offset number := 1;
 		i number;
 		remainingStringLength number;
@@ -66,8 +72,9 @@ EXECUTE IMMEDIATE 'begin :a := '||converter.VALUE||'(:b); end;' USING IN OUT m_c
     m varchar2(200);
 	begin
 		-- Initialize new pattern
-		m_converters := new PatternConverterArray();
-		
+		--m_converters := new PatternConverterArray();
+    m_PatternFormatters := new PatternFormatterArray();
+
 		while offset < LENGTH(pattern) loop
 			i := instr(pattern, '%', offset);
 			if (i < 1 or i = length(pattern)) then
@@ -82,7 +89,7 @@ EXECUTE IMMEDIATE 'begin :a := '||converter.VALUE||'(:b); end;' USING IN OUT m_c
 				else
 					ProcessLiteral(substr(pattern, offset, i - offset));
 					offset := i + 1;
-					
+
 					LeftAlign := false;
 					MinTextWidth := 0;
 					MaxTextwidth := 2147483647;
@@ -95,9 +102,9 @@ EXECUTE IMMEDIATE 'begin :a := '||converter.VALUE||'(:b); end;' USING IN OUT m_c
 							offset := offset + 1;
 						end if;
 					end if;
-					
+
 					-- Look for the minimum length
-					while (offset <= length(pattern) and 
+					while (offset <= length(pattern) and
 					       translate(substr(pattern, offset, 1), 'a1234567890', 'a') is null) loop
 						-- Seen digit
 						if MinTextWidth < 0 then
@@ -106,16 +113,16 @@ EXECUTE IMMEDIATE 'begin :a := '||converter.VALUE||'(:b); end;' USING IN OUT m_c
 						MinTextWidth := (MinTextWidth * 10) + to_number(substr(pattern, offset, 1));
 						offset := offset + 1;
 					end loop;
-					
+
 					-- Look for the separator between min and max
 					if offset <= length(pattern) then
 						if substr(pattern, offset, 1) = '.' then
 							offset := offset + 1;
 						end if;
 					end if;
-					
+
 					-- Look for the maximum length
-					while (offset <= length(pattern) and 
+					while (offset <= length(pattern) and
 					       translate(substr(pattern, offset, 1), 'a1234567890', 'a') is null) loop
 						-- Seen digit
 						if MaxTextWidth >= 2147483647 then
@@ -135,11 +142,11 @@ EXECUTE IMMEDIATE 'begin :a := '||converter.VALUE||'(:b); end;' USING IN OUT m_c
 							if substr(pattern, offset, length(m)) = m then
 								-- Found match
 								offset := offset + length(m);
-								
+
 								-- Look for option
 								/** TODO */
                 --dbms_output.put_line('look for options:'||substr(pattern,offset) );
-                
+
                 IF substr(pattern, offset, 1) = '{' THEN
                   i := instr(pattern, '}', offset);
                  -- dbms_output.put_line('FOUND OPTIONS:'||substr(pattern, offset, i - offset+1 ));
@@ -147,40 +154,40 @@ EXECUTE IMMEDIATE 'begin :a := '||converter.VALUE||'(:b); end;' USING IN OUT m_c
                   offset := i+1;
                 ELSE
                  processconverter(m_converterRules(m), NULL, LeftAlign, MinTextWidth,MaxTextWidth);
-                
+
                 END IF;
 
 
 								exit;
-								
+
 							end if;
 						END IF;
             m := m_converterRules.prior(m);
-            
+
 					end loop;
 				end if;
 			end if;
 		end loop;
-		
+
     --FOR z IN m_converters.FIRST .. m_converters.LAST LOOP
     --dbms_output.put_line(z||':'||m_converters(z).getName());
     --end loop;
-     
+
 		-- Remove ending newline pattern due to usage of PUT_LINE
-		IF m_converters IS NOT NULL AND m_converters(m_converters.LAST).NAME IN ('LINESEPARATORPATTERNCONVERTER') THEN
-			m_converters.DELETE(m_converters.LAST);
-		END IF;
-		
-		return m_converters;
+		--IF m_converters IS NOT NULL AND m_converters(m_converters.LAST).NAME IN ('LINESEPARATORPATTERNCONVERTER') THEN
+--			m_converters.DELETE(m_converters.LAST);
+		--END IF;
+
+		return m_PatternFormatters;
 	end;
 
-	
-	function Parse(pattern varchar2) return PatternConverterArray is
+
+	function Parse(pattern varchar2) return PatternFormatterArray is
 	begin
-	
+
 		return ParseInternal(pattern);
 	end;
-	
+
 BEGIN
 --m_converterRules := PatternConverterMap();
 
@@ -229,10 +236,10 @@ END;
 --these should all be replace by individual objects
 /*
 	m_globalRulesRegistry := NEW PatternConverterArray(
-			
+
 		NEW EIPatternConverter('c',        'event.getLoggername()'),
 		new EIPatternConverter('logger',   'event.getLoggername()'),
-		
+
 		NEW EIPatternConverter('f',        '''filename'''),
 
 
@@ -241,19 +248,20 @@ END;
 
 		NEW EIPatternConverter('M',         '''Method'''),
 		NEW EIPatternConverter('method',         '''Method'''),
-		
+
 		NEW EIPatternConverter('r',         '0'),
 		NEW EIPatternConverter('relative',         '0'),
 
 		NEW EIPatternConverter('t',         'event.getThreadName()'),
-		
+
 		NEW EIPatternConverter('utcdate',   q'[to_char(event.getTimestamp() at time zone 'UTC', 'yyyy-mm-dd hh24:mi:ss,ff3')]'),
 		NEW EIPatternConverter('utcDate',   q'[to_char(event.getTimestamp() at time zone 'UTC', 'yyyy-mm-dd hh24:mi:ss,ff3')]'),
 		new EIPatternConverter('UtcDate',   q'[to_char(event.getTimestamp() at time zone 'UTC', 'yyyy-mm-dd hh24:mi:ss,ff3')]'),
-		    
+
 		new EIPatternConverter('w',         'event.UserName'),
 		NEW EIPatternConverter('username',  'event.UserName'));
 */
 
-end PatternParser;
+END PatternParser;
 /
+show errors

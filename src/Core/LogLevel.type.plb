@@ -99,29 +99,18 @@ constructor function LogLevel(self in out nocopy LogLevel, logLevel BINARY_INTEG
     return LogLevel(0);
   end;
 
--- Compares this level against the level passed as an argument and returns true if this level is the same or more specific.
-  MEMBER FUNCTION isAtLeastAsSpecificAs(lvl INTEGER) RETURN boolean as
-  BEGIN
-    return self.intLevel <= lvl;
-  END;
 
   --Compares this level against the level passed as an argument and returns true if this level is the same or more specific.
-  member function isAtLeastAsSpecificAs(lvl LogLevel) return boolean as
+  member function isMoreSpecificThan(lvl LogLevel) return boolean as
   begin
     return self.intLevel <= lvl.intLevel;
-  end;
-          
-  --Compares the specified Level against this one.          
-  member function lessOrEqual(lvl integer) return boolean as
-  begin
-    return self.intLevel <= lvl;
-  end;
+  END;
   
-  --Compares the specified Level against this one.          
-  member function lessOrEqual(lvl  LogLevel) return boolean as
-  begin
-    return self.intLevel <= lvl.intLevel;
-  end;
+  member function isLessSpecificThan(lvl LogLevel) return boolean as
+  BEGIN
+    return self.intLevel >= lvl.intLevel;
+  end;  
+          
 
   STATIC FUNCTION getLevel( NAME VARCHAR2)  RETURN LogLevel AS
   BEGIN

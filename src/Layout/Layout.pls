@@ -85,6 +85,18 @@ as object
 	* Empty default constructor
 	*/
 	constructor function Layout return self as result
+  
+  /*
+  046        /**
+047         * Returns the format for the layout format.
+048         * @return The footer.
+050        byte[] getFooter();
+051    
+052        /**
+053         * Returns the header for the layout format.
+054         * @return The header.
+056        BYTE[] getHeader();
+*/
 	
 )
 not final not instantiable;

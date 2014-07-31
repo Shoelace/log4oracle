@@ -15,3 +15,21 @@ Returns the Message formatted as a String.
 not final not instantiable;
 /
 show errors
+
+create or replace type MultiformatMessage under Message
+(
+	MEMBER FUNCTION getFormattedMessage(self IN out nocopy MultiformatMessage, formats log4_array ) RETURN VARCHAR2,
+	member function getFormats return log4_array
+	--member function getParameters return log4_array,
+	--member function getThrowable return GenericException
+
+/* multi format
+String[]	getFormats()
+Returns the supported formats.
+String	getFormattedMessage(String[] formats)
+Returns the Message formatted as a String.
+*/
+)
+not final not instantiable;
+/
+show errors

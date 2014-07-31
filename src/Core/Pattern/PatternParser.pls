@@ -38,7 +38,7 @@ as
 	* Parses the pattern into a chain of pattern converters.
 	* @return The head of a chain of pattern converters.
 	*/
-	function Parse(pattern varchar2) return PatternConverterArray;
+	function Parse(pattern varchar2) return PatternFormatterArray;
 	
 end PatternParser;
 /

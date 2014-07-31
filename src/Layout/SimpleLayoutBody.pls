@@ -26,13 +26,22 @@ type body SimpleLayout as
 	end;
 	
 	overriding MEMBER FUNCTION Format(event LogEvent) RETURN VARCHAR2 IS
-	 m Message := event.GetMessage();
+	 m Message;
+   l LogLevel;
   begin
 		if event is null then
-			null; --raise LogUtil.ArgumentNullException;
-		end if;
+			NULL; --raise LogUtil.ArgumentNullException;
+      return '';
+		END IF;
+
+    m := event.GetMessage();
+    l := event.getLevel();
 		
-		return event.getLevel().m_name||' - '||m.getformattedMessage();
+    IF m is not null then
+      RETURN l.m_name||' - '||m.getformattedMessage();
+    else
+      RETURN l.m_name||' - ';
+    end if;
 	end;
 	
 	constructor function SimpleLayout return self as result is

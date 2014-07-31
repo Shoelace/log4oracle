@@ -28,17 +28,11 @@ under log4_object
 	,STATIC FUNCTION OFF RETURN LogLevel
 	,STATIC FUNCTION vals RETURN log4_array
 
-  -- Compares this level against the level passed as an argument and returns true if this level is the same or more specific.
-  ,MEMBER FUNCTION isAtLeastAsSpecificAs(lvl INTEGER) RETURN boolean
   --Compares this level against the level passed as an argument and returns true if this level is the same or more specific.
-  ,member function isAtLeastAsSpecificAs(lvl LogLevel) return boolean
+  ,member function isMoreSpecificThan(lvl LogLevel) return boolean
+  --Compares this level against the level passed as an argument and returns true if this level is the same or less specific.
+  ,member function isLessSpecificThan(lvl LogLevel) return boolean
           
-  --Compares the specified Level against this one.          
-  ,member function lessOrEqual(lvl integer) return boolean
-  
-  --Compares the specified Level against this one.          
-  ,member function lessOrEqual(lvl  LogLevel) return boolean
-
 
   /** Return the Level assoicated with the name or null if the Level cannot be found. */
   ,STATIC FUNCTION getLevel( name VARCHAR2)  RETURN LogLevel

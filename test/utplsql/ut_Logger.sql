@@ -45,7 +45,14 @@ package body ut_Logger as
 		--utassert.isnull('rootlogger name test', l.getname() );
 
 		l := LogManager.getLogger();
+$if dbms_db_version.ver_le_10 $then
 		utassert.eq('default name test', l.getname(), USER||'.'||$$PLSQL_UNIT);
+$elsif dbms_db_version.ver_le_11 $then
+		utassert.eq('default name test', l.getname(), USER||'.'||$$PLSQL_UNIT);
+$else
+		utassert.eq('default name test', l.getname(), USER||'.'||$$PLSQL_UNIT||'.UT_LOGGER_1');
+$end
+         
 exception
 	when others then
 			
@@ -64,10 +71,10 @@ raise;
 		utoutput.save;
 		utoutput.extract;
 		
-    l.log(loglevel.DEBUG, NULL,'test message');
+    l.log(loglevel.FATAL, NULL,'test message');
 		
-    o := utoutput.nextline(false);
-		utassert.this('message logged', o like '%test message%');
+    o := utoutput.nextline(FALSE);
+		utassert.this('message logged "'||o||'"', o like '%test message%');
 		utoutput.replace;
 
 		utoutput.save;

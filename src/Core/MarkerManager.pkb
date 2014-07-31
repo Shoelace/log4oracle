@@ -49,7 +49,10 @@ AS
 		v_parent_ref Ref Marker;
 	BEGIN
 		k_log.ENTRY();
-    --k_log.trace('getMarker(name,parent)'||name||','||parent.getname());
+		if parent IS NULL THEN
+			RAISE NO_DATA_FOUND;
+		END IF;    
+    k_log.info('getMarker(name,parent)'||name||','||parent.getname());
 
 
 		BEGIN

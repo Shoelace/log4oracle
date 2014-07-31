@@ -11,6 +11,10 @@ AS
 
    PROCEDURE ut_LogLevel_4;
 
+   PROCEDURE ut_LogLevel_5;
+   
+   PROCEDURE ut_LogLevel_6;
+
 END;
 /
 show errors
@@ -109,7 +113,55 @@ AS
 		utassert.eq('tostring()',ll.toString(),'CUSTOM');
 
 	END;
-   
+
+     PROCEDURE ut_LogLevel_5
+	IS
+  ll loglevel;
+
+	BEGIN  
+   ll := LogLevel.DEBUG;
+
+		utassert.this('DEBUG isMoreSpecificThan TRACE',ll.isMoreSpecificThan(loglevel.TRACE));
+
+		utassert.this('DEBUG NOT isMoreSpecificThan INFO',NOT ll.isMoreSpecificThan(loglevel.INFO));
+END;
+    
+
+     PROCEDURE ut_LogLevel_6
+	IS
+  ll loglevel;
+
+  ll2 loglevel;
+
+	BEGIN  
+    ll := LogLevel.tolevel('ALL');
+    ll2 := loglevel.ll_ALL;
+
+		utassert.eq('tolevel(ALL) = loglevel.all',ll.intlevel, ll2.intlevel);
+
+    ll := LogLevel.tolevel('debug');
+    ll2 := loglevel.debug;
+
+		utassert.eq('tolevel(debug) = loglevel.debug',ll.intlevel, ll2.intlevel);
+
+    ll := LogLevel.tolevel('debug');
+    ll2 := loglevel.debug;
+
+		utassert.eq('tolevel(debug) = loglevel.debug',ll.intlevel, ll2.intlevel);
+
+
+    ll := LogLevel.tolevel('unknown');
+    ll2 := loglevel.DEBUG;
+		utassert.eq('tolevel(unknown) = loglevel.debug',ll.intlevel, ll2.intlevel);
+
+    ll := LogLevel.tolevel('unknown', loglevel.INFO);
+    ll2 := loglevel.INFO;
+		utassert.eq('tolevel(unknown,info) = loglevel.info',ll.intlevel, ll2.intlevel);
+
+
+		--utassert.this('DEBUG NOT isAtLeastAsSpecificAs INFO',NOT ll.isAtLeastAsSpecificAs(loglevel.INFO));
+   END;
+
 END;
 /
 show errors

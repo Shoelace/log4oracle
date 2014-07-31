@@ -1,7 +1,10 @@
+set serveroutput on 
 BEGIN
+utconfig.showfailuresonly (false);
 utconfig.showconfig;
 utConfig.autocompile(false);   
 
-   utPLSQL.test ('formattinginfo');
+
+   utPLSQL.test ('layout');
 END;
 /

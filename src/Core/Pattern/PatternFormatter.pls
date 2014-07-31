@@ -23,8 +23,8 @@ CREATE OR REPLACE TYPE patternFormatter
 AUTHID DEFINER
 AS OBJECT
 (
-	converter logEventPatternConverter,
-	field formattingInfo
+	field formattingInfo,
+	converter logEventPatternConverter
 
     ,constructor function patternFormatter(c logEventPatternConverter, f formattingInfo)  return self as result
     
@@ -59,7 +59,7 @@ AS
     
 	member procedure format(event LogEvent, buffer IN OUT NOCOPY VARCHAR2) 
 	is
-		startfield pls_integer := length(buffer);
+		startfield pls_integer := nvl(length(buffer),1);
 	begin
 		buffer := buffer || converter.format(event);
 		field.format(startfield,buffer);

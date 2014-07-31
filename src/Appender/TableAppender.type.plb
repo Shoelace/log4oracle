@@ -1,4 +1,4 @@
-prompt create or replace TYPE BODY TableAppender 
+--prompt create or replace TYPE BODY TableAppender 
 
 create or replace
 TYPE BODY TableAppender 
@@ -24,8 +24,8 @@ AS
     cm    ThreadContextContextMap := event.getContextMap();
   BEGIN
 
-dbms_output.put_line('USER:'||sys_context('USERENV','CURRENT_USER'));
-dbms_output.put_line('SESSION_USER:'||sys_context('USERENV','SESSION_USER'));
+--dbms_output.put_line('USER:'||sys_context('USERENV','CURRENT_USER'));
+--dbms_output.put_line('SESSION_USER:'||sys_context('USERENV','SESSION_USER'));
 
 
     INSERT INTO log_table (

@@ -16,10 +16,11 @@ AS
 	IS
 	BEGIN
     IF m_message IS NULL THEN
+      --formatmessage()
    		m_message := m_format;
-      FOR i IN 1 .. REGEXP_COUNT(m_message, '{}') LOOP
-        exit when i > m_params.last;
-        m_message := regexp_replace(m_message, '{}', m_params(i).tostring() , 1 ,1 );
+      FOR i IN 1 .. REGEXP_COUNT(m_message, '[^\\]{}') LOOP
+        exit WHEN i > m_params.LAST;
+        m_message := regexp_replace(m_message, '([^\\]){}', '\1'||m_params(i).tostring() , 1 ,1 );
       END LOOP;    
     END IF;
 		return m_message;
@@ -30,12 +31,12 @@ AS
 	overriding member function getFormat return VARCHAR2
 	IS
 	BEGIN
-		return m_message;
+		return m_format;
 	END;
 	overriding member function getParameters return log4_array
 	IS
 	BEGIN
-		return null;
+		return m_params;
 	END;
 	overriding member function getThrowable return GenericException
 	IS

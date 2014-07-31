@@ -19,6 +19,18 @@ AS
 		return m_obj.toString();
 	END;
 
+	overriding MEMBER FUNCTION getThrowable RETURN GenericException
+  IS
+  BEGIN
+    return null;
+  END;
+    
+  overriding MEMBER FUNCTION getParameters RETURN log4_array
+  IS
+  BEGIN
+    return log4_array(m_obj);
+  END;
+
 END;
 /
 show errors

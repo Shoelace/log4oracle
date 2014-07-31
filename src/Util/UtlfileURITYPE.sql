@@ -103,12 +103,18 @@ AS
   constructor FUNCTION UTLFILEURITYPE(url IN VARCHAR2)   RETURN self AS result
   IS
   BEGIN
-    IF url LIKE '/%' THEN
-      self.directory_name := 'LOG4_CONFIG';
+    IF url LIKE 'utlfile://%' THEN
+       self.url := substr(url,10);
+    ELSE 
       self.url := url;
+    end if;
+    
+    IF self.url LIKE '/%' THEN
+      self.directory_name := 'LOG4_CONFIG';
+      self.url := self.url;
     ELSE
-      self.directory_name := substr(url,1, instr(url,'/')-1);
-      self.url := substr(url,instr(url,'/'));
+      self.directory_name := substr(self.url,1, instr(self.url,'/')-1);
+      self.url := substr(self.url,instr(self.url,'/'));
     END IF;
     return;
   END;
@@ -122,12 +128,12 @@ AS
   overriding MEMBER FUNCTION getExternalUrl RETURN VARCHAR2 deterministic
   IS
   BEGIN
-    RETURN 'utlfile:/$'||directory_name||'#'||url;
+    RETURN URIFACTORY.escapeURI(getUrl());
   END;  
   overriding MEMBER FUNCTION getUrl RETURN VARCHAR2 deterministic  
     IS
   BEGIN
-    RETURN 'utlfile:/$'||directory_name||'#'||url;
+    RETURN 'utlfile://'||directory_name||url;
   END;
   
   overriding MEMBER FUNCTION getXML RETURN sys.XMLTYPE

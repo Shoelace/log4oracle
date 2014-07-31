@@ -13,19 +13,19 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-prompt create or replace type body PatternLayout 
+--prompt create or replace type body PatternLayout 
 
 create or replace 
 type body PatternLayout as
 	
 	overriding member procedure ActivateOptions is
-	begin
-		self.m_converters := PatternParser.Parse(self.ConversionPattern);
+	BEGIN
+		self.m_formatters := PatternParser.Parse(self.ConversionPattern);
 		null;
 	end;
 	
-	overriding member function Format(event LogEvent) return varchar2 is
-		l_converters PatternConverterArray := self.m_converters;
+	overriding MEMBER FUNCTION Format(event LogEvent) RETURN VARCHAR2 IS
+		l_formatters PatternFormatterArray := self.m_formatters;
 		l_index number;
 		l_message varchar2(32767);
 	begin
@@ -33,10 +33,10 @@ type body PatternLayout as
 			raise Log4Util.ArgumentNullException;
 		end if;
 		
-		l_index := l_converters.FIRST;
-		while l_index is not null loop
-			l_message := l_message||l_converters(l_index).Format(event);
-			l_index := l_converters.NEXT(l_index);
+		l_index := l_formatters.FIRST;
+		while l_index IS NOT NULL loop
+			l_formatters(l_index).Format(event,l_message);
+			l_index := l_formatters.NEXT(l_index);
 		end loop;
 		
 		return l_message;
@@ -45,7 +45,7 @@ type body PatternLayout as
 	constructor function PatternLayout return self as result is
 	begin
 --self.ConversionPattern := '%message%newline';
-self.ConversionPattern := '%d %-5level - %m%newline';
+self.ConversionPattern := '%d %-5level - %m%n';
 		self.IgnoresException := 1;
 		return;
 	end;

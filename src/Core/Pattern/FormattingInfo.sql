@@ -15,6 +15,7 @@
  * limitations under the license.
  */
 
+DROP TYPE FormattingInfo FORCE;
 
 /**
  * Modifies the output of a pattern converter for a specified minimum and maximum width and alignment.
@@ -98,9 +99,7 @@ AS OBJECT
      * @return a String suitable for debugging.
     * @Override
      */
-/*
-    public String toString() {
-*/
+      ,member function toString return varchar2
 
 );
 /
@@ -172,14 +171,15 @@ AS
     member procedure format(fieldStart INTEGER, buffer IN OUT NOCOPY VARCHAR2) 
 	is
 		rawlength pls_integer := length(buffer) - fieldStart;
-	begin
+	BEGIN
+--    dbms_output.put_line('format "'||buffer||'" from pos:'||fieldStart);
 
-        if (rawLength > maxLength) then
+    IF (rawLength > maxLength) THEN
 			buffer := substr(buffer,1,fieldstart+ maxLength-1 ) ;
 
-		elsif (rawLength < minLength) then
-            if (isleftAligned()) then
-				buffer := rpad(buffer, fieldstart+minLength);
+		elsif (rawLength < minLength) THEN
+            IF (isleftAligned()) THEN
+				buffer := rpad(buffer, fieldstart+minLength-1);
             else 
 				buffer := substr(buffer,1,fieldstart-1) || LPAD(substr(buffer,fieldstart), minLength);
             end if;
@@ -192,20 +192,13 @@ AS
      * @return a String suitable for debugging.
     * @Override
      */
-/*
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(super.toString());
-        sb.append("[leftAlign=");
-        sb.append(leftAlign);
-        sb.append(", maxLength=");
-        sb.append(maxLength);
-        sb.append(", minLength=");
-        sb.append(minLength);
-        sb.append("]");
-        return sb.toString();
-    }
-*/
+     
+    MEMBER FUNCTION toString RETURN VARCHAR2
+    IS
+    BEGIN
+        RETURN utl_lms.format_message('[leftAlign=%s, maxLength=%s, minLength=%s]', to_char(leftAlign),to_char(maxLength),to_char(minLength));
+    END;
+
 
 END;
 /
