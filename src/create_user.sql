@@ -19,7 +19,9 @@ grant SELECT ANY DICTIONARY to log4;
 
 --
 grant create synonym to log4;
-grant create public synonym to log4;
+
+--public synonyms useless for editioning
+--grant create public synonym to log4;
 
 --needed for AQ impl. not current used
 --GRANT aq_administrator_role TO log4;

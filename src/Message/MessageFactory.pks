@@ -1,4 +1,4 @@
-
+prompt create or replace package MessageFactory
 create or replace package MessageFactory
 authid definer
 as

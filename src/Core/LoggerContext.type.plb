@@ -5,7 +5,7 @@ AS
 	overriding MEMBER FUNCTION getLogger(NAME VARCHAR2) RETURN Logger
 	IS
 	BEGIN
-		NULL;
+		return NULL;
 	end;  
 	--Determine if the specified Logger exists.
 	overriding MEMBER FUNCTION hasLogger(NAME VARCHAR2) RETURN boolean

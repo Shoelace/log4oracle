@@ -7,10 +7,10 @@ under Filter
 
 
     ,overriding member function dofilter(logger Logger, lvl LogLevel, marker Marker, msg log4_object, t GenericException) return Result
-    ,overriding member function dofilter(logger Logger, lvl LogLevel, marker Marker, msg Message, t GenericException) return Result
+    ,overriding member function dofilter(logger Logger, lvl LogLevel, marker Marker, msg Message    , t GenericException) return Result
     ,overriding member function dofilter(event LogEvent) return Result
 	
-	, member function addFilter(filter Filter) return CompositeFilter
+	, member function addFilter   (filter Filter) return CompositeFilter
 	, member function removeFilter(filter Filter) return CompositeFilter
 
 	, member function hasFilters return boolean
@@ -59,38 +59,51 @@ AS
     overriding member function dofilter(logger Logger, lvl LogLevel, marker Marker, msg log4_object, t GenericException) return Result
 	IS
 	retval Result := Result.NEUTRAL;
+	x integer;
 	BEGIN
-		for x in m_filters.FIRST .. m_filters.LAST LOOP
+		x := m_filters.FIRST;
+		WHILE ( x is not null ) LOOP
+		--for x in m_filters.FIRST .. m_filters.LAST LOOP
 			if m_filters.exists(x) THEN
 				retval := m_filters(x).dofilter(logger, lvl, marker, msg, t);
 				IF retval != Result.NEUTRAL THEN
 					return retval;
 				END IF;
 			end if;
+		x := m_filters.next(x);
 		END LOOP;
         return retval;
 	end;
     overriding member function dofilter(logger Logger, lvl LogLevel, marker Marker, msg Message, t GenericException) return Result
 	IS
 		retval Result := Result.NEUTRAL;
+	x integer;
 	BEGIN
-		for x in m_filters.FIRST .. m_filters.LAST LOOP
+		x := m_filters.FIRST;
+		WHILE ( x is not null ) LOOP
+		--for x in m_filters.FIRST .. m_filters.LAST LOOP
             retval := m_filters(x).dofilter(logger, lvl, marker, msg, t);
 			IF retval != Result.NEUTRAL THEN
 				return retval;
 			END IF;
+		x := m_filters.next(x);
 		END LOOP;
         return retval;
 	end;
     overriding member function dofilter(event LogEvent) return Result
 	IS
 		retval Result := Result.NEUTRAL;
+	x integer;
 	BEGIN
-		for x in m_filters.FIRST .. m_filters.LAST LOOP
+		x := m_filters.FIRST;
+		WHILE ( x is not null ) LOOP
+		--for x in m_filters.FIRST .. m_filters.LAST LOOP
             retval := m_filters(x).dofilter(event);
 			IF retval != Result.NEUTRAL THEN
 				return retval;
 			END IF;
+		x := m_filters.next(x);
+
 		END LOOP;
         return retval;
 	end;

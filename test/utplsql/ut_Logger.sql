@@ -21,12 +21,17 @@ package body ut_Logger as
    PROCEDURE ut_setup
 	is
 	begin
+insert into log_levels values( USER||'.'||$$PLSQL_UNIT||'.UT_LOGGER_2',1,1,1,1,1,1);
+--		l := LogManager.getLogger('test');
+
 		null;
+	exception when others then null;
 	end;
   
 	PROCEDURE ut_teardown
 	IS
 	BEGIN
+delete from  log_levels where logger_name = USER||'.'||$$PLSQL_UNIT||'.UT_LOGGER_2';
 		NULL;
 	END;
  

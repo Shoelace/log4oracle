@@ -1,10 +1,10 @@
 set serveroutput on 
 BEGIN
 utconfig.showfailuresonly (false);
-utconfig.showconfig;
 utConfig.autocompile(false);   
+utconfig.showconfig;
 
 
-   utPLSQL.test ('layout');
+   utPLSQL.test ('filter');
 END;
 /

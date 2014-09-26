@@ -9,22 +9,20 @@ AS
 
 	member FUNCTION getParent RETURN Marker
 	AS
-   mkr Marker;
+ 
 	begin
-		IF m_parent IS NULL THEN
+		IF m_parent_name IS NULL THEN
 			RETURN NULL;
 		END IF;
+
     
-    SELECT DEREF(m_parent) INTO mkr FROM dual;
-    
-    return mkr;
 		--need to avoid getmarker as it causes infinite loop
-		--IF NOT MarkerManager.m_all_markers.EXISTS(m_parent_name)  THEN
+		IF NOT MarkerManager.m_all_markers.EXISTS(m_parent_name)  THEN
 --dbms_output.put_line('parent not exist:'||m_parent_name);      
---					return null;
-		--END IF;
+					return null;
+		END IF;
     
-		--return MarkerManager.m_all_markers(m_parent_name);--0treat(m_parent as Marker);
+		return MarkerManager.m_all_markers(m_parent_name);--0treat(m_parent as Marker);
 	end;
 
 

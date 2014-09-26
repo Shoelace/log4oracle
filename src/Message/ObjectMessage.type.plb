@@ -1,3 +1,5 @@
+prompt create or replace type BODY ObjectMessage 
+
 create or replace type BODY
 ObjectMessage 
 AS

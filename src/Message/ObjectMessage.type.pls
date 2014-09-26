@@ -1,3 +1,5 @@
+prompt create or replace type ObjectMessage under Message
+
 create or replace
 type ObjectMessage under Message
 (

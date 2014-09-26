@@ -13,7 +13,8 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
---prompt create or replace type PatternLayout
+
+prompt create or replace type PatternLayout
 
 create or replace 
 type PatternLayout under Layout

@@ -1,3 +1,5 @@
+prompt create or replace type ParameterizedMessage under Message
+
 create or replace
 type ParameterizedMessage under Message
 (

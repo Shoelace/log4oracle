@@ -4,7 +4,7 @@ under log4_object
 (
 	/* The name of this level. */
 	m_name VARCHAR2(255),
-	m_parent REF Marker,
+	m_parent_name varchar2(255),
 
 	member function getName return varchar2,
 	member function getParent return Marker,

@@ -47,9 +47,7 @@ type body LineSeparatorPatternConverter as
 
 	overriding member function Format(event LogEvent) return varchar2 is
 	begin
-dbms_output.put_line('in linesep format :'||name);
-
-
+--dbms_output.put_line('in linesep format :'||name);
 		return CHR(13)||CHR(10);
 	end;
 end;

@@ -50,33 +50,35 @@ IF k_appenders.count > 0 THEN
     m := simplemessage('');
     END IF;
     
-    --these user env option can change during a session so need to save at time of call.
-    ctxmap.put('module'     , SYS_CONTEXT('USERENV', 'MODULE'));
-    ctxmap.put('action'     , SYS_CONTEXT('USERENV', 'ACTION'));
-    ctxmap.put('client_info', SYS_CONTEXT('USERENV', 'CLIENT_INFO'));
+	--these user env option can change during a session so need to save at time of call.
+	ctxmap.put('module'     , SYS_CONTEXT('USERENV', 'MODULE'));
+	ctxmap.put('action'     , SYS_CONTEXT('USERENV', 'ACTION'));
+	ctxmap.put('client_info', SYS_CONTEXT('USERENV', 'CLIENT_INFO'));
 
-  <<debug_web_variables>>
-   BEGIN
-      FOR i IN 1 .. OWA.num_cgi_vars
-      LOOP
-       ctxmap.put(OWA.cgi_var_name (i),OWA.cgi_var_val (i));
-      END LOOP;
-   EXCEPTION
-      WHEN VALUE_ERROR
-      THEN
-         NULL;
-   END debug_web_variables;      
+	<<debug_web_variables>>
+	BEGIN
+		IF OWA.num_cgi_vars IS NOT NULL THEN
+			FOR i IN 1 .. OWA.num_cgi_vars
+			LOOP
+				ctxmap.put(OWA.cgi_var_name (i),OWA.cgi_var_val (i));
+			END LOOP;
+		END IF;
+	EXCEPTION
+		WHEN VALUE_ERROR
+		THEN
+			NULL;
+	END debug_web_variables;      
     
 
-   le := Log4oraclelogEvent('test logger',marker,fqcn,lvl,m,t, ctxmap ,THREADCONTEXT.CLONESTACK(),'mythreadname', StackTraceElement(2), SYSTIMESTAMP);
+	le := Log4oraclelogEvent('test logger',marker,fqcn,lvl,m,t, ctxmap ,THREADCONTEXT.CLONESTACK(),'mythreadname', StackTraceElement(2), SYSTIMESTAMP);
+
+	FOR i IN k_appenders.FIRST .. k_appenders.LAST LOOP
+		k_appenders(i).APPEND(le);
+	end loop;
 ELSE
    return; --no appenders
 END IF;
 
-FOR i IN k_appenders.FIRST .. k_appenders.LAST LOOP
- k_appenders(i).APPEND(le);
-
-end loop;
 
 	END;
 
@@ -114,7 +116,7 @@ CONNECT BY  supertype_name = PRIOR type_name
 START WITH type_name = 'APPENDER') LOOP
 
 k_appenders.EXTEND;
-dbms_output.put_line('createing appender:'||x.type_name);
+dbms_output.put_line('creating appender:'||x.type_name);
 
 execute immediate 'begin :k := '||x.owner||'.'||x.type_name||'('''||x.type_name||''' , null, :l, false); end;' using out k_appenders(k_appenders.last) , k_layout;
 

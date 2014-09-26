@@ -1,6 +1,6 @@
+alter session set ddl_lock_timeout = 5;
+
 set serveroutput on
-declare
-cnt NUMBER;
 begin
 dbms_output.put_line('-- statements to drop all user_objects in order of dependency');
 
@@ -8,10 +8,20 @@ dbms_output.put_line('-- dropping packages');
 
 for x in (SELECT 'drop '||object_type||' '||object_name||' ' stmt
           FROM user_objects
+          where object_type like '% BODY') LOOP
+dbms_output.put_line(x.stmt||';');
+execute immediate x.stmt;
+END LOOP;
+for x in (SELECT 'drop '||object_type||' '||object_name||' ' stmt
+          FROM user_objects
           where object_type like 'PACKAGE') LOOP
 dbms_output.put_line(x.stmt||';');
 execute immediate x.stmt;
 END LOOP;
+end;
+/
+
+begin
 dbms_output.new_line;
 dbms_output.put_line('-- dropping tables');
 
@@ -21,11 +31,16 @@ for x in ( SELECT 'drop '||object_type||' '||object_name||' purge' stmt
 dbms_output.put_line(x.stmt||';');
 execute immediate x.stmt;
 END LOOP;
+execute immediate 'purge recyclebin';
 
 dbms_output.put_line('-- dropping everything else.');
 
+end;
+/
+
+begin
 for y in 1 .. 15 LOOP
-dbms_output.new_line;
+dbms_output.put_line(y);
 
 FOR x IN (SELECT 'drop '||object_type||' '||object_name||' ' stmt
 FROM user_objects
@@ -37,6 +52,20 @@ dbms_output.put_line(x.stmt||';');
 execute immediate x.stmt;
 END LOOP;
 END LOOP;
+end;
+/
+
+begin
+dbms_output.put_line('-- dropping public synonyms .');
+FOR x IN (
+SELECT 'drop public synonym '||synonym_name||' ' stmt
+FROM all_synonyms
+where 1=1
+AND owner = 'PUBLIC' AND table_owner = USER) LOOP
+dbms_output.put_line(x.stmt||';');
+execute immediate x.stmt;
+END LOOP;
+
 
 end;
 /

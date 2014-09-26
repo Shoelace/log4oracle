@@ -9,7 +9,7 @@ IS
    PROCEDURE ut_PATTERNLAYOUT_default;
 
    PROCEDURE ut_PATTERNLAYOUT_custom1;
-   PROCEDURE ut_PATTERNLAYOUT_custom2;
+   --PROCEDURE ut_PATTERNLAYOUT_custom2;
 
 
 END ut_layout;
@@ -130,7 +130,7 @@ IS
      utAssert.eq (
          'Test of PatternLayout.format le1',
          l.format(le1),
-         to_char(le1.gettimestamp(),'YYYY-MM-DD HH24:MI:SS,FF3') ||' INFO - layout test message'
+         to_char(le1.gettimestamp(),'YYYY-MM-DD HH24:MI:SS,FF3') ||' INFO - layout test message'||CHR(13)||CHR(10)
          );
 
 

@@ -1,3 +1,4 @@
+alter session set ddl_lock_timeout = 5;
 /**
 * Copyright 2011
 *
@@ -24,6 +25,7 @@ set serveroutput on size 1000000 format wrapped
 set serveroutput on size unlimited format wrapped
 set define on
 set timing off
+whenever sqlerror exit
 
 define line1='------------------------------------------------------------------------'
 define line2='========================================================================'
@@ -187,7 +189,7 @@ prompt Converters
 prompt &line1
 
 @@Core/Pattern/PatternConverter.pls
-@@Core/Pattern/FormattingInfo.pls
+@@Core/Pattern/FormattingInfo.sql
 @@Core/Pattern/LogEventPatternConverter.pls
 @@Core/Pattern/PatternFormatter.pls
 @@Core/Pattern/PatternConverterArray.pls
@@ -212,9 +214,9 @@ prompt &line1
 @@Core/Pattern/PatternParserBody.pls
 
 @@Message/MessageFactory.pks
-@@Message/ObjectMessage.type.pls
-@@Message/SimpleMessage.type.pls
-@@Message/ParameterizedMessage.type.pls
+--@@Message/ObjectMessage.type.pls
+--@@Message/SimpleMessage.type.pls
+--@@Message/ParameterizedMessage.type.pls
 
 @@Layout/PatternLayout.pls
 @@Layout/SimpleLayout.pls
@@ -244,7 +246,6 @@ prompt Tables
 prompt &line1
 
 @@Config/log_levels.sql
-@@Core/all_markers.tab.sql
 
 prompt &line1
 prompt Appenders
@@ -313,10 +314,20 @@ prompt &line1
 --other stuff
 @@Appender/log_table_trim.prc
 
+begin
+$IF dbms_db_version.ver_le_10 $THEN
+$ELSIF dbms_db_version.ver_le_11 $THEN
+$ELSE
+execute immediate 'drop package UTL_CALL_STACK';
+$END
+end;
+/
+
 -- @@grants.sql
 
 prompt &line1
 prompt &finished
 prompt &line2
+@tst
 set feedback on
 

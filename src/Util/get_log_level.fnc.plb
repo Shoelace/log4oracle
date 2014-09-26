@@ -10,9 +10,6 @@ RESULT_CACHE
 IS
 
 /************************************************************************
-    Log4ora - Logging package for Oracle 
-    Copyright (C) 2009  John Thompson
-
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -31,9 +28,19 @@ IS
 	rLog_level log_levels%rowtype;
 BEGIN
 	--DBMS_OUTPUT.PUT_LINE('looking for:'||pFQCN);
-	SELECT * INTO rLog_Level 
-	FROM log_levels
-	WHERE logger_name = pFQCN;
+
+WITH lname AS (SELECT pFQCN logname from dual )
+,lvls AS (SELECT LEVEL l, logname logname FROM lname  CONNECT BY   LEVEL <= regexp_count (logname, '\.', 1) + 1)
+SELECT *
+INTO rLog_Level 
+FROM log_levels
+WHERE logger_name IN ( SELECT substr(logname,1,instr(logname||'.','.',1,l)-1)  FROM lvls ) OR logger_name ='.'
+ORDER BY LENGTH(logger_name) DESC
+;
+
+	--SELECT * 
+	--FROM log_levels
+	--WHERE logger_name = pFQCN;
 
 	--DBMS_OUTPUT.PUT_LINE('got level:'||pFQCN);
 	RETURN rLog_level;
