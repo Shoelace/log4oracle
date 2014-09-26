@@ -1,6 +1,6 @@
 prompt CREATE FUNCTION get_log_level
 
-create or replace  FUNCTION get_log_level
+create or replace FUNCTION get_log_level
 (
     pFQCN IN VARCHAR2
 ) 
@@ -26,17 +26,24 @@ IS
 ************************************************************************/
 
 	rLog_level log_levels%rowtype;
+
+	cursor c_ll IS
+		WITH lvls AS (	SELECT LEVEL l, pFQCN  logname
+				FROM dual
+				CONNECT BY LEVEL <= regexp_count pFQCN '\.', 1) + 1)
+		SELECT *
+		FROM log_levels
+		WHERE logger_name IN ( SELECT substr(logname,1,instr(logname||'.','.',1,l)-1)  FROM lvls ) 
+		   OR logger_name = LogManager.ROOT_LOGGER_NAME
+		ORDER BY LENGTH(logger_name) DESC
+		;
+
 BEGIN
 	--DBMS_OUTPUT.PUT_LINE('looking for:'||pFQCN);
 
-WITH lname AS (SELECT pFQCN logname from dual )
-,lvls AS (SELECT LEVEL l, logname logname FROM lname  CONNECT BY   LEVEL <= regexp_count (logname, '\.', 1) + 1)
-SELECT *
-INTO rLog_Level 
-FROM log_levels
-WHERE logger_name IN ( SELECT substr(logname,1,instr(logname||'.','.',1,l)-1)  FROM lvls ) OR logger_name ='.'
-ORDER BY LENGTH(logger_name) DESC
-;
+	open c_ll;
+	fetch c_ll INTO rLog_Level;
+	close c_ll;
 
 	--SELECT * 
 	--FROM log_levels
