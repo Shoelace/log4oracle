@@ -1,125 +1,153 @@
-CREATE OR REPLACE TYPE logger
+CREATE OR REPLACE TYPE logger 
 AUTHID current_user
 AS OBJECT
 (
-  m_name varchar2(255),
-  m_lvl number,
-  
-	map member function Compare return number 
+	m_name varchar2(255),
+	m_lvl number,
 
-  
-	/* log4x 1.x api */
+	map MEMBER FUNCTION Compare RETURN NUMBER 
+	-----
+	--methods are list in alphabetical order (more or less)
 
-  ,member procedure trace(msg varchar2)
-  --,member procedure trace(msg varchar2, throwable)
-  ,MEMBER PROCEDURE DEBUG(msg VARCHAR2)
-  ,MEMBER PROCEDURE DEBUG(msg VARCHAR2, throwable GenericException)
-  ,member procedure info(msg varchar2)
-  --,member procedure info(msg varchar2, throwable)
-  ,member procedure warn(msg varchar2)
-  --,member procedure warn(msg varchar2, throwable)
-  ,MEMBER PROCEDURE ERROR(msg VARCHAR2)
-  ,member procedure error(msg varchar2, throwable GenericException)
-  ,MEMBER PROCEDURE fatal(msg VARCHAR2)
-  ,MEMBER PROCEDURE fatal(msg VARCHAR2, throwable GenericException)
-  
+	,MEMBER PROCEDURE catching(lvl LogLevel, throwable GenericException DEFAULT GenericException() )
+	,MEMBER PROCEDURE catching(throwable GenericException DEFAULT GenericException() )
 
-  ,member function isTraceEnabled return BOOLEAN
-  ,member function isDebugEnabled return BOOLEAN
-  ,member function isInfoEnabled  return BOOLEAN
-  ,member function isWarnEnabled  return BOOLEAN
-  ,member function isErrorEnabled return BOOLEAN
-  ,member function isFatalEnabled return BOOLEAN
+	,MEMBER PROCEDURE debug(m Marker, msg Message)
+	,MEMBER PROCEDURE debug(m Marker, msg Message, throwable GenericException)
+	,MEMBER PROCEDURE debug(m Marker, msg VARCHAR2)
+	,MEMBER PROCEDURE debug(m Marker, msg VARCHAR2, throwable GenericException)
 
-  ,member function getName return VARCHAR2
+	,MEMBER PROCEDURE debug(msg Message)
+	,MEMBER PROCEDURE debug(msg Message, throwable GenericException)
+	,MEMBER PROCEDURE debug(msg VARCHAR2)
+	,MEMBER PROCEDURE debug(msg VARCHAR2, throwable GenericException)
 
-/*  removed from 2.x
-getlevel
-getparent
-*/
+	,MEMBER PROCEDURE entry
 
-  ,member procedure log(lvl LogLevel, msg varchar2)
-  --,member procedure log(lvl varchar2, MSG varchar2, throwable)
-  --,member procedure log(fqcn varchar2,lvl varchar2, MSG varchar2, throwable)
+	,MEMBER PROCEDURE error(m Marker, msg Message)
+	,MEMBER PROCEDURE error(m Marker, msg Message, throwable GenericException)
+	,MEMBER PROCEDURE error(m Marker, msg VARCHAR2)
+	,MEMBER PROCEDURE error(m Marker, msg VARCHAR2, throwable GenericException)
 
-	/* end log4 1.x api */
+	,MEMBER PROCEDURE error(msg Message)
+	,MEMBER PROCEDURE error(msg Message, throwable GenericException)
+	,MEMBER PROCEDURE error(msg VARCHAR2)
+	,MEMBER PROCEDURE error(msg VARCHAR2, throwable GenericException)
 
+	,MEMBER PROCEDURE exit
+	--,MEMBER FUNCTION exit(result R) return R
+	--sql overloads
+	,MEMBER FUNCTION  exit(result VARCHAR2) return VARCHAR2
+	,MEMBER FUNCTION  exit(result NUMBER) return NUMBER
+	,MEMBER FUNCTION  exit(result DATE) return DATE
+	--,MEMBER FUNCTION  exit(result BINARY_FLOAT) return BINARY_FLOAT
+	--,MEMBER FUNCTION  exit(result BINARY_DOUBLE) return BINARY_DOUBLE
+	,MEMBER FUNCTION  exit(result TIMESTAMP ) return TIMESTAMP 
+	,MEMBER FUNCTION  exit(result TIMESTAMP WITH TIME ZONE) return TIMESTAMP WITH TIME ZONE
+	--,MEMBER FUNCTION  exit(result INTERVAL YEAR TO MONTH ) return INTERVAL YEAR TO MONTH
+	--,MEMBER FUNCTION  exit(result INTERVAL DAY TO SECOND ) return INTERVAL DAY TO SECOND
+	--,MEMBER FUNCTION  exit(result RAW) return RAW
+	--,MEMBER FUNCTION  exit(result BFILE) return BFILE
+	--pl/sql overloads
+	,MEMBER FUNCTION  exit(result BOOLEAN) return BOOLEAN
+	,MEMBER FUNCTION  exit(result log4_object) return log4_object
 
-	/* log4 2.x api */
-  ,member procedure catching(throwable GenericException DEFAULT GenericException() )
-  ,member procedure catching(lvl LogLevel, throwable GenericException DEFAULT GenericException() )
+	,MEMBER PROCEDURE fatal(m Marker, msg Message)
+	,MEMBER PROCEDURE fatal(m Marker, msg Message, throwable GenericException)
+	,MEMBER PROCEDURE fatal(m Marker, msg VARCHAR2)
+	,MEMBER PROCEDURE fatal(m Marker, msg VARCHAR2, throwable GenericException)
 
-  ,MEMBER PROCEDURE DEBUG(m Marker, msg VARCHAR2)
-  ,member procedure debug(m Marker, msg varchar2, throwable GenericException)
+	,MEMBER PROCEDURE fatal(msg Message)
+	,MEMBER PROCEDURE fatal(msg Message, throwable GenericException)
+	,MEMBER PROCEDURE fatal(msg VARCHAR2)
+	,MEMBER PROCEDURE fatal(msg VARCHAR2, throwable GenericException)
 
-  ,member procedure entry
-  --,member procedure entry(params varchar2)
+	,MEMBER FUNCTION  getLevel RETURN LogLevel
+	--,MEMBER FUNCTION getMessageFactory() RETURN MessageFactory
+	,MEMBER FUNCTION  getName return VARCHAR2
 
-  ,member procedure error(m Marker, msg varchar2)
-  --,member procedure error(m varchar2, msg varchar2, throwable)
+	,MEMBER PROCEDURE info (m Marker, msg Message)
+	,MEMBER PROCEDURE info (m Marker, msg Message, throwable GenericException)
+	,MEMBER PROCEDURE info (m Marker, msg VARCHAR2)
+	,MEMBER PROCEDURE info (m Marker, msg VARCHAR2, throwable GenericException)
 
-  ,member procedure exit
---sql overloads
-  ,member function exit(result VARCHAR2) return VARCHAR2
-  ,member function exit(result NUMBER) return NUMBER
-  ,member function exit(result DATE) return DATE
-  --,member function exit(result BINARY_FLOAT) return BINARY_FLOAT
-  --,member function exit(result BINARY_DOUBLE) return BINARY_DOUBLE
-  ,member function exit(result TIMESTAMP ) return TIMESTAMP 
-  ,member function exit(result TIMESTAMP WITH TIME ZONE) return TIMESTAMP WITH TIME ZONE
-  --,member function exit(result INTERVAL YEAR TO MONTH ) return INTERVAL YEAR TO MONTH
-  --,member function exit(result INTERVAL DAY TO SECOND ) return INTERVAL DAY TO SECOND
-  --,member function exit(result RAW) return RAW
-  --,member function exit(result BFILE) return BFILE
---pl/sql overloads
-  ,member function exit(result BOOLEAN) return BOOLEAN
-  ,member function exit(result log4_object) return log4_object
-  --,member function exit(result R) return R
+	,MEMBER PROCEDURE info (msg Message)
+	,MEMBER PROCEDURE info (msg Message, throwable GenericException)
+	,MEMBER PROCEDURE info (msg VARCHAR2)
+	,MEMBER PROCEDURE info (msg VARCHAR2, throwable GenericException)
 
-  ,member procedure fatal(m Marker, msg varchar2)
-  --,member procedure fatal(m varchar2, msg varchar2, throwable)
+	,MEMBER FUNCTION  isEnabled(lvl LogLevel) return BOOLEAN
+	,MEMBER FUNCTION  isEnabled(lvl LogLevel, marker Marker) return BOOLEAN
 
-  ,member procedure info(m Marker, msg varchar2)
-  --,member procedure info(m varchar2, msg varchar2, throwable)
+	,MEMBER FUNCTION  isTraceEnabled return BOOLEAN
+	,MEMBER FUNCTION  isTraceEnabled(marker Marker) return BOOLEAN
 
-  ,member function isTraceEnabled(marker Marker) return BOOLEAN
-  ,member function isDebugEnabled(marker Marker) return BOOLEAN
-  ,member function isInfoEnabled(marker Marker)  return BOOLEAN
-  ,member function isWarnEnabled(marker Marker)  return BOOLEAN
-  ,member function isErrorEnabled(marker Marker) return BOOLEAN
-  ,member function isFatalEnabled(marker Marker) return BOOLEAN
+	,MEMBER FUNCTION  isDebugEnabled return BOOLEAN
+	,MEMBER FUNCTION  isDebugEnabled(marker Marker) return BOOLEAN
 
-  ,member function isEnabled(lvl LogLevel) return BOOLEAN
-  ,member function isEnabled(lvl LogLevel, marker Marker) return BOOLEAN
+	,MEMBER FUNCTION  isInfoEnabled  return BOOLEAN
+	,MEMBER FUNCTION  isInfoEnabled(marker Marker)  return BOOLEAN
 
-  ,member procedure log(lvl LogLevel, marker Marker, msg varchar2)
-  ,member procedure log(lvl LogLevel, marker Marker, msg varchar2, throwable GenericException)
+	,MEMBER FUNCTION  isWarnEnabled  return BOOLEAN
+	,MEMBER FUNCTION  isWarnEnabled(marker Marker)  return BOOLEAN
 
+	,MEMBER FUNCTION  isErrorEnabled return BOOLEAN
+	,MEMBER FUNCTION  isErrorEnabled(marker Marker) return BOOLEAN
 
-  --,member function throwing(lvl varchar2, t throwable) return throwable
-  --,member function throwing(t throwable) return throwable
+	,MEMBER FUNCTION  isFatalEnabled return BOOLEAN
+	,MEMBER FUNCTION  isFatalEnabled(marker Marker) return BOOLEAN
 
-  ,member procedure trace(m Marker, msg varchar2)
-  --,member procedure trace(m Marker, msg varchar2, throwable)
+	,MEMBER PROCEDURE log(lvl LogLevel, marker Marker, msg Message)
+	,MEMBER PROCEDURE log(lvl LogLevel, marker Marker, msg Message, throwable GenericException)
+	,MEMBER PROCEDURE log(lvl LogLevel, marker Marker, msg VARCHAR2)
+	,MEMBER PROCEDURE log(lvl LogLevel, marker Marker, msg VARCHAR2, throwable GenericException)
+	,MEMBER PROCEDURE log(lvl LogLevel, msg Message)
+	,MEMBER PROCEDURE log(lvl LogLevel, msg Message, throwable GenericException)
+	,MEMBER PROCEDURE log(lvl LogLevel, msg VARCHAR2)
+	,MEMBER PROCEDURE log(lvl LogLevel, msg VARCHAR2, throwable GenericException)
 
-  ,member procedure warn(m Marker, msg varchar2)
-  --,member procedure warn(m Marker, msg varchar2, throwable)
+	--,MEMBER FUNCTION  throwing(lvl LogLevel, t GenericException) return GenericException
+	--,MEMBER FUNCTION  throwing(t GenericException) return GenericException
 
-	/* end log4 2.x */
-  
-  --parameterisedmessage overloads
-  --TODO: there must be a better way then this
+	,MEMBER PROCEDURE trace(m Marker, msg Message)
+	,MEMBER PROCEDURE trace(m Marker, msg Message, throwable GenericException)
+	,MEMBER PROCEDURE trace(m Marker, msg VARCHAR2)
+	,MEMBER PROCEDURE trace(m Marker, msg VARCHAR2, throwable GenericException)
 
-  ,MEMBER PROCEDURE trace(msg VARCHAR2 , arg01 VARCHAR2 , arg02 VARCHAR2 DEFAULT NULL , arg03 VARCHAR2 DEFAULT NULL , arg04 VARCHAR2 DEFAULT NULL , arg05 VARCHAR2 DEFAULT NULL , arg06 VARCHAR2 DEFAULT NULL , arg07 VARCHAR2 DEFAULT NULL , arg08 VARCHAR2 DEFAULT NULL , arg09 VARCHAR2 DEFAULT NULL) 
-  ,MEMBER PROCEDURE debug(msg VARCHAR2 , arg01 VARCHAR2 , arg02 VARCHAR2 DEFAULT NULL , arg03 VARCHAR2 DEFAULT NULL , arg04 VARCHAR2 DEFAULT NULL , arg05 VARCHAR2 DEFAULT NULL , arg06 VARCHAR2 DEFAULT NULL , arg07 VARCHAR2 DEFAULT NULL , arg08 VARCHAR2 DEFAULT NULL , arg09 VARCHAR2 DEFAULT NULL) 
-  ,MEMBER PROCEDURE  info(msg VARCHAR2 , arg01 VARCHAR2 , arg02 VARCHAR2 DEFAULT NULL , arg03 VARCHAR2 DEFAULT NULL , arg04 VARCHAR2 DEFAULT NULL , arg05 VARCHAR2 DEFAULT NULL , arg06 VARCHAR2 DEFAULT NULL , arg07 VARCHAR2 DEFAULT NULL , arg08 VARCHAR2 DEFAULT NULL , arg09 VARCHAR2 DEFAULT NULL) 
-  ,MEMBER PROCEDURE  warn(msg VARCHAR2 , arg01 VARCHAR2 , arg02 VARCHAR2 DEFAULT NULL , arg03 VARCHAR2 DEFAULT NULL , arg04 VARCHAR2 DEFAULT NULL , arg05 VARCHAR2 DEFAULT NULL , arg06 VARCHAR2 DEFAULT NULL , arg07 VARCHAR2 DEFAULT NULL , arg08 VARCHAR2 DEFAULT NULL , arg09 VARCHAR2 DEFAULT NULL) 
-  ,MEMBER PROCEDURE error(msg VARCHAR2 , arg01 VARCHAR2 , arg02 VARCHAR2 DEFAULT NULL , arg03 VARCHAR2 DEFAULT NULL , arg04 VARCHAR2 DEFAULT NULL , arg05 VARCHAR2 DEFAULT NULL , arg06 VARCHAR2 DEFAULT NULL , arg07 VARCHAR2 DEFAULT NULL , arg08 VARCHAR2 DEFAULT NULL , arg09 VARCHAR2 DEFAULT NULL) 
-  ,MEMBER PROCEDURE fatal(msg VARCHAR2 , arg01 VARCHAR2 , arg02 VARCHAR2 DEFAULT NULL , arg03 VARCHAR2 DEFAULT NULL , arg04 VARCHAR2 DEFAULT NULL , arg05 VARCHAR2 DEFAULT NULL , arg06 VARCHAR2 DEFAULT NULL , arg07 VARCHAR2 DEFAULT NULL , arg08 VARCHAR2 DEFAULT NULL , arg09 VARCHAR2 DEFAULT NULL) 
+	,MEMBER PROCEDURE trace(msg Message)
+	,MEMBER PROCEDURE trace(msg Message, throwable GenericException)
+	,MEMBER PROCEDURE trace(msg VARCHAR2)
+	,MEMBER PROCEDURE trace(msg VARCHAR2, throwable GenericException)
+
+	,MEMBER PROCEDURE warn (m Marker, msg Message)
+	,MEMBER PROCEDURE warn (m Marker, msg Message, throwable GenericException)
+	,MEMBER PROCEDURE warn (m Marker, msg VARCHAR2)
+	,MEMBER PROCEDURE warn (m Marker, msg VARCHAR2, throwable GenericException)
+
+	,MEMBER PROCEDURE warn (msg Message)
+	,MEMBER PROCEDURE warn (msg Message, throwable GenericException)
+	,MEMBER PROCEDURE warn (msg VARCHAR2)
+	,MEMBER PROCEDURE warn (msg VARCHAR2, throwable GenericException)
+
+	--parameterisedmessage overloads
+	--TODO: there must be a better way then this
+
+	,MEMBER PROCEDURE entry(               arg01 VARCHAR2 , arg02 VARCHAR2 DEFAULT NULL , arg03 VARCHAR2 DEFAULT NULL , arg04 VARCHAR2 DEFAULT NULL , arg05 VARCHAR2 DEFAULT NULL , arg06 VARCHAR2 DEFAULT NULL , arg07 VARCHAR2 DEFAULT NULL , arg08 VARCHAR2 DEFAULT NULL , arg09 VARCHAR2 DEFAULT NULL) 
+
+	,MEMBER PROCEDURE trace(msg VARCHAR2 , arg01 VARCHAR2 , arg02 VARCHAR2 DEFAULT NULL , arg03 VARCHAR2 DEFAULT NULL , arg04 VARCHAR2 DEFAULT NULL , arg05 VARCHAR2 DEFAULT NULL , arg06 VARCHAR2 DEFAULT NULL , arg07 VARCHAR2 DEFAULT NULL , arg08 VARCHAR2 DEFAULT NULL , arg09 VARCHAR2 DEFAULT NULL) 
+	,MEMBER PROCEDURE debug(msg VARCHAR2 , arg01 VARCHAR2 , arg02 VARCHAR2 DEFAULT NULL , arg03 VARCHAR2 DEFAULT NULL , arg04 VARCHAR2 DEFAULT NULL , arg05 VARCHAR2 DEFAULT NULL , arg06 VARCHAR2 DEFAULT NULL , arg07 VARCHAR2 DEFAULT NULL , arg08 VARCHAR2 DEFAULT NULL , arg09 VARCHAR2 DEFAULT NULL) 
+	,MEMBER PROCEDURE  info(msg VARCHAR2 , arg01 VARCHAR2 , arg02 VARCHAR2 DEFAULT NULL , arg03 VARCHAR2 DEFAULT NULL , arg04 VARCHAR2 DEFAULT NULL , arg05 VARCHAR2 DEFAULT NULL , arg06 VARCHAR2 DEFAULT NULL , arg07 VARCHAR2 DEFAULT NULL , arg08 VARCHAR2 DEFAULT NULL , arg09 VARCHAR2 DEFAULT NULL) 
+	,MEMBER PROCEDURE  warn(msg VARCHAR2 , arg01 VARCHAR2 , arg02 VARCHAR2 DEFAULT NULL , arg03 VARCHAR2 DEFAULT NULL , arg04 VARCHAR2 DEFAULT NULL , arg05 VARCHAR2 DEFAULT NULL , arg06 VARCHAR2 DEFAULT NULL , arg07 VARCHAR2 DEFAULT NULL , arg08 VARCHAR2 DEFAULT NULL , arg09 VARCHAR2 DEFAULT NULL) 
+	,MEMBER PROCEDURE error(msg VARCHAR2 , arg01 VARCHAR2 , arg02 VARCHAR2 DEFAULT NULL , arg03 VARCHAR2 DEFAULT NULL , arg04 VARCHAR2 DEFAULT NULL , arg05 VARCHAR2 DEFAULT NULL , arg06 VARCHAR2 DEFAULT NULL , arg07 VARCHAR2 DEFAULT NULL , arg08 VARCHAR2 DEFAULT NULL , arg09 VARCHAR2 DEFAULT NULL) 
+	,MEMBER PROCEDURE fatal(msg VARCHAR2 , arg01 VARCHAR2 , arg02 VARCHAR2 DEFAULT NULL , arg03 VARCHAR2 DEFAULT NULL , arg04 VARCHAR2 DEFAULT NULL , arg05 VARCHAR2 DEFAULT NULL , arg06 VARCHAR2 DEFAULT NULL , arg07 VARCHAR2 DEFAULT NULL , arg08 VARCHAR2 DEFAULT NULL , arg09 VARCHAR2 DEFAULT NULL) 
+
+	,MEMBER PROCEDURE printf(lvl LogLevel, mkr Marker, format VARCHAR2 , arg01 VARCHAR2 , arg02 VARCHAR2 DEFAULT NULL , arg03 VARCHAR2 DEFAULT NULL , arg04 VARCHAR2 DEFAULT NULL , arg05 VARCHAR2 DEFAULT NULL , arg06 VARCHAR2 DEFAULT NULL , arg07 VARCHAR2 DEFAULT NULL , arg08 VARCHAR2 DEFAULT NULL , arg09 VARCHAR2 DEFAULT NULL) 
+	,MEMBER PROCEDURE printf(lvl LogLevel            , format VARCHAR2 , arg01 VARCHAR2 , arg02 VARCHAR2 DEFAULT NULL , arg03 VARCHAR2 DEFAULT NULL , arg04 VARCHAR2 DEFAULT NULL , arg05 VARCHAR2 DEFAULT NULL , arg06 VARCHAR2 DEFAULT NULL , arg07 VARCHAR2 DEFAULT NULL , arg08 VARCHAR2 DEFAULT NULL , arg09 VARCHAR2 DEFAULT NULL) 
 
 ) not instantiable not final
 ;
 /
 show errors
+-- vim: ts=4 sw=4 filetype=sqloracle
 
 

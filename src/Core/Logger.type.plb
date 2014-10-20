@@ -1,481 +1,532 @@
-create or replace type body LOGGER AS
-  member function getName return VARCHAR2
-	is
-	begin
-		return m_name;
-	end;
-
-	member function isEnabled(lvl IN LogLevel) return BOOLEAN
-	is
-	begin
-		return isEnabled(lvl,NULL);
-	END;
-
-	member function isEnabled(lvl IN LogLevel, marker Marker) return BOOLEAN
-	is
-	begin
-		return logimpl.isenabled(self, lvl,marker);
-	END;
-
-	member function isTraceEnabled return BOOLEAN
-	is
-	begin
-	return isEnabled(logimpl.ll_TRACE,NULL);
-	END;
-	member function isDebugEnabled return BOOLEAN
-	is
-	begin
-	return isEnabled(logimpl.ll_DEBUG,NULL);
-	END;
-	member function isInfoEnabled  return BOOLEAN
-	is
-	begin
-	return isEnabled(logimpl.ll_INFO,NULL);
-	END;
-	member function isWarnEnabled  return BOOLEAN
-	is
-	begin
-	return isEnabled(logimpl.ll_WARN,NULL);
-	END;
-	member function isErrorEnabled return BOOLEAN
-	is
-	begin
-	return isEnabled(logimpl.ll_ERROR,NULL);
-	END;
-	member function isFatalEnabled return BOOLEAN
-	is
-	begin
-	return isEnabled(logimpl.ll_FATAL,NULL);
-	END;
-	member function isTraceEnabled(marker Marker) return BOOLEAN
-	is
-	begin
-	return isEnabled(logimpl.ll_TRACE,marker);
-	END;
-	member function isDebugEnabled(marker Marker) return BOOLEAN
-	is
-	begin
-	return isEnabled(logimpl.ll_DEBUG,marker);
-	END;
-	member function isInfoEnabled(marker Marker)  return BOOLEAN
-	is
-	begin
-	return isEnabled(logimpl.ll_INFO,marker);
-	END;
-	member function isWarnEnabled(marker Marker)  return BOOLEAN
-	is
-	begin
-	return isEnabled(logimpl.ll_WARN,marker);
-	END;
-	member function isErrorEnabled(marker Marker) return BOOLEAN
-	is
-	begin
-	return isEnabled(logimpl.ll_ERROR,marker);
-	END;
-	member function isFatalEnabled(marker Marker) return BOOLEAN
-	is
-	begin
-	return isEnabled(logimpl.ll_FATAL,marker);
-	END;
-
-	member procedure log(lvl LogLevel, msg varchar2)
-	is
-	begin
-	if isenabled(lvl,NULL) THEN
-		logimpl.log(null,m_name,lvl,MessageFactory.newMessage(msg));
-	end if;
-	END;
-
-	member procedure log(lvl LogLevel, marker Marker, msg varchar2)
-	is
-	begin
-	if isenabled(lvl,marker) THEN
-		logimpl.log(marker,m_name,lvl,MessageFactory.newMessage(msg));
-	end if;
-	END;
-
-	member procedure log(lvl LogLevel, marker Marker, msg varchar2, throwable GenericException)
-	is
-	begin
-	if isenabled(lvl,marker) THEN
-		logimpl.log(marker,m_name,lvl,MessageFactory.newMessage(msg),throwable);
-	end if;
-	END;
-
-
-	member procedure entry
-	is
-	begin
-	if isenabled(logimpl.ll_TRACE,logimpl.ENTRY_MARKER) THEN
-			logimpl.log(logimpl.ENTRY_MARKER,m_name,logimpl.ll_TRACE,NULL);
-	end if;
-	END;
-
-	member procedure exit
-	is
-	begin
-		if isenabled(logimpl.ll_TRACE,logimpl.EXIT_MARKER) THEN
-			logimpl.log(logimpl.EXIT_MARKER,m_name,logimpl.ll_TRACE,NULL);
-		end if;
-	end;
-	member function exit(result log4_object) return log4_object
-	is
-	begin
-		if isenabled(logimpl.ll_TRACE,logimpl.EXIT_MARKER) THEN
-			if result is null then
-				logimpl.log(logimpl.EXIT_MARKER ,m_name, logimpl.ll_TRACE, MessageFactory.newMessage('exit'));
-			else
-				logimpl.log(logimpl.EXIT_MARKER ,m_name, logimpl.ll_TRACE, MessageFactory.newMessage('exit with ('||result.tostring||')'));
-			end if;
-		end if;
-		return result;
-	end;
-
-
-	member procedure trace(MSG varchar2)
-	is
-	begin
-	if isenabled(logimpl.ll_TRACE,NULL) THEN
-			logimpl.log(NULL, m_name,logimpl.ll_TRACE,MessageFactory.newMessage(msg));
-	end if;
-	end;
-
-	member procedure debug(MSG varchar2)
-	is
-	begin
-	if isenabled(logimpl.ll_DEBUG,NULL) THEN
-			logimpl.log(NULL, m_name, logimpl.ll_DEBUG,MessageFactory.newMessage(msg));
-	end if;
-	END;
-	member procedure debug(MSG varchar2, throwable GenericException)
-	is
-	begin
-	IF isenabled(logimpl.ll_DEBUG,NULL) THEN
-			logimpl.log(NULL, m_name, logimpl.ll_DEBUG,MessageFactory.newMessage(msg),throwable);
-	END IF;
-	end;  
-	member procedure debug(m Marker,MSG varchar2)
-	is
-	begin
-	if isenabled(logimpl.ll_DEBUG,m) THEN
-			logimpl.log(m, m_name, logimpl.ll_DEBUG,MessageFactory.newMessage(msg));
-	end if;
-	END;
-	member procedure debug(m Marker,MSG varchar2, throwable GenericException)
-	is
-	begin
-	IF isenabled(logimpl.ll_DEBUG,m) THEN
-			logimpl.log(m, m_name, logimpl.ll_DEBUG,MessageFactory.newMessage(msg),throwable);
-	END IF;
-	end;
-	member procedure info(MSG varchar2)
-	is
-	begin
-	if isenabled(logimpl.ll_INFO,NULL) THEN
-			logimpl.log(NULL, m_name, logimpl.ll_INFO,MessageFactory.newMessage(msg));
-	end if;
-	end;
-
-	member procedure warn(MSG varchar2)
-	is
-	begin
-	if isenabled(logimpl.ll_WARN,NULL) THEN
-			logimpl.log(NULL,m_name,logimpl.ll_WARN,MessageFactory.newMessage(msg));
-	end if;
-	end;
-
-	member procedure error(msg varchar2)
-	is
-	begin
-	if isenabled(logimpl.ll_ERROR,NULL) THEN
-			logimpl.log(NULL,m_name,logimpl.ll_ERROR,MessageFactory.newMessage(msg));
-	end if;
-	END;
-	member procedure error(msg varchar2, throwable GenericException)
-	is
-	begin
-	IF isenabled(logimpl.ll_ERROR,NULL) THEN
-			logimpl.log(NULL,m_name,logimpl.ll_ERROR,MessageFactory.newMessage(msg),throwable);
-	END IF;
-	end;  
-
-	member procedure fatal(msg varchar2)
-	is
-	begin
-	if isenabled(logimpl.ll_FATAL,NULL) THEN
-			logimpl.log(NULL,m_name,logimpl.ll_FATAL,MessageFactory.newMessage(msg));
-	end if;
-	END;
-	member procedure fatal(msg varchar2, throwable GenericException)
-	is
-	begin
-	IF isenabled(logimpl.ll_FATAL,NULL) THEN
-			logimpl.log(NULL,m_name,logimpl.ll_FATAL,MessageFactory.newMessage(msg),throwable);
-	end if;
-	end;  
-
-	--marker versions
-	member procedure trace(m Marker, msg varchar2)
-	is
-	begin
-	if isenabled(logimpl.ll_TRACE,m) THEN
-			logimpl.log(m, m_name, logimpl.ll_TRACE,MessageFactory.newMessage(msg));
-	end if;
-	END;
-	member procedure info(m Marker, msg varchar2)
-	is
-	begin
-	if isenabled(logimpl.ll_INFO,m) THEN
-			logimpl.log(m, m_name, logimpl.ll_INFO,MessageFactory.newMessage(msg));
-	end if;
-
-	END;
-	member procedure warn(m Marker, msg varchar2)
-	is
-	begin
-	if isenabled(logimpl.ll_WARN,m) THEN
-			logimpl.log(m, m_name, logimpl.ll_WARN,MessageFactory.newMessage(msg));
-	end if;
-	END;
-	member procedure error(m Marker, msg varchar2)
-	is
-	begin
-	if isenabled(logimpl.ll_ERROR,m) THEN
-			logimpl.log(m, m_name, logimpl.ll_ERROR,MessageFactory.newMessage(msg));
-	end if;
-	END;
-	member procedure fatal(m Marker, msg varchar2)
-	is
-	begin
-	if isenabled(logimpl.ll_FATAL,m) THEN
-			logimpl.log(m, m_name, logimpl.ll_FATAL,MessageFactory.newMessage(msg));
-	end if;
-	END;
-
-
-	member function exit(result VARCHAR2) return VARCHAR2
-	is
+CREATE OR REPLACE TYPE BODY logger
+AS
+	MEMBER FUNCTION getName RETURN VARCHAR2
+	IS
 	BEGIN
-		if isenabled(logimpl.ll_TRACE,logimpl.EXIT_MARKER) THEN
-			if result is null then
+		RETURN m_name;
+	END;
+
+	map MEMBER FUNCTION Compare RETURN number 
+	IS
+	BEGIN
+		RETURN m_lvl;
+	END;
+
+	MEMBER FUNCTION  getLevel RETURN LogLevel
+	IS
+	BEGIN
+		RETURN null;
+	END;
+
+
+	MEMBER FUNCTION isEnabled(lvl IN LogLevel, marker Marker) RETURN BOOLEAN
+	IS
+	BEGIN
+		RETURN logimpl.isEnabled(self, lvl,marker);
+	END;
+
+	MEMBER FUNCTION isEnabled(lvl IN LogLevel) RETURN BOOLEAN IS BEGIN RETURN isEnabled(lvl,NULL); END;
+
+	MEMBER FUNCTION isTraceEnabled RETURN BOOLEAN IS BEGIN RETURN isEnabled(logimpl.ll_TRACE,NULL); END;
+	MEMBER FUNCTION isDebugEnabled RETURN BOOLEAN IS BEGIN RETURN isEnabled(logimpl.ll_DEBUG,NULL); END;
+	MEMBER FUNCTION isInfoEnabled  RETURN BOOLEAN IS BEGIN RETURN isEnabled(logimpl.ll_INFO ,NULL); END;
+	MEMBER FUNCTION isWarnEnabled  RETURN BOOLEAN IS BEGIN RETURN isEnabled(logimpl.ll_WARN ,NULL); END;
+	MEMBER FUNCTION isErrorEnabled RETURN BOOLEAN IS BEGIN RETURN isEnabled(logimpl.ll_ERROR,NULL); END;
+	MEMBER FUNCTION isFatalEnabled RETURN BOOLEAN IS BEGIN RETURN isEnabled(logimpl.ll_FATAL,NULL); END;
+
+	MEMBER FUNCTION isTraceEnabled(marker Marker) RETURN BOOLEAN IS BEGIN RETURN isEnabled(logimpl.ll_TRACE,marker); END;
+	MEMBER FUNCTION isDebugEnabled(marker Marker) RETURN BOOLEAN IS BEGIN RETURN isEnabled(logimpl.ll_DEBUG,marker); END;
+	MEMBER FUNCTION isInfoEnabled (marker Marker) RETURN BOOLEAN IS BEGIN RETURN isEnabled(logimpl.ll_INFO ,marker); END;
+	MEMBER FUNCTION isWarnEnabled (marker Marker) RETURN BOOLEAN IS BEGIN RETURN isEnabled(logimpl.ll_WARN ,marker); END;
+	MEMBER FUNCTION isErrorEnabled(marker Marker) RETURN BOOLEAN IS BEGIN RETURN isEnabled(logimpl.ll_ERROR,marker); END;
+	MEMBER FUNCTION isFatalEnabled(marker Marker) RETURN BOOLEAN IS BEGIN RETURN isEnabled(logimpl.ll_FATAL,marker); END;
+
+	MEMBER PROCEDURE log(lvl LogLevel, marker Marker, msg Message)
+	IS BEGIN IF isEnabled(lvl,marker) THEN logimpl.log(marker,m_name,lvl,msg); END IF; END;
+
+	MEMBER PROCEDURE log(lvl LogLevel, marker Marker, msg Message, throwable GenericException)
+	IS BEGIN IF isEnabled(lvl,marker) THEN logimpl.log(marker,m_name,lvl,msg,throwable); END IF; END;
+
+	MEMBER PROCEDURE log(lvl LogLevel, marker Marker, msg VARCHAR2)
+	IS BEGIN IF isEnabled(lvl,marker) THEN logimpl.log(marker,m_name,lvl,MessageFactory.newMessage(msg)); END IF; END;
+
+	MEMBER PROCEDURE log(lvl LogLevel, marker Marker, msg VARCHAR2, throwable GenericException)
+	IS BEGIN IF isEnabled(lvl,marker) THEN logimpl.log(marker,m_name,lvl,MessageFactory.newMessage(msg),throwable); END IF; END;
+
+
+	MEMBER PROCEDURE log(lvl LogLevel, msg Message)
+	IS BEGIN IF isEnabled(lvl,NULL  ) THEN logimpl.log(null  ,m_name,lvl,msg); END IF; END;
+
+	MEMBER PROCEDURE log(lvl LogLevel, msg Message, throwable GenericException)
+	IS BEGIN IF isEnabled(lvl,NULL  ) THEN logimpl.log(NULL  ,m_name,lvl,msg,throwable); END IF; END;
+
+	MEMBER PROCEDURE log(lvl LogLevel, msg VARCHAR2)
+	IS BEGIN IF isEnabled(lvl,NULL  ) THEN logimpl.log(NULL  ,m_name,lvl,MessageFactory.newMessage(msg)); END IF; END;
+
+	MEMBER PROCEDURE log(lvl LogLevel, msg VARCHAR2, throwable GenericException)
+	IS BEGIN IF isEnabled(lvl,NULL  ) THEN logimpl.log(NULL  ,m_name,lvl,MessageFactory.newMessage(msg),throwable); END IF; END;
+
+
+--entry
+
+	MEMBER PROCEDURE entry
+	IS
+	BEGIN
+	IF isEnabled(logimpl.ll_TRACE,logimpl.ENTRY_MARKER) THEN
+			logimpl.log(logimpl.ENTRY_MARKER,m_name,logimpl.ll_TRACE,NULL);
+	END IF;
+	END;
+
+--exit
+
+	MEMBER PROCEDURE exit
+	IS
+	BEGIN
+		IF isEnabled(logimpl.ll_TRACE,logimpl.EXIT_MARKER) THEN
+			logimpl.log(logimpl.EXIT_MARKER,m_name,logimpl.ll_TRACE,NULL);
+		END IF;
+	END;
+
+	MEMBER FUNCTION exit(result log4_object) RETURN log4_object
+	IS
+	BEGIN
+		IF isEnabled(logimpl.ll_TRACE,logimpl.EXIT_MARKER) THEN
+			IF result is null then
+				logimpl.log(logimpl.EXIT_MARKER ,m_name, logimpl.ll_TRACE, MessageFactory.newMessage('exit'));
+			ELSE
+				logimpl.log(logimpl.EXIT_MARKER ,m_name, logimpl.ll_TRACE, MessageFactory.newMessage('exit with ('||result.tostring||')'));
+			END IF;
+		END IF;
+		RETURN result;
+	END;
+
+	MEMBER FUNCTION exit(result VARCHAR2) RETURN VARCHAR2
+	IS
+	BEGIN
+		IF isEnabled(logimpl.ll_TRACE,logimpl.EXIT_MARKER) THEN
+			IF result is null then
 				logimpl.log(logimpl.EXIT_MARKER ,m_name, logimpl.ll_TRACE, MessageFactory.newMessage('exit'));
 			else
 				logimpl.log(logimpl.EXIT_MARKER ,m_name, logimpl.ll_TRACE, MessageFactory.newMessage('exit with ('||result||')'));
-			end if;
-		end if;  
-		return result;
-	end;
-	member function exit(result NUMBER) return NUMBER
-	is
+			END IF;
+		END IF;  
+		RETURN result;
+	END;
+
+	MEMBER FUNCTION exit(result NUMBER) RETURN NUMBER
+	IS
 	BEGIN
-		if isenabled(logimpl.ll_TRACE,logimpl.EXIT_MARKER) THEN
-			if result is null then
+		IF isEnabled(logimpl.ll_TRACE,logimpl.EXIT_MARKER) THEN
+			IF result is null then
 				logimpl.log(logimpl.EXIT_MARKER ,m_name, logimpl.ll_TRACE, MessageFactory.newMessage('exit'));
 			ELSE
 				logimpl.log(logimpl.EXIT_MARKER ,m_name, logimpl.ll_TRACE, MessageFactory.newMessage('exit with ('||to_char(result)||')'));
 			END IF;
-		end if;  
-		return result;
-	end;
-	member function exit(result DATE) return DATE
-	is
-	BEGIN
-		if isenabled(logimpl.ll_TRACE,logimpl.EXIT_MARKER) THEN
-			if result is null then
-				logimpl.log(logimpl.EXIT_MARKER ,m_name, logimpl.ll_TRACE, MessageFactory.newMessage('exit'));
-			ELSE
-				logimpl.log(logimpl.EXIT_MARKER ,m_name, logimpl.ll_TRACE, MessageFactory.newMessage('exit with ('||TO_CHAR(result)||')'));
-			END IF;
-		end if;  
-		return result;
-	end;
-	member function exit(result TIMESTAMP ) return TIMESTAMP 
-	is
-	BEGIN
-		if isenabled(logimpl.ll_TRACE,logimpl.EXIT_MARKER) THEN
-			if result is null then
-				logimpl.log(logimpl.EXIT_MARKER ,m_name, logimpl.ll_TRACE, MessageFactory.newMessage('exit'));
-			ELSE
-				logimpl.log(logimpl.EXIT_MARKER ,m_name, logimpl.ll_TRACE, MessageFactory.newMessage('exit with ('||TO_CHAR(result)||')'));
-			END IF;
-		end if;    
-		return result;
-	end;
-	member function exit(result TIMESTAMP WITH TIME ZONE) return TIMESTAMP WITH TIME ZONE
-	is
-	BEGIN
-		if isenabled(logimpl.ll_TRACE,logimpl.EXIT_MARKER) THEN
-			if result is null then
-				logimpl.log(logimpl.EXIT_MARKER ,m_name, logimpl.ll_TRACE, MessageFactory.newMessage('exit'));
-			ELSE
-				logimpl.log(logimpl.EXIT_MARKER ,m_name, logimpl.ll_TRACE, MessageFactory.newMessage('exit with ('||TO_CHAR(result)||')'));
-			END IF;
-		end if;    
-		return result;
-	end;
+		END IF;  
+		RETURN result;
+	END;
 
-	member function exit(result BOOLEAN) return BOOLEAN
-	is
+	MEMBER FUNCTION exit(result DATE) RETURN DATE
+	IS
 	BEGIN
-		if isenabled(logimpl.ll_TRACE,logimpl.EXIT_MARKER) THEN
+		IF isEnabled(logimpl.ll_TRACE,logimpl.EXIT_MARKER) THEN
+			IF result is null then
+				logimpl.log(logimpl.EXIT_MARKER ,m_name, logimpl.ll_TRACE, MessageFactory.newMessage('exit'));
+			ELSE
+				logimpl.log(logimpl.EXIT_MARKER ,m_name, logimpl.ll_TRACE, MessageFactory.newMessage('exit with ('||TO_CHAR(result)||')'));
+			END IF;
+		END IF;  
+		RETURN result;
+	END;
+
+	MEMBER FUNCTION exit(result TIMESTAMP ) RETURN TIMESTAMP 
+	IS
+	BEGIN
+		IF isEnabled(logimpl.ll_TRACE,logimpl.EXIT_MARKER) THEN
+			IF result is null then
+				logimpl.log(logimpl.EXIT_MARKER ,m_name, logimpl.ll_TRACE, MessageFactory.newMessage('exit'));
+			ELSE
+				logimpl.log(logimpl.EXIT_MARKER ,m_name, logimpl.ll_TRACE, MessageFactory.newMessage('exit with ('||TO_CHAR(result)||')'));
+			END IF;
+		END IF;    
+		RETURN result;
+	END;
+
+	MEMBER FUNCTION exit(result TIMESTAMP WITH TIME ZONE) RETURN TIMESTAMP WITH TIME ZONE
+	IS
+	BEGIN
+		IF isEnabled(logimpl.ll_TRACE,logimpl.EXIT_MARKER) THEN
+			IF result is null then
+				logimpl.log(logimpl.EXIT_MARKER ,m_name, logimpl.ll_TRACE, MessageFactory.newMessage('exit'));
+			ELSE
+				logimpl.log(logimpl.EXIT_MARKER ,m_name, logimpl.ll_TRACE, MessageFactory.newMessage('exit with ('||TO_CHAR(result)||')'));
+			END IF;
+		END IF;    
+		RETURN result;
+	END;
+
+	MEMBER FUNCTION exit(result BOOLEAN) RETURN BOOLEAN
+	IS
+	BEGIN
+		IF isEnabled(logimpl.ll_TRACE,logimpl.EXIT_MARKER) THEN
 			IF result IS NULL THEN
 				logimpl.LOG(logimpl.EXIT_MARKER ,m_name, logimpl.ll_TRACE, MessageFactory.newMessage('exit with (NULL)'));
 			elsif result then
 				logimpl.LOG(logimpl.EXIT_MARKER ,m_name, logimpl.ll_TRACE, MessageFactory.newMessage('exit with (TRUE)'));
-      else
+	  else
 				logimpl.log(logimpl.EXIT_MARKER ,m_name, logimpl.ll_TRACE, MessageFactory.newMessage('exit with (FALSE)'));
-			end if;
-		end if;  
-		return result;
-	end;
+			END IF;
+		END IF;  
+		RETURN result;
+	END;
 
-	map member function Compare return number 
-	is
-	begin
-		return m_lvl;
-	end;
+  --debug
+	MEMBER PROCEDURE debug(m Marker,msg Message)
+	IS BEGIN IF isEnabled(logimpl.ll_DEBUG,m) THEN logimpl.log(m, m_name, logimpl.ll_DEBUG,msg); END IF; END;
 
-	member procedure catching(throwable GenericException default GenericException() )
-	is
-	begin
-		if isenabled(logimpl.ll_ERROR,logimpl.CATCHING_MARKER) THEN
+	MEMBER PROCEDURE debug(m Marker,msg Message, throwable GenericException)
+	IS BEGIN IF isEnabled(logimpl.ll_DEBUG,m) THEN logimpl.log(m, m_name, logimpl.ll_DEBUG,msg,throwable); END IF; END;
+
+	MEMBER PROCEDURE debug(m Marker,msg VARCHAR2)
+	IS BEGIN IF isEnabled(logimpl.ll_DEBUG,m) THEN logimpl.log(m, m_name, logimpl.ll_DEBUG,MessageFactory.newMessage(msg)); END IF; END;
+
+	MEMBER PROCEDURE debug(m Marker,msg VARCHAR2, throwable GenericException)
+	IS BEGIN IF isEnabled(logimpl.ll_DEBUG,m) THEN logimpl.log(m, m_name, logimpl.ll_DEBUG,MessageFactory.newMessage(msg),throwable); END IF; END;
+
+
+	MEMBER PROCEDURE debug(msg Message)
+	IS BEGIN IF isEnabled(logimpl.ll_DEBUG,NULL) THEN logimpl.log(NULL, m_name, logimpl.ll_DEBUG,msg); END IF; END;
+
+	MEMBER PROCEDURE debug(msg Message, throwable GenericException)
+	IS BEGIN IF isEnabled(logimpl.ll_DEBUG,NULL) THEN logimpl.log(NULL, m_name, logimpl.ll_DEBUG,msg,throwable); END IF; END;  
+
+	MEMBER PROCEDURE debug(msg VARCHAR2)
+	IS BEGIN IF isEnabled(logimpl.ll_DEBUG,NULL) THEN logimpl.log(NULL, m_name, logimpl.ll_DEBUG,MessageFactory.newMessage(msg)); END IF; END;
+
+	MEMBER PROCEDURE debug(msg VARCHAR2, throwable GenericException)
+	IS BEGIN IF isEnabled(logimpl.ll_DEBUG,NULL) THEN logimpl.log(NULL, m_name, logimpl.ll_DEBUG,MessageFactory.newMessage(msg),throwable); END IF; END;  
+
+
+--error
+	MEMBER PROCEDURE error(m Marker, msg Message)
+	IS BEGIN IF isEnabled(logimpl.ll_ERROR,m)    THEN logimpl.log(m   ,m_name,logimpl.ll_ERROR,msg); END IF; END;
+
+	MEMBER PROCEDURE error(m Marker, msg Message, throwable GenericException)
+	IS BEGIN IF isEnabled(logimpl.ll_ERROR,m)    THEN logimpl.log(m   ,m_name,logimpl.ll_ERROR,msg,throwable); END IF; END;  
+
+	MEMBER PROCEDURE error(m Marker, msg VARCHAR2)
+	IS BEGIN IF isEnabled(logimpl.ll_ERROR,m)    THEN logimpl.log(m   ,m_name,logimpl.ll_ERROR,MessageFactory.newMessage(msg)); END IF; END;
+
+	MEMBER PROCEDURE error(m Marker, msg VARCHAR2, throwable GenericException)
+	IS BEGIN IF isEnabled(logimpl.ll_ERROR,m   ) THEN logimpl.log(m   ,m_name,logimpl.ll_ERROR,MessageFactory.newMessage(msg),throwable); END IF; END;  
+
+
+	MEMBER PROCEDURE error(msg Message)
+	IS BEGIN IF isEnabled(logimpl.ll_ERROR,NULL) THEN logimpl.log(NULL,m_name,logimpl.ll_ERROR,msg); END IF; END;
+
+	MEMBER PROCEDURE error(msg Message, throwable GenericException)
+	IS BEGIN IF isEnabled(logimpl.ll_ERROR,NULL) THEN logimpl.log(NULL,m_name,logimpl.ll_ERROR,msg,throwable); END IF; END;  
+
+	MEMBER PROCEDURE error(msg VARCHAR2)
+	IS BEGIN IF isEnabled(logimpl.ll_ERROR,NULL) THEN logimpl.log(NULL,m_name,logimpl.ll_ERROR,MessageFactory.newMessage(msg)); END IF; END;
+
+	MEMBER PROCEDURE error(msg VARCHAR2, throwable GenericException)
+	IS BEGIN IF isEnabled(logimpl.ll_ERROR,NULL) THEN logimpl.log(NULL,m_name,logimpl.ll_ERROR,MessageFactory.newMessage(msg),throwable); END IF; END;  
+
+  --info
+
+	MEMBER PROCEDURE info(m Marker, msg Message)
+	IS BEGIN IF isEnabled(logimpl.ll_INFO,m   ) THEN logimpl.log(m   , m_name, logimpl.ll_INFO,msg); END IF; END;
+
+	MEMBER PROCEDURE info(m Marker, msg Message, throwable GenericException)
+	IS BEGIN IF isEnabled(logimpl.ll_INFO,m   ) THEN logimpl.log(m   , m_name, logimpl.ll_INFO,msg, throwable); END IF; END;
+
+	MEMBER PROCEDURE info(m Marker, msg VARCHAR2)
+	IS BEGIN IF isEnabled(logimpl.ll_INFO,m   ) THEN logimpl.log(m   , m_name, logimpl.ll_INFO,MessageFactory.newMessage(msg)); END IF; END;
+
+	MEMBER PROCEDURE info(m Marker, msg VARCHAR2, throwable GenericException)
+	IS BEGIN IF isEnabled(logimpl.ll_INFO,m   ) THEN logimpl.log(m   , m_name, logimpl.ll_INFO,MessageFactory.newMessage(msg),throwable); END IF; END;
+
+
+	MEMBER PROCEDURE info(msg Message)
+	IS BEGIN IF isEnabled(logimpl.ll_INFO,NULL) THEN logimpl.log(NULL, m_name, logimpl.ll_INFO,msg); END IF; END;
+
+	MEMBER PROCEDURE info(msg Message, throwable GenericException)
+	IS BEGIN IF isEnabled(logimpl.ll_INFO,NULL) THEN logimpl.log(NULL, m_name, logimpl.ll_INFO,msg, throwable); END IF; END;
+
+	MEMBER PROCEDURE info(msg VARCHAR2)
+	IS BEGIN IF isEnabled(logimpl.ll_INFO,NULL) THEN logimpl.log(NULL, m_name, logimpl.ll_INFO,MessageFactory.newMessage(msg)); END IF; END;
+
+	MEMBER PROCEDURE info(msg VARCHAR2, throwable GenericException)
+	IS BEGIN IF isEnabled(logimpl.ll_INFO,NULL) THEN logimpl.log(NULL, m_name, logimpl.ll_INFO,MessageFactory.newMessage(msg),throwable); END IF; END;
+
+--warn
+	MEMBER PROCEDURE warn(m Marker, msg Message)
+	IS BEGIN IF isEnabled(logimpl.ll_WARN,m   ) THEN logimpl.log(m   ,m_name,logimpl.ll_WARN,msg); END IF; END;
+
+	MEMBER PROCEDURE warn(m Marker, msg Message, throwable GenericException)
+	IS BEGIN IF isEnabled(logimpl.ll_WARN,m   ) THEN logimpl.log(m   ,m_name,logimpl.ll_WARN,msg,throwable); END IF; END;
+
+	MEMBER PROCEDURE warn(m Marker, msg VARCHAR2)
+	IS BEGIN IF isEnabled(logimpl.ll_WARN,m   ) THEN logimpl.log(m   ,m_name,logimpl.ll_WARN,MessageFactory.newMessage(msg)); END IF; END;
+
+	MEMBER PROCEDURE warn(m Marker, msg VARCHAR2, throwable GenericException)
+	IS BEGIN IF isEnabled(logimpl.ll_WARN,m   ) THEN logimpl.log(m   ,m_name,logimpl.ll_WARN,MessageFactory.newMessage(msg),throwable); END IF; END;
+
+
+	MEMBER PROCEDURE warn(msg Message)
+	IS BEGIN IF isEnabled(logimpl.ll_WARN,NULL) THEN logimpl.log(NULL,m_name,logimpl.ll_WARN,msg); END IF; END;
+
+	MEMBER PROCEDURE warn(msg Message, throwable GenericException)
+	IS BEGIN IF isEnabled(logimpl.ll_WARN,NULL) THEN logimpl.log(NULL,m_name,logimpl.ll_WARN,msg,throwable); END IF; END;
+
+	MEMBER PROCEDURE warn(msg VARCHAR2)
+	IS BEGIN IF isEnabled(logimpl.ll_WARN,NULL) THEN logimpl.log(NULL,m_name,logimpl.ll_WARN,MessageFactory.newMessage(msg)); END IF; END;
+
+	MEMBER PROCEDURE warn(msg VARCHAR2, throwable GenericException)
+	IS BEGIN IF isEnabled(logimpl.ll_WARN,NULL) THEN logimpl.log(NULL,m_name,logimpl.ll_WARN,MessageFactory.newMessage(msg),throwable); END IF; END;
+
+
+--fatal
+	MEMBER PROCEDURE fatal(m Marker, msg Message)
+	IS BEGIN IF isEnabled(logimpl.ll_FATAL,m) THEN logimpl.log(m,m_name,logimpl.ll_FATAL,msg); END IF; END;
+
+	MEMBER PROCEDURE fatal(m Marker, msg Message, throwable GenericException)
+	IS BEGIN IF isEnabled(logimpl.ll_FATAL,m) THEN logimpl.log(m,m_name,logimpl.ll_FATAL,msg,throwable); END IF; END;  
+
+	MEMBER PROCEDURE fatal(m Marker, msg VARCHAR2)
+	IS BEGIN IF isEnabled(logimpl.ll_FATAL,m) THEN logimpl.log(m,m_name,logimpl.ll_FATAL,MessageFactory.newMessage(msg)); END IF; END;
+
+	MEMBER PROCEDURE fatal(m Marker, msg VARCHAR2, throwable GenericException)
+	IS BEGIN IF isEnabled(logimpl.ll_FATAL,m) THEN logimpl.log(m,m_name,logimpl.ll_FATAL,MessageFactory.newMessage(msg),throwable); END IF; END;  
+
+
+	MEMBER PROCEDURE fatal(msg Message)
+	IS BEGIN IF isEnabled(logimpl.ll_FATAL,NULL) THEN logimpl.log(NULL,m_name,logimpl.ll_FATAL,msg); END IF; END;
+
+	MEMBER PROCEDURE fatal(msg Message, throwable GenericException)
+	IS BEGIN IF isEnabled(logimpl.ll_FATAL,NULL) THEN logimpl.log(NULL,m_name,logimpl.ll_FATAL,msg,throwable); END IF; END;  
+
+	MEMBER PROCEDURE fatal(msg VARCHAR2)
+	IS BEGIN IF isEnabled(logimpl.ll_FATAL,NULL) THEN logimpl.log(NULL,m_name,logimpl.ll_FATAL,MessageFactory.newMessage(msg)); END IF; END;
+
+	MEMBER PROCEDURE fatal(msg VARCHAR2, throwable GenericException)
+	IS BEGIN IF isEnabled(logimpl.ll_FATAL,NULL) THEN logimpl.log(NULL,m_name,logimpl.ll_FATAL,MessageFactory.newMessage(msg),throwable); END IF; END;  
+
+--trace
+
+	MEMBER PROCEDURE trace(m Marker, msg Message)
+	IS BEGIN IF isEnabled(logimpl.ll_TRACE,m   ) THEN logimpl.log(m   ,m_name,logimpl.ll_TRACE,msg); END IF; END;
+
+	MEMBER PROCEDURE trace(m Marker, msg Message, throwable GenericException)
+	IS BEGIN IF isEnabled(logimpl.ll_TRACE,m   ) THEN logimpl.log(m   ,m_name,logimpl.ll_TRACE,msg,throwable); END IF; END;  
+
+	MEMBER PROCEDURE trace(m Marker, msg VARCHAR2)
+	IS BEGIN IF isEnabled(logimpl.ll_TRACE,m   ) THEN logimpl.log(m   ,m_name,logimpl.ll_TRACE,MessageFactory.newMessage(msg)); END IF; END;
+
+	MEMBER PROCEDURE trace(m Marker, msg VARCHAR2, throwable GenericException)
+	IS BEGIN IF isEnabled(logimpl.ll_TRACE,m   ) THEN logimpl.log(m   ,m_name,logimpl.ll_TRACE,MessageFactory.newMessage(msg),throwable); END IF; END;  
+
+
+	MEMBER PROCEDURE trace(msg Message)
+	IS BEGIN IF isEnabled(logimpl.ll_TRACE,NULL) THEN logimpl.log(NULL,m_name,logimpl.ll_TRACE,msg); END IF; END;
+
+	MEMBER PROCEDURE trace(msg Message, throwable GenericException)
+	IS BEGIN IF isEnabled(logimpl.ll_TRACE,NULL) THEN logimpl.log(NULL,m_name,logimpl.ll_TRACE,msg,throwable); END IF; END;  
+
+	MEMBER PROCEDURE trace(msg VARCHAR2)
+	IS BEGIN IF isEnabled(logimpl.ll_TRACE,NULL) THEN logimpl.log(NULL,m_name,logimpl.ll_TRACE,MessageFactory.newMessage(msg)); END IF; END;
+
+	MEMBER PROCEDURE trace(msg VARCHAR2, throwable GenericException)
+	IS BEGIN IF isEnabled(logimpl.ll_TRACE,NULL) THEN logimpl.log(NULL,m_name,logimpl.ll_TRACE,MessageFactory.newMessage(msg),throwable); END IF; END;  
+
+
+--catching
+	MEMBER PROCEDURE catching(throwable GenericException DEFAULT GenericException() )
+	IS
+	BEGIN
+		IF isEnabled(logimpl.ll_ERROR,logimpl.CATCHING_MARKER) THEN
 			logimpl.log(logimpl.CATCHING_MARKER, m_name, logimpl.ll_ERROR,MessageFactory.newMessage('catching'),throwable);
-		end if;
-	end;
-	member procedure catching(lvl LogLevel, throwable GenericException default GenericException() )
-	is
-	begin
-		if isenabled(lvl,logimpl.CATCHING_MARKER) THEN
-			logimpl.log(logimpl.CATCHING_MARKER, m_name, lvl,MessageFactory.newMessage('catching'),throwable);
-		end if;
-	end;
+		END IF;
+	END;
 
-  MEMBER PROCEDURE trace(msg VARCHAR2
-                        , arg01 VARCHAR2
-                        , arg02 VARCHAR2 DEFAULT NULL
-                        , arg03 VARCHAR2 DEFAULT NULL
-                        , arg04 VARCHAR2 DEFAULT NULL
-                        , arg05 VARCHAR2 DEFAULT NULL
-                        , arg06 VARCHAR2 DEFAULT NULL
-                        , arg07 VARCHAR2 DEFAULT NULL
-                        , arg08 VARCHAR2 DEFAULT NULL
-                        , arg09 VARCHAR2 DEFAULT NULL
-                        )
-  IS
-   prms log4_array;
-  BEGIN
-	  IF isenabled(logimpl.ll_TRACE,NULL) THEN
+	MEMBER PROCEDURE catching(lvl LogLevel, throwable GenericException DEFAULT GenericException() )
+	IS
+	BEGIN
+		IF isEnabled(lvl,logimpl.CATCHING_MARKER) THEN
+			logimpl.log(logimpl.CATCHING_MARKER, m_name, lvl,MessageFactory.newMessage('catching'),throwable);
+		END IF;
+	END;
+
+
+--parameterised stuff
+	MEMBER PROCEDURE trace(msg VARCHAR2
+						, arg01 VARCHAR2
+						, arg02 VARCHAR2 DEFAULT NULL
+						, arg03 VARCHAR2 DEFAULT NULL
+						, arg04 VARCHAR2 DEFAULT NULL
+						, arg05 VARCHAR2 DEFAULT NULL
+						, arg06 VARCHAR2 DEFAULT NULL
+						, arg07 VARCHAR2 DEFAULT NULL
+						, arg08 VARCHAR2 DEFAULT NULL
+						, arg09 VARCHAR2 DEFAULT NULL
+						)
+	IS
+	prms log4_array;
+	BEGIN
+	  IF isEnabled(logimpl.ll_TRACE,NULL) THEN
 			prms := log4_array(log4_sql_object(arg01),log4_sql_object(arg02),log4_sql_object(arg03),log4_sql_object(arg04),log4_sql_object(arg05),log4_sql_object(arg06),log4_sql_object(arg07),log4_sql_object(arg08),log4_sql_object(arg09) );
 			logimpl.LOG(NULL, m_name, logimpl.ll_TRACE,MessageFactory.newMessage(msg, prms));
-	  end if;  
-  END;
-  
+		END IF;  
+	END;
 
 
-  MEMBER PROCEDURE debug(msg VARCHAR2
-                        , arg01 VARCHAR2
-                        , arg02 VARCHAR2 DEFAULT NULL
-                        , arg03 VARCHAR2 DEFAULT NULL
-                        , arg04 VARCHAR2 DEFAULT NULL
-                        , arg05 VARCHAR2 DEFAULT NULL
-                        , arg06 VARCHAR2 DEFAULT NULL
-                        , arg07 VARCHAR2 DEFAULT NULL
-                        , arg08 VARCHAR2 DEFAULT NULL
-                        , arg09 VARCHAR2 DEFAULT NULL
-                        )
-  IS
-   prms log4_array;
-  BEGIN
-	  IF isenabled(logimpl.ll_DEBUG,NULL) THEN
-      prms := log4_array(log4_sql_object(arg01),log4_sql_object(arg02),log4_sql_object(arg03),log4_sql_object(arg04),log4_sql_object(arg05),log4_sql_object(arg06),log4_sql_object(arg07),log4_sql_object(arg08),log4_sql_object(arg09) );
+
+	MEMBER PROCEDURE debug(msg VARCHAR2
+						, arg01 VARCHAR2
+						, arg02 VARCHAR2 DEFAULT NULL
+						, arg03 VARCHAR2 DEFAULT NULL
+						, arg04 VARCHAR2 DEFAULT NULL
+						, arg05 VARCHAR2 DEFAULT NULL
+						, arg06 VARCHAR2 DEFAULT NULL
+						, arg07 VARCHAR2 DEFAULT NULL
+						, arg08 VARCHAR2 DEFAULT NULL
+						, arg09 VARCHAR2 DEFAULT NULL
+						)
+	IS
+	prms log4_array;
+	BEGIN
+	  IF isEnabled(logimpl.ll_DEBUG,NULL) THEN
+	  prms := log4_array(log4_sql_object(arg01),log4_sql_object(arg02),log4_sql_object(arg03),log4_sql_object(arg04),log4_sql_object(arg05),log4_sql_object(arg06),log4_sql_object(arg07),log4_sql_object(arg08),log4_sql_object(arg09) );
 			logimpl.LOG(NULL, m_name, logimpl.ll_DEBUG,MessageFactory.newMessage(msg, prms));
 	  end if;  
-  END;
+	END;
 
- MEMBER PROCEDURE  info(msg VARCHAR2
-                        , arg01 VARCHAR2
-                        , arg02 VARCHAR2 DEFAULT NULL
-                        , arg03 VARCHAR2 DEFAULT NULL
-                        , arg04 VARCHAR2 DEFAULT NULL
-                        , arg05 VARCHAR2 DEFAULT NULL
-                        , arg06 VARCHAR2 DEFAULT NULL
-                        , arg07 VARCHAR2 DEFAULT NULL
-                        , arg08 VARCHAR2 DEFAULT NULL
-                        , arg09 VARCHAR2 DEFAULT NULL
-                        )
-  IS
-   prms log4_array;
-  BEGIN
-	  IF isenabled(logimpl.ll_INFO,NULL) THEN
-      prms := log4_array(log4_sql_object(arg01),log4_sql_object(arg02),log4_sql_object(arg03),log4_sql_object(arg04),log4_sql_object(arg05),log4_sql_object(arg06),log4_sql_object(arg07),log4_sql_object(arg08),log4_sql_object(arg09) );
+	MEMBER PROCEDURE  info(msg VARCHAR2
+						, arg01 VARCHAR2
+						, arg02 VARCHAR2 DEFAULT NULL
+						, arg03 VARCHAR2 DEFAULT NULL
+						, arg04 VARCHAR2 DEFAULT NULL
+						, arg05 VARCHAR2 DEFAULT NULL
+						, arg06 VARCHAR2 DEFAULT NULL
+						, arg07 VARCHAR2 DEFAULT NULL
+						, arg08 VARCHAR2 DEFAULT NULL
+						, arg09 VARCHAR2 DEFAULT NULL
+						)
+	IS
+	prms log4_array;
+	BEGIN
+	  IF isEnabled(logimpl.ll_INFO,NULL) THEN
+	  prms := log4_array(log4_sql_object(arg01),log4_sql_object(arg02),log4_sql_object(arg03),log4_sql_object(arg04),log4_sql_object(arg05),log4_sql_object(arg06),log4_sql_object(arg07),log4_sql_object(arg08),log4_sql_object(arg09) );
 			logimpl.LOG(NULL, m_name, logimpl.ll_INFO,MessageFactory.newMessage(msg, prms));
 	  end if;  
-  END;
+	END;
 
- MEMBER PROCEDURE  warn(msg VARCHAR2
-                        , arg01 VARCHAR2
-                        , arg02 VARCHAR2 DEFAULT NULL
-                        , arg03 VARCHAR2 DEFAULT NULL
-                        , arg04 VARCHAR2 DEFAULT NULL
-                        , arg05 VARCHAR2 DEFAULT NULL
-                        , arg06 VARCHAR2 DEFAULT NULL
-                        , arg07 VARCHAR2 DEFAULT NULL
-                        , arg08 VARCHAR2 DEFAULT NULL
-                        , arg09 VARCHAR2 DEFAULT NULL
-                        )
-  IS
-   prms log4_array;
-  BEGIN
-	  IF isenabled(logimpl.ll_WARN,NULL) THEN
-      prms := log4_array(log4_sql_object(arg01),log4_sql_object(arg02),log4_sql_object(arg03),log4_sql_object(arg04),log4_sql_object(arg05),log4_sql_object(arg06),log4_sql_object(arg07),log4_sql_object(arg08),log4_sql_object(arg09) );
+	MEMBER PROCEDURE  warn(msg VARCHAR2
+						, arg01 VARCHAR2
+						, arg02 VARCHAR2 DEFAULT NULL
+						, arg03 VARCHAR2 DEFAULT NULL
+						, arg04 VARCHAR2 DEFAULT NULL
+						, arg05 VARCHAR2 DEFAULT NULL
+						, arg06 VARCHAR2 DEFAULT NULL
+						, arg07 VARCHAR2 DEFAULT NULL
+						, arg08 VARCHAR2 DEFAULT NULL
+						, arg09 VARCHAR2 DEFAULT NULL
+						)
+	IS
+	prms log4_array;
+	BEGIN
+	  IF isEnabled(logimpl.ll_WARN,NULL) THEN
+	  prms := log4_array(log4_sql_object(arg01),log4_sql_object(arg02),log4_sql_object(arg03),log4_sql_object(arg04),log4_sql_object(arg05),log4_sql_object(arg06),log4_sql_object(arg07),log4_sql_object(arg08),log4_sql_object(arg09) );
 			logimpl.LOG(NULL, m_name, logimpl.ll_WARN,MessageFactory.newMessage(msg, prms));
 	  end if;  
-  END;
+	END;
 
-  
- MEMBER PROCEDURE error(msg VARCHAR2
-                        , arg01 VARCHAR2
-                        , arg02 VARCHAR2 DEFAULT NULL
-                        , arg03 VARCHAR2 DEFAULT NULL
-                        , arg04 VARCHAR2 DEFAULT NULL
-                        , arg05 VARCHAR2 DEFAULT NULL
-                        , arg06 VARCHAR2 DEFAULT NULL
-                        , arg07 VARCHAR2 DEFAULT NULL
-                        , arg08 VARCHAR2 DEFAULT NULL
-                        , arg09 VARCHAR2 DEFAULT NULL
-                        )
-  IS
-   prms log4_array;
-  BEGIN
-	  IF isenabled(logimpl.ll_ERROR,NULL) THEN
-      prms := log4_array(log4_sql_object(arg01),log4_sql_object(arg02),log4_sql_object(arg03),log4_sql_object(arg04),log4_sql_object(arg05),log4_sql_object(arg06),log4_sql_object(arg07),log4_sql_object(arg08),log4_sql_object(arg09) );
+
+	MEMBER PROCEDURE error(msg VARCHAR2
+						, arg01 VARCHAR2
+						, arg02 VARCHAR2 DEFAULT NULL
+						, arg03 VARCHAR2 DEFAULT NULL
+						, arg04 VARCHAR2 DEFAULT NULL
+						, arg05 VARCHAR2 DEFAULT NULL
+						, arg06 VARCHAR2 DEFAULT NULL
+						, arg07 VARCHAR2 DEFAULT NULL
+						, arg08 VARCHAR2 DEFAULT NULL
+						, arg09 VARCHAR2 DEFAULT NULL
+						)
+	IS
+	prms log4_array;
+	BEGIN
+	  IF isEnabled(logimpl.ll_ERROR,NULL) THEN
+	  prms := log4_array(log4_sql_object(arg01),log4_sql_object(arg02),log4_sql_object(arg03),log4_sql_object(arg04),log4_sql_object(arg05),log4_sql_object(arg06),log4_sql_object(arg07),log4_sql_object(arg08),log4_sql_object(arg09) );
 			logimpl.LOG(NULL, m_name, logimpl.ll_ERROR,MessageFactory.newMessage(msg, prms));
 	  end if;  
-  END;
+	END;
 
 
- MEMBER PROCEDURE fatal(msg VARCHAR2
-                        , arg01 VARCHAR2
-                        , arg02 VARCHAR2 DEFAULT NULL
-                        , arg03 VARCHAR2 DEFAULT NULL
-                        , arg04 VARCHAR2 DEFAULT NULL
-                        , arg05 VARCHAR2 DEFAULT NULL
-                        , arg06 VARCHAR2 DEFAULT NULL
-                        , arg07 VARCHAR2 DEFAULT NULL
-                        , arg08 VARCHAR2 DEFAULT NULL
-                        , arg09 VARCHAR2 DEFAULT NULL
-                        )
-  IS
-   prms log4_array;
-  BEGIN
-	  IF isenabled(logimpl.ll_FATAL,NULL) THEN
-      prms := log4_array(log4_sql_object(arg01),log4_sql_object(arg02),log4_sql_object(arg03),log4_sql_object(arg04),log4_sql_object(arg05),log4_sql_object(arg06),log4_sql_object(arg07),log4_sql_object(arg08),log4_sql_object(arg09) );
+	MEMBER PROCEDURE fatal(msg VARCHAR2
+						, arg01 VARCHAR2
+						, arg02 VARCHAR2 DEFAULT NULL
+						, arg03 VARCHAR2 DEFAULT NULL
+						, arg04 VARCHAR2 DEFAULT NULL
+						, arg05 VARCHAR2 DEFAULT NULL
+						, arg06 VARCHAR2 DEFAULT NULL
+						, arg07 VARCHAR2 DEFAULT NULL
+						, arg08 VARCHAR2 DEFAULT NULL
+						, arg09 VARCHAR2 DEFAULT NULL
+						)
+	IS
+	prms log4_array;
+	BEGIN
+	  IF isEnabled(logimpl.ll_FATAL,NULL) THEN
+	  prms := log4_array(log4_sql_object(arg01),log4_sql_object(arg02),log4_sql_object(arg03),log4_sql_object(arg04),log4_sql_object(arg05),log4_sql_object(arg06),log4_sql_object(arg07),log4_sql_object(arg08),log4_sql_object(arg09) );
 			logimpl.LOG(NULL, m_name, logimpl.ll_FATAL,MessageFactory.newMessage(msg, prms));
 	  end if;  
-  END;
+	END;
+
+	MEMBER PROCEDURE entry(
+						 arg01 VARCHAR2
+						, arg02 VARCHAR2 DEFAULT NULL
+						, arg03 VARCHAR2 DEFAULT NULL
+						, arg04 VARCHAR2 DEFAULT NULL
+						, arg05 VARCHAR2 DEFAULT NULL
+						, arg06 VARCHAR2 DEFAULT NULL
+						, arg07 VARCHAR2 DEFAULT NULL
+						, arg08 VARCHAR2 DEFAULT NULL
+						, arg09 VARCHAR2 DEFAULT NULL
+						)
+	IS
+	--prms log4_array;
+	BEGIN
+null;
+	  --IF isEnabled(logimpl.ll_FATAL,NULL) THEN
+	  --prms := log4_array(log4_sql_object(arg01),log4_sql_object(arg02),log4_sql_object(arg03),log4_sql_object(arg04),log4_sql_object(arg05),log4_sql_object(arg06),log4_sql_object(arg07),log4_sql_object(arg08),log4_sql_object(arg09) );
+			--logimpl.LOG(NULL, m_name, logimpl.ll_FATAL,MessageFactory.newMessage(msg, prms));
+	  --end if;  
+	END;
+
+	MEMBER PROCEDURE printf(lvl LogLevel, mkr Marker, format VARCHAR2 , arg01 VARCHAR2 , arg02 VARCHAR2 DEFAULT NULL , arg03 VARCHAR2 DEFAULT NULL , arg04 VARCHAR2 DEFAULT NULL , arg05 VARCHAR2 DEFAULT NULL , arg06 VARCHAR2 DEFAULT NULL , arg07 VARCHAR2 DEFAULT NULL , arg08 VARCHAR2 DEFAULT NULL , arg09 VARCHAR2 DEFAULT NULL) 
+	IS
+	prms log4_array;
+	BEGIN
+	  IF isEnabled(lvl,mkr) THEN
+		  prms := log4_array(log4_sql_object(arg01),log4_sql_object(arg02),log4_sql_object(arg03),log4_sql_object(arg04),log4_sql_object(arg05),log4_sql_object(arg06),log4_sql_object(arg07),log4_sql_object(arg08),log4_sql_object(arg09) );
+		--	logimpl.LOG(NULL, m_name, logimpl.ll_FATAL,MessageFactory.newMessage(msg, prms));
+	  end if;  
+	END;
+	MEMBER PROCEDURE printf(lvl LogLevel            , format VARCHAR2 , arg01 VARCHAR2 , arg02 VARCHAR2 DEFAULT NULL , arg03 VARCHAR2 DEFAULT NULL , arg04 VARCHAR2 DEFAULT NULL , arg05 VARCHAR2 DEFAULT NULL , arg06 VARCHAR2 DEFAULT NULL , arg07 VARCHAR2 DEFAULT NULL , arg08 VARCHAR2 DEFAULT NULL , arg09 VARCHAR2 DEFAULT NULL) 
+	IS
+	prms log4_array;
+	BEGIN
+	  IF isEnabled(lvl,NULL) THEN
+		  prms := log4_array(log4_sql_object(arg01),log4_sql_object(arg02),log4_sql_object(arg03),log4_sql_object(arg04),log4_sql_object(arg05),log4_sql_object(arg06),log4_sql_object(arg07),log4_sql_object(arg08),log4_sql_object(arg09) );
+		--logimpl.LOG(NULL, m_name, logimpl.ll_FATAL,MessageFactory.newMessage(msg, prms));
+	  end if;  
+	END;
 
 
-end;
+
+END;
 /
 show errors
--- vim: ts=4 sw=4
+-- vim: ts=4 sw=4 filetype=sqloracle
