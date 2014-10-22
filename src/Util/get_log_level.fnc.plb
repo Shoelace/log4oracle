@@ -1,6 +1,6 @@
-prompt CREATE FUNCTION get_log_level
+Prompt CREATE FUNCTION get_log_level
 
-create or replace FUNCTION get_log_level
+CREATE OR REPLACE fUNCTION get_log_level
 (
     pFQCN IN VARCHAR2
 ) 
@@ -41,13 +41,9 @@ IS
 BEGIN
 	--DBMS_OUTPUT.PUT_LINE('looking for:'||pFQCN);
 
-	open c_ll;
-	fetch c_ll INTO rLog_Level;
-	close c_ll;
-
-	--SELECT * 
-	--FROM log_levels
-	--WHERE logger_name = pFQCN;
+	OPEN c_ll;
+	FETCH c_ll INTO rLog_Level;
+	CLOSE c_ll;
 
 	--DBMS_OUTPUT.PUT_LINE('got level:'||pFQCN);
 	RETURN rLog_level;

@@ -1,4 +1,4 @@
---prompt CREATE OR REPLACE PACKAGE BODY ThreadContext 
+Prompt CREATE OR REPLACE PACKAGE BODY ThreadContext 
 create or replace 
 package body threadcontext as
 
@@ -92,15 +92,15 @@ BEGIN
 
 put('instance'     , SYS_CONTEXT('USERENV', 'INSTANCE') );
 put('instance_name', SYS_CONTEXT('USERENV', 'INSTANCE_NAME'));
+put('db_domain'    , SYS_CONTEXT('USERENV', 'DB_DOMAIN'));
+put('db_name'      , SYS_CONTEXT('USERENV', 'DB_NAME'));
 
 $if (dbms_db_version.version >=11  and dbms_db_version.release >=2) OR (dbms_db_version.version >= 12 ) $then
 put('db_role'      , SYS_CONTEXT('USERENV', 'DATABASE_ROLE'));
 $end
 
-put('db_domain'    , SYS_CONTEXT('USERENV', 'DB_DOMAIN'));
-put('db_name'      , SYS_CONTEXT('USERENV', 'DB_NAME'));
-put('server_host'  , SYS_CONTEXT('USERENV', 'SERVER_HOST'));
-put('service_name' , SYS_CONTEXT('USERENV', 'SERVICE_NAME'));
+put('server_host'  , SYS_CONTEXT ('USERENV', 'SERVER_HOST'));
+put('service_name' , SYS_CONTEXT ('USERENV', 'SERVICE_NAME'));
 
 put('client_ip'    , SYS_CONTEXT('USERENV', 'IP_ADDRESS'));
 put('session_id'   , SYS_CONTEXT('USERENV', 'SESSIONID'));

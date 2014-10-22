@@ -1,4 +1,4 @@
---prompt create or replace package body LogImpl 
+Prompt create or replace package body LogImpl 
 create or replace 
 package body LogImpl as
 
