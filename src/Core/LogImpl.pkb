@@ -1,4 +1,4 @@
---prompt create or replace package body LogImpl 
+Prompt create or replace package body LogImpl 
 create or replace 
 package body LogImpl as
 
@@ -56,10 +56,12 @@ IF k_appenders.count > 0 THEN
 
   <<debug_web_variables>>
    BEGIN
+      IF OWA.num_cgi_vars IS NOT NULL THEN 
       FOR i IN 1 .. OWA.num_cgi_vars
       LOOP
        ctxmap.put(OWA.cgi_var_name (i),OWA.cgi_var_val (i));
       END LOOP;
+      END IF;
    EXCEPTION
       WHEN VALUE_ERROR
       THEN
@@ -68,14 +70,15 @@ IF k_appenders.count > 0 THEN
     
 
    le := Log4oraclelogEvent('test logger',marker,fqcn,lvl,m,t, ctxmap ,THREADCONTEXT.CLONESTACK(),'mythreadname', StackTraceElement(2), SYSTIMESTAMP);
+
+	FOR i IN k_appenders.FIRST .. k_appenders.LAST LOOP
+	 k_appenders(i).APPEND(le);
+
+	end loop;
 ELSE
    return; --no appenders
 END IF;
 
-FOR i IN k_appenders.FIRST .. k_appenders.LAST LOOP
- k_appenders(i).APPEND(le);
-
-end loop;
 
 	END;
 
