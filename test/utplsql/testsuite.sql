@@ -1,3 +1,4 @@
+set serveroutput on size unlimited
 BEGIN
 utconfig.showfailuresonly (true);
 utConfig.autocompile(false);   
@@ -14,10 +15,15 @@ and us.name = 'LOG4'
 ;
 */
 
-for x in (select distinct object_name , row_number() over (order by object_name) rn from user_objects where object_name like 'UT#_%' escape '#' and object_type = 'PACKAGE' order by object_name
+FOR x IN (
+SELECT DISTINCT object_name , row_number() OVER (ORDER BY object_name) rn 
+FROM user_objects 
+WHERE object_name LIKE UPPER(utConfig.prefix)||'%' ESCAPE '#' AND object_type = 'PACKAGE' 
+order by object_name
 ) LOOP
  dbms_output.put_line('adding to suite:'|| substr(x.object_name,4));
-   utPackage.add( 'log4', substr(x.object_name,4), seq_in => x.rn);
+   utPackage.ADD( 'log4', substr(x.object_name,4), seq_in => x.rn);
+  --dbms_output.put_line('exec utPLSQL.test ('''||substr(x.object_name,4)||''' , recompile_in => FALSE, suite_in => ''log4'')   ;' );
 end loop;
   
   
@@ -26,4 +32,10 @@ END;
 /
 column ut_suite_name format a30 heading NAME
 
-select id,name ut_suite_name,executions,failures,last_status from ut_suite;
+
+SELECT id,owner,name ut_suite_name, description, executions, failures, last_status, last_start
+FROM ut_package
+WHERE suite_id IS NOT NULL
+order by suite_id,seq;
+
+SELECT ID,NAME ut_suite_name,executions,failures,last_status FROM ut_suite;

@@ -36,7 +36,8 @@ AS
 	FUNCTION getMarker(name VARCHAR2, parent IN OUT NOCOPY Marker) RETURN Marker
 	IS
 	BEGIN
-		k_log.entry();
+		k_log.ENTRY();
+    IF PARENT IS NULL THEN RAISE NO_DATA_FOUND; END IF;
 k_log.trace('getMarker(name,parent)'||name||','||parent.getname());
 	 if not m_all_markers.exists(name) then
             --LogLog.debug('creating Marker:'||name);

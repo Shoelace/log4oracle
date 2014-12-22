@@ -1,4 +1,4 @@
---prompt create or replace TYPE BODY TableAppender 
+prompt create or replace TYPE BODY TableAppender 
 
 create or replace
 TYPE BODY TableAppender 
@@ -37,6 +37,7 @@ AS
           logmessage,
           loguser,
           logid,
+          --loggroup,
           logthrowable ,
           logstacktrace ,
           logcallstack ,
@@ -47,12 +48,13 @@ AS
           ll.m_name,
           event.getMarker().toString(),
           event.getSource().toString(),
-          msg ,
+          substr(msg,1,4000) ,
         nvl2(cm, cm.get('os_user'), NULL),
         nvl2(cm, to_number(cm.get('LOG_ID')), NULL),
-        nvl2(t, t.errorstack, NULL ) ,
-        nvl2(t, t.errorbacktrace, NULL ) ,
-        nvl2(t, t.callstack, NULL ) ,
+        --nvl2(cm, cm.get('LOGGROUP'), NULL),
+        nvl2(t, substr(t.errorstack,1,4000), NULL ) ,
+        nvl2(t, substr(t.errorbacktrace,1,4000), NULL ) ,
+        nvl2(t, substr(t.callstack,1,4000), NULL ) ,
 	nvl2(cm, cm.tostring(), NULL)
     ); 
     
