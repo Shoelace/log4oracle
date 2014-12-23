@@ -92,6 +92,10 @@ create type     SIMPLEMESSAGE;
 /
 create type LOGGER;
 /
+create type   ExtendedLOGGER;
+/
+create type     AbstractLogger;
+/
 create type PATTERNCONVERTER;
 /
 create type   LOGEVENTPATTERNCONVERTER;
@@ -135,7 +139,7 @@ prompt &line1
 prompt Collections
 prompt &line1
 --collections
---prompt create type THREADCONTEXTCONTEXTMAPINDEX;
+Prompt create type THREADCONTEXTCONTEXTMAPINDEX;
 --create type THREADCONTEXTCONTEXTMAPINDEX;
 --/
 --create type LOG4_ARRAY;
@@ -153,91 +157,92 @@ prompt Generic Stuff
 prompt &line1
 
 
-@@Util/Log4Util.sql
-@@Util/UtlfileURITYPE.sql
+@@log4/Util/Log4Util.sql
+@@log4/Util/UtlfileURITYPE.sql
 
 prompt &line1
 prompt Object Types
 prompt &line1
 
-@@Core/ThreadContextStack.sql
-@@Core/ThreadContextContextStack.sql
+@@log4/Spi/ThreadContextStack.sql
+@@log4/Spi/ThreadContextContextStack.sql
 
-@@Core/ThreadContextMap.sql
-@@Util/StackTraceElement.type.pls
+@@log4/Spi/ThreadContextMap.sql
+@@log4/Util/StackTraceElement.type.pls
 
-@@Util/log4_object.sql
+@@log4/Util/log4_object.sql
 
-@@Util/GenericException.type.pls
-@@Core/Marker.type.pls
-@@Core/MarkerImpl.type.pls
+@@log4/Util/GenericException.type.pls
+@@log4/Marker.type.pls
+@@log4/Core/MarkerImpl.type.pls
 
-@@Message/Message.type.pls
-@@Message/SimpleMessage.type.pls
-@@Message/ObjectMessage.type.pls
-@@Message/ParameterizedMessage.type.pls
-@@Core/LogLevel.type.pls
+@@log4/Message/Message.type.pls
+@@log4/Message/SimpleMessage.type.pls
+@@log4/Message/ObjectMessage.type.pls
+@@log4/Message/ParameterizedMessage.type.pls
+@@log4/Core/LogLevel.type.pls
 
-@@Core/LogEvent.type.pls
-@@Layout/Layout.pls
+@@log4/Core/LogEvent.type.pls
+@@log4/Core/Layout/Layout.pls
 
 
-@@Core/Log4oracleLogEvent.type.pls
+@@log4/Core/Log4oracleLogEvent.type.pls
 
 prompt &line1
 prompt Converters
 prompt &line1
 
-@@Core/Pattern/PatternConverter.pls
-@@Core/Pattern/FormattingInfo.sql
-@@Core/Pattern/LogEventPatternConverter.pls
-@@Core/Pattern/PatternFormatter.pls
-@@Core/Pattern/PatternConverterArray.pls
+@@log4/Core/Pattern/PatternConverter.pls
+@@log4/Core/Pattern/FormattingInfo.sql
+@@log4/Core/Pattern/LogEventPatternConverter.pls
+@@log4/Core/Pattern/PatternFormatter.pls
+@@log4/Core/Pattern/PatternConverterArray.pls
 
-@@Core/Pattern/DatePatternConverter.pls
-@@Core/Pattern/FullLocationPatternConverter.pls
-@@Core/Pattern/LevelPatternConverter.pls
-@@Core/Pattern/LineSeparatorPatternConverter.pls
-@@Core/Pattern/LiteralPatternConverter.pls
-@@Core/Pattern/LoggerPatternConverter.pls
-@@Core/Pattern/MarkerPatternConverter.pls
-@@Core/Pattern/MDCPatternConverter.pls
-@@Core/Pattern/MessagePatternConverter.pls
-@@Core/Pattern/NDCPatternConverter.pls
-@@Core/Pattern/ThrowablePatternConverter.pls
+@@log4/Core/Pattern/DatePatternConverter.pls
+@@log4/Core/Pattern/FullLocationPatternConverter.pls
+@@log4/Core/Pattern/LevelPatternConverter.pls
+@@log4/Core/Pattern/LineSeparatorPatternConverter.pls
+@@log4/Core/Pattern/LiteralPatternConverter.pls
+@@log4/Core/Pattern/LoggerPatternConverter.pls
+@@log4/Core/Pattern/MarkerPatternConverter.pls
+@@log4/Core/Pattern/MDCPatternConverter.pls
+@@log4/Core/Pattern/MessagePatternConverter.pls
+@@log4/Core/Pattern/NDCPatternConverter.pls
+@@log4/Core/Pattern/ThrowablePatternConverter.pls
 
 prompt &line1
 prompt parser
 prompt &line1
 
-@@Core/Pattern/PatternParser.pls
-@@Core/Pattern/PatternParserBody.pls
+@@log4/Core/Pattern/PatternParser.pls
+@@log4/Core/Pattern/PatternParserBody.pls
 
-@@Message/MessageFactory.pks
+@@log4/Message/MessageFactory.pks
 --@@Message/ObjectMessage.type.pls
 --@@Message/SimpleMessage.type.pls
 --@@Message/ParameterizedMessage.type.pls
 
-@@Layout/PatternLayout.pls
-@@Layout/SimpleLayout.pls
+@@log4/Core/Layout/PatternLayout.pls
+@@log4/Core/Layout/SimpleLayout.pls
 
 
-@@Util/UTL_CALL_STACK.pks
+@@log4/Util/UTL_CALL_STACK.pks
 
 
 --logger must be last
-@@Core/Logger.type.pls
-@@Core/loggerimpl.type.pls
+@@log4/Logger.type.pls
+@@log4/spi/ExtendedLogger.sql
+@@log4/spi/AbstractLogger.type.pls
 
-@@Core/Result.type.pls
-@@Core/Filter.type.pls
-@@Core/ThresholdFilter.type.pls
-@@Core/CompositeFilter.type.pls
+@@log4/Core/Result.type.pls
+@@log4/Core/Filter/Filter.type.pls
+@@log4/Core/Filter/ThresholdFilter.type.pls
+@@log4/Core/Filter/CompositeFilter.type.pls
 
-@@Appender/Appender.type.pls
+@@log4/Core/Appender/Appender.type.pls
 
-@@Config/Configuration.sql
-@@Core/LoggerContext.type.pls
+@@log4/Core/Config/Configuration.sql
+@@log4/Spi/LoggerContext.type.pls
 
 --
 
@@ -245,74 +250,74 @@ prompt &line1
 prompt Tables
 prompt &line1
 
-@@Config/log_levels.sql
+@@log4/Core/Config/log_levels.sql
 
 prompt &line1
 prompt Appenders
 prompt &line1
 
-@@Appender/DBMSOutputAppender.type.pls
+@@log4/Core/Appender/DBMSOutputAppender.type.pls
 --@@Appender/SMTPAppender.type.pls
 
-@@Appender/log_table_plain.sql
-@@Appender/TableAppender.type.pls
-@@Appender/TableAppender.type.plb
+@@log4/Core/Appender/log_table_plain.sql
+@@log4/Core/Appender/TableAppender.type.pls
+@@log4/Core/Appender/TableAppender.type.plb
 
 prompt &line1
 prompt Package Specs
 prompt &line1
 
-@@Core/LogImpl.pks
-@@Core/LogManager.pks
-@@Core/MarkerManager.pks
-@@Core/ThreadContext.pks
+@@log4/Core/LogImpl.pks
+@@log4/Core/LogManager.pks
+@@log4/Core/MarkerManager.pks
+@@log4/Spi/ThreadContext.pks
 
-@@Util/get_log_level.fnc.plb
+@@log4/Util/get_log_level.fnc.plb
 
 prompt &line1
 prompt Object Bodies
 prompt &line1
-@@Core/LoggerContext.type.plb
+@@log4/Spi/LoggerContext.type.plb
 
-@@Message/SimpleMessage.type.plb
-@@Message/ObjectMessage.type.plb
-@@Message/ParameterizedMessage.type.plb
-@@Core/Log4oracleLogEvent.type.plb
-@@Util/StackTraceElement.type.plb
+@@log4/Message/SimpleMessage.type.plb
+@@log4/Message/ObjectMessage.type.plb
+@@log4/Message/ParameterizedMessage.type.plb
+@@log4/Core/Log4oracleLogEvent.type.plb
+@@log4/Util/StackTraceElement.type.plb
 
-@@Core/Logger.type.plb
-@@Core/LogLevel.type.plb
+@@log4/Core/LogLevel.type.plb
+@@log4/Spi/AbstractLogger.type.plb
 
-@@Core/LogManager.pkb
-@@Core/MarkerManager.pkb
-@@Core/Marker.type.plb
-@@Core/MarkerImpl.type.plb
+@@log4/LogManager.pkb
+@@log4/MarkerManager.pkb
+@@log4/Marker.type.plb
+@@log4/Core/MarkerImpl.type.plb
 
 
-@@Core/LogImpl.pkb
-@@Core/ThreadContext.pkb
+@@log4/Core/Logger_Impl.pkb
+@@log4/Spi/ThreadContext.pkb
 
-@@Appender/Appender.type.plb
+@@log4/Core/Appender/Appender.type.plb
 
-@@Layout/LayoutBody.pls
-@@Layout/PatternLayoutBody.pls
-@@Layout/SimpleLayoutBody.pls
+@@log4/Core/Layout/LayoutBody.pls
+@@log4/Core/Layout/PatternLayoutBody.pls
+@@log4/Core/Layout/SimpleLayoutBody.pls
 
-@@Util/GenericException.type.plb
+@@log4/Util/GenericException.type.plb
 
 prompt &line1
 prompt package Bodies
 prompt &line1
 
-@@Util/UTL_CALL_STACK.pkb
+@@log4/Util/UTL_CALL_STACK.pkb
 
 
-@@Message/MessageFactory.pkb
+@@log4/Message/MessageFactory.pkb
 
-@@Util/Log4UtilBody.sql
+@@log4/Util/Log4UtilBody.sql
 
 --other stuff
-@@Appender/log_table_trim.prc
+@@log4/Core/Appender/log_table_trim.prc
 
 begin
 $IF dbms_db_version.ver_le_10 $THEN
