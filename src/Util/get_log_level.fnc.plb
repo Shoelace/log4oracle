@@ -30,7 +30,7 @@ IS
 	cursor c_ll IS
 		WITH lvls AS (	SELECT LEVEL l, pFQCN  logname
 				FROM dual
-				CONNECT BY LEVEL <= regexp_count pFQCN '\.', 1) + 1)
+				CONNECT BY LEVEL <= (regexp_count (pFQCN , '\.', 1) + 1))
 		SELECT *
 		FROM log_levels
 		WHERE logger_name IN ( SELECT substr(logname,1,instr(logname||'.','.',1,l)-1)  FROM lvls ) 
