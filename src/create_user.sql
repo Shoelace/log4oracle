@@ -2,6 +2,7 @@ drop user log4 cascade;
 CREATE USER log4 IDENTIFIED BY log4;
 GRANT CONNECT, RESOURCE TO log4;
 GRANT UNLIMITED TABLESPACE TO log4;
+alter user log4 enable editions;
 
 
 grant create procedure to log4;

@@ -33,6 +33,7 @@ end;
 
 BEGIN
 --  dolog;
+ThreadContext.put('LOGGROUP','TestGroup');
   mydolog;
 exception
 when others then

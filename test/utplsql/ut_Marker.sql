@@ -47,6 +47,8 @@ AS
       
       utAssert.throws('missing parent', 'declare m Marker; begin m :=  MarkerManager.getMarker(''PARENT'',''''); end', 'NO_DATA_FOUND');
 
+      utAssert.throws('missing parent', 'declare m Marker; m2 marker; begin m :=  MarkerManager.getMarker(''PARENT'',m2); end', 'NO_DATA_FOUND');
+
       m3 := MarkerManager.getMarker('CHILD',m2);
      
       utAssert.this('child instance of grandparent', m3.isinstanceof(m) );

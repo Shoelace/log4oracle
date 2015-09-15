@@ -1,6 +1,6 @@
-Prompt create or replace package body LogImpl 
+Prompt create or replace package body Logger_impl 
 create or replace 
-package body LogImpl as
+package body Logger_impl as
 
 TYPE appender_table IS TABLE OF appender;
 
@@ -119,6 +119,6 @@ k_appenders(k_appenders.LAST) := TableAppender('tableoutput',NULL, NULL, FALSE);
 --k_appenders(k_appenders.LAST) := SMTPAppender('SMTPoutput',ThresholdFilter(LogLevel.ERROR,null,null), k_layout, FALSE);
 
 
-END;
+END Logger_impl;
 /
 show errors

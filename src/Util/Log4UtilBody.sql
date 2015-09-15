@@ -86,6 +86,5 @@ BEGIN
   END LOOP;
 END who_called_me;
 
-
 end Log4Util;
 /

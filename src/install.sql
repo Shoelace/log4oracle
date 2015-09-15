@@ -234,7 +234,8 @@ prompt &line1
 @@Appender/DBMSOutputAppender.type.pls
 --@@Appender/SMTPAppender.type.pls
 
-@@Appender/log_table_plain.sql
+--@@Appender/log_table_plain.sql
+@@Appender/log_table_edition.sql
 @@Appender/TableAppender.type.pls
 @@Appender/TableAppender.type.plb
 
@@ -242,7 +243,7 @@ prompt &line1
 prompt Package Specs
 prompt &line1
 
-@@Core/LogImpl.pks
+@@Core/Logger_Impl.pks
 @@Core/LogManager.pks
 @@Core/MarkerManager.pks
 @@Core/ThreadContext.pks
@@ -265,7 +266,7 @@ prompt &line1
 @@Core/LogManager.pkb
 @@Core/MarkerManager.pkb
 @@Core/Marker.type.plb
-@@Core/LogImpl.pkb
+@@Core/Logger_Impl.pkb
 @@Core/ThreadContext.pkb
 
 @@Appender/Appender.type.plb
@@ -286,6 +287,9 @@ prompt &line1
 @@Message/MessageFactory.pkb
 
 @@Util/Log4UtilBody.sql
+
+@@Util/Logtable_util.sql
+@@Util/Logtable_utilBody.sql
 
 -- @@grants.sql
 
