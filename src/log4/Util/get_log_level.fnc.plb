@@ -3,10 +3,10 @@ Prompt CREATE FUNCTION get_log_level
 CREATE OR REPLACE fUNCTION log4.get_log_level
 (
     pFQCN IN VARCHAR2
-) 
+)
 RETURN log_levels%rowtype
 AUTHID DEFINER
-RESULT_CACHE 
+RESULT_CACHE
 IS
 
 /************************************************************************
@@ -30,10 +30,10 @@ IS
 	cursor c_ll IS
 		WITH lvls AS (	SELECT LEVEL l, pFQCN  logname
 				FROM dual
-				CONNECT BY LEVEL <= regexp_count( pFQCN, '\.', 1) + 1)
+				CONNECT BY LEVEL <= (regexp_count (pFQCN , '\.', 1) + 1))
 		SELECT *
 		FROM log_levels
-		WHERE logger_name IN ( SELECT substr(logname,1,instr(logname||'.','.',1,l)-1)  FROM lvls ) 
+		WHERE logger_name IN ( SELECT substr(logname,1,instr(logname||'.','.',1,l)-1)  FROM lvls )
 		   OR logger_name = LogManager.ROOT_LOGGER_NAME
 		ORDER BY LENGTH(logger_name) DESC
 		;
@@ -47,12 +47,12 @@ BEGIN
 
 	--DBMS_OUTPUT.PUT_LINE('got level:'||pFQCN);
 	RETURN rLog_level;
-EXCEPTION 
+EXCEPTION
 	WHEN no_data_found THEN
 	--DBMS_OUTPUT.PUT_LINE('got NO level');
 		RETURN rLog_level;
-	WHEN others THEN 
-		raise;      
+	WHEN others THEN
+		raise;
 END get_log_level;
 /
 show errors
