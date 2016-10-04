@@ -111,6 +111,38 @@ getparent
 show errors
 
 
+create or replace
+package LogManager
+as
+	function GetLogger return Logger;
+	function GetLogger(name varchar2) return Logger;
+	function GETCLASSNAME(DEPTH number) return varchar2;
+
+
+	ll_TRACE VARCHAR2(6) := 'TRACE';
+	ll_DEBUG VARCHAR2(6) := 'DEBUG';
+	ll_INFO VARCHAR2(6) := 'INFO';
+	ll_WARN VARCHAR2(6) := 'WARN';
+	ll_ERROR VARCHAR2(6) := 'ERROR';
+	ll_FATAL VARCHAR2(6) := 'FATAL';
+	ll_ALL VARCHAR2(6) := 'ALL';
+
+	ll_TRACE_enabled BOOLEAN := TRUE;
+	ll_DEBUG_enabled BOOLEAN := TRUE;
+	ll_INFO_enabled BOOLEAN := TRUE;
+	ll_WARN_enabled BOOLEAN := TRUE;
+	ll_ERROR_enabled BOOLEAN := TRUE;
+	ll_FATAL_enabled BOOLEAN := TRUE;
+
+	procedure log(lvl varchar2, marker varchar2, msg varchar2);
+	function isEnabled(lvl varchar2, mkr varchar2) return BOOLEAN;
+end ;
+/
+Show Errors
+
+
+--now implementations
+
 create or replace type body LOGGER AS
   member function getName return VARCHAR2
 	is
@@ -243,10 +275,10 @@ create or replace type body LOGGER AS
 
   member procedure INFO(MSG varchar2)
   is
-  begin
-	if isenabled(LogManager.ll_INFO,NULL) THEN
+  Begin
+	--if isenabled(LogManager.ll_INFO,NULL) THEN
 			LogManager.log(LogManager.ll_INFO,NULL,msg);
-    end if;
+   -- end if;
   end;
 
   member procedure WARN(MSG varchar2)
@@ -373,40 +405,12 @@ end;
 show errors
 
 
-create or replace
-package LogManager
-as
-	function GETLOGGER return LOGGER;
-	function GETLOGGER(name varchar2) return LOGGER;
-	function GETCLASSNAME(DEPTH number) return varchar2;
-
-
-	ll_TRACE VARCHAR2(6) := 'TRACE';
-	ll_DEBUG VARCHAR2(6) := 'DEBUG';
-	ll_INFO VARCHAR2(6) := 'INFO';
-	ll_WARN VARCHAR2(6) := 'WARN';
-	ll_ERROR VARCHAR2(6) := 'ERROR';
-	ll_FATAL VARCHAR2(6) := 'FATAL';
-	ll_ALL VARCHAR2(6) := 'ALL';
-
-	ll_TRACE_enabled BOOLEAN := TRUE;
-	ll_DEBUG_enabled BOOLEAN := TRUE;
-	ll_INFO_enabled BOOLEAN := TRUE;
-	ll_WARN_enabled BOOLEAN := TRUE;
-	ll_ERROR_enabled BOOLEAN := TRUE;
-	ll_FATAL_enabled BOOLEAN := TRUE;
-
-	procedure log(lvl varchar2, marker varchar2, msg varchar2);
-	function isEnabled(lvl varchar2, mkr varchar2) return BOOLEAN;
-end ;
-/
-SHOW ERRORS
-
 
 create or replace
 package body LOGMANAGER as
     ROOT_LOGGER_NAME CONSTANT VARCHAR2(1) := '';
 
+         $if dbms_db_version.ver_le_11 $then
 
 procedure who_called_me( owner      out varchar2,
                         name       out varchar2,
@@ -444,7 +448,7 @@ begin
 --dbms_output.put_line(line);
 				--format '0x70165ba0       104  package body S06DP3.LOGMANAGER'
 --dbms_output.put_line('substr:'||substr( line, 14, 8 ));
-               lineno := to_number(substr( line, 14, 8 ));
+               lineno := to_number(substr( line, 12, 10 ));
                line   := substr( line, 23 ); --set to rest of line .. change from 21 to 23
                if ( line like 'pr%' ) then
                    n := length( 'procedure ' );
@@ -474,6 +478,10 @@ begin
        end if;
    end loop;
 end;
+         $else
+           version 12 and later code
+         $end
+
 
 	function isEnabled(lvl varchar2, mkr varchar2) return BOOLEAN
 	IS
@@ -496,8 +504,14 @@ procedure log(lvl varchar2, marker varchar2, msg varchar2)
    NAME      VARCHAR2(30);
    lineno    number;
    caller_type      VARCHAR2(30);
-	begin
+	Begin
+$if dbms_db_version.ver_le_11 $then
 		WHO_CALLED_ME( OWNER, name, LINENO, CALLER_TYPE  ,2);
+         $else
+    --3 represent. 1 = this (logmanager.log), 2 = caller (ie logger.xxx), 3 = who called logger.xxx 
+    Name := Utl_Call_Stack.Concatenate_Subprogram(Utl_Call_Stack.Subprogram(3));
+    Lineno := Utl_Call_Stack.Unit_Line(3);
+$end
 	  --DBMS_OUTPUT.PUT_LINE(name||'('||lineno||') '||TO_CHAR(systimestamp,'YYYY-MM-DD"T"HH:MI:SSXFF6')||' '||RPAD(lvl,5)||rtrim(' '||marker)||' '||msg);
 	  DBMS_OUTPUT.PUT_LINE(TO_CHAR(systimestamp,'YYYY-MM-DD"T"HH:MI:SSXFF6')||' '||RPAD(lvl,5)||' '||replace(name,' ')||'('||lineno||')'||rtrim(' '||marker)||' - '||msg);
 	END;
@@ -512,11 +526,15 @@ procedure log(lvl varchar2, marker varchar2, msg varchar2)
    caller_type      VARCHAR2(30);
     begin
 		--k_logger.entry('getClassName');
-        LogManager.who_called_me( owner, name, lineno, caller_type ,depth );
 		--dbms_output.put_line($$PLSQL_UNIT ||':'||loc.lineno);
 		--dbms_output.put_line($$PLSQL_UNIT ||':'||loc.toString());
 		--return k_logger.exit('getClassName',loc.getfqcn);
-      return owner||'.'||name;
+$if dbms_db_version.ver_le_11 $then
+        LogManager.who_called_me( owner, name, lineno, caller_type ,depth );
+		return owner||'.'||name;
+$else
+		return utl_call_stack.concatenate_subprogram(utl_call_stack.subprogram(1+depth)); --owner||'.'||name;
+$end
     END;
 
 
