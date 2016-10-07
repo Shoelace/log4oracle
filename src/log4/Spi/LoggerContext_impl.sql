@@ -1,3 +1,5 @@
+prompt CREATE OR REPLACE package LoggerContext_impl
+
 CREATE OR REPLACE
 package LoggerContext_impl
 AS
@@ -9,6 +11,7 @@ AS
 
 END;
 /
+show errors
 
 CREATE OR REPLACE
 package BODY LoggerContext_impl 
@@ -46,3 +49,5 @@ END;
         
 END;
 /
+
+show errors

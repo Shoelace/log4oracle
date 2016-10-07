@@ -52,88 +52,163 @@ CONNECT BY  supertype_name = PRIOR type_name --and supertype_owner = PRIOR owner
 START WITH supertype_name IS NULL
 ;
 */
-create type APPENDER;
-/
-create type   DBMSOUTPUTAPPENDER;
-/
-create type   TABLEAPPENDER;
-/
-create type FORMATTINGINFO;
-/
-create type LAYOUT;
-/
-create type   PATTERNLAYOUT;
-/
-create type   SIMPLELAYOUT;
-/
 create type LOG4_OBJECT;
-/
-create type   GENERICEXCEPTION;
-/
-create type   LOG4_SQL_OBJECT;
-/
+/                                                                           
+
 create type   LOGEVENT;
-/
+/                                                                            
+
 create type     LOG4ORACLELOGEVENT;
-/
-create type   LOGLEVEL;
-/
-create type   MARKER;
-/
-create type     MARKERIMPL;
-/
+/                                                                
+
+create type   LOG4_SQL_OBJECT;
+/                                                                     
+
+create type   GENERICEXCEPTION;
+/                                                                    
+
 create type   MESSAGE;
-/
-create type     OBJECTMESSAGE;
-/
-create type     PARAMETERIZEDMESSAGE;
-/
+/                                                                             
+
+create type     MULTIFORMATMESSAGE;
+/                                                                
+
+
 create type     SIMPLEMESSAGE;
-/
-create type LOGGER;
-/
-create type   ExtendedLOGGER;
-/
-create type     AbstractLogger;
-/
-create type PATTERNCONVERTER;
-/
-create type   LOGEVENTPATTERNCONVERTER;
-/
-create type     DATEPATTERNCONVERTER;
-/
-create type     FULLLOCATIONPATTERNCONVERTER;
-/
-create type     LEVELPATTERNCONVERTER;
-/
-create type     LINESEPARATORPATTERNCONVERTER;
-/
-create type     LITERALPATTERNCONVERTER;
-/
-create type     LOGGERPATTERNCONVERTER;
-/
-create type     MARKERPATTERNCONVERTER;
-/
-create type     MDCPATTERNCONVERTER;
-/
-create type     MESSAGEPATTERNCONVERTER;
-/
-create type     NDCPATTERNCONVERTER;
-/
-create type     THROWABLEPATTERNCONVERTER;
-/
-create type PATTERNFORMATTER;
-/
-create type STACKTRACEELEMENT;
-/
-create type THREADCONTEXTCONTEXTMAP;
-/
-create type THREADCONTEXTCONTEXTSTACK;
-/
-create type THREADCONTEXTMAPENTRY;
-/
+/                                                                     
+
+create type     PARAMETERIZEDMESSAGE;
+/                                                              
+
+create type     OBJECTMESSAGE;
+/                                                                     
+
+create type   MARKER;
+/                                                                              
+
+create type     MARKERIMPL;
+/                                                                        
+
+create type   LOGLEVEL;
+/                                                                            
+
+
+create type   CONFIGURATION;
+/                                                                       
+
+create type   FILTER;
+/                                                                              
+
+create type     COMPOSITEFILTER;
+/                                                                   
+
+create type     THRESHOLDFILTER;
+/                                                                   
+
+create type LAYOUT;
+/                                                                                
+
+create type   SIMPLELAYOUT;
+/                                                                        
+
+create type   PATTERNLAYOUT;
+/                                                                       
+
+
+create type FORMATTINGINFO;
+/                                                                        
+
+create type APPENDER;
+/                                                                              
+
+create type   TABLEAPPENDER;
+/                                                                       
+
+create type   DBMSOUTPUTAPPENDER;
+/                                                                  
+
 create type LOGGERCONTEXT;
-/
+/                                                                         
+
+create type   SIMPLELOGGERCONTEXT;
+/                                                                 
+
+
+create type   LOGGERCONTEXTIMPL;
+/                                                                   
+
+create type THREADCONTEXTMAPENTRY;
+/                                                                 
+
+create type THREADCONTEXTCONTEXTSTACK;
+/                                                             
+
+create type THREADCONTEXTCONTEXTMAP;
+/                                                               
+
+create type STACKTRACEELEMENT;
+/                                                                     
+
+create type PATTERNFORMATTER;
+/                                                                      
+
+create type PATTERNCONVERTER;
+/                                                                      
+
+
+create type   LOGEVENTPATTERNCONVERTER;
+/                                                            
+
+create type     THROWABLEPATTERNCONVERTER;
+/                                                         
+
+create type     NDCPATTERNCONVERTER;
+/                                                               
+
+create type     MESSAGEPATTERNCONVERTER;
+/                                                           
+
+create type     MDCPATTERNCONVERTER;
+/                                                               
+
+create type     MARKERPATTERNCONVERTER;
+/                                                            
+
+
+create type     LOGGERPATTERNCONVERTER;
+/                                                            
+
+create type     LITERALPATTERNCONVERTER;
+/                                                           
+
+create type     LINESEPARATORPATTERNCONVERTER;
+/                                                     
+
+create type     LEVELPATTERNCONVERTER;
+/                                                             
+
+create type     FULLLOCATIONPATTERNCONVERTER;
+/                                                      
+
+create type     DATEPATTERNCONVERTER;
+/                                                              
+
+create type LOGGER;
+/                                                                                
+
+
+create type   EXTENDEDLOGGER;
+/                                                                      
+
+create type     ABSTRACTLOGGER;
+/                                                                    
+
+create type       SIMPLELOGGER;
+/                                                                    
+
+create type RESULT;
+/                                                                                
+
 
 prompt &line1
 prompt Collections
@@ -158,8 +233,9 @@ prompt &line1
 
 
 @@log4/Util/Log4Util.sql
-@@log4/Util/UtlfileURITYPE.sql
+--@@log4/Util/UtlfileURITYPE.sql
 
+-- -------------------------------------------------------------------------
 prompt &line1
 prompt Object Types
 prompt &line1
@@ -188,6 +264,7 @@ prompt &line1
 
 @@log4/Core/Log4oracleLogEvent.type.pls
 
+-- -------------------------------------------------------------------------
 prompt &line1
 prompt Converters
 prompt &line1
@@ -210,6 +287,7 @@ prompt &line1
 @@log4/Core/Pattern/NDCPatternConverter.pls
 @@log4/Core/Pattern/ThrowablePatternConverter.pls
 
+-- -------------------------------------------------------------------------
 prompt &line1
 prompt parser
 prompt &line1
@@ -233,6 +311,7 @@ prompt &line1
 @@log4/Logger.type.pls
 @@log4/spi/ExtendedLogger.sql
 @@log4/spi/AbstractLogger.type.pls
+@@log4/Simple/SimpleLogger.type.pls
 
 @@log4/Core/Result.type.pls
 @@log4/Core/Filter/Filter.type.pls
@@ -243,15 +322,17 @@ prompt &line1
 
 @@log4/Core/Config/Configuration.sql
 @@log4/Spi/LoggerContext.type.pls
+@@log4/Simple/SimpleLoggerContext.type.pls
 
 --
-
+-- -------------------------------------------------------------------------
 prompt &line1
 prompt Tables
 prompt &line1
 
 @@log4/Core/Config/log_levels.sql
 
+-- -------------------------------------------------------------------------
 prompt &line1
 prompt Appenders
 prompt &line1
@@ -263,21 +344,25 @@ prompt &line1
 @@log4/Core/Appender/TableAppender.type.pls
 @@log4/Core/Appender/TableAppender.type.plb
 
+-- -------------------------------------------------------------------------
 prompt &line1
 prompt Package Specs
 prompt &line1
 
-@@log4/Core/LogImpl.pks
-@@log4/Core/LogManager.pks
-@@log4/Core/MarkerManager.pks
+@@log4/Core/Logger_Impl.pks
+@@log4/LogManager.pks
+@@log4/MarkerManager.pks
 @@log4/Spi/ThreadContext.pks
 
 @@log4/Util/get_log_level.fnc.plb
+@@log4/spi/LoggerContext_impl.sql
 
 prompt &line1
 prompt Object Bodies
 prompt &line1
+
 @@log4/Spi/LoggerContext.type.plb
+@@log4/Simple/SimpleLoggerContext.type.plb
 
 @@log4/Message/SimpleMessage.type.plb
 @@log4/Message/ObjectMessage.type.plb
@@ -286,7 +371,9 @@ prompt &line1
 @@log4/Util/StackTraceElement.type.plb
 
 @@log4/Core/LogLevel.type.plb
+
 @@log4/Spi/AbstractLogger.type.plb
+@@log4/Simple/SimpleLogger.type.plb
 
 @@log4/LogManager.pkb
 @@log4/MarkerManager.pkb
@@ -320,6 +407,7 @@ prompt &line1
 @@log4/Core/Appender/log_table_trim.prc
 
 begin
+NULL;
 $IF dbms_db_version.ver_le_10 $THEN
 $ELSIF dbms_db_version.ver_le_11 $THEN
 $ELSE

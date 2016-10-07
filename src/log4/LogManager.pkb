@@ -67,7 +67,7 @@ package body LOGMANAGER as
   --return factory.getContext(FQCN, null, null, true);
      IF lc IS NULL THEN
      dbms_output.put_line('creating logger context');
-       lc :=  NEW SimpleLoggerContext('testcontext');
+       lc :=  NEW SimpleLoggerContext();
     END IF;
     
     return lc;

@@ -51,7 +51,7 @@ AS
 
 		IF trim(configLocn) IS NOT NULL THEN
 		BEGIN
-			self.m_configLocation := utlfileuritype(configLocn);
+			self.m_configLocation := null;--utlfileuritype(configLocn);
 		exception
 			WHEN others THEN
 				self.m_configLocation := NULL;

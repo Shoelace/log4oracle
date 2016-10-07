@@ -89,3 +89,7 @@ END LOOP;
 
 end;
 /
+
+prompt remaining objects
+select object_name
+from user_objects;

@@ -36,6 +36,7 @@ k_log.entry;
 
 k_log.exit;
 
-END;
+END log_table_trim;
 /
-show errors procedure log_table_trim
+
+show errors

@@ -16,7 +16,7 @@ as object
 	member function getLayout return Layout,
 
 	member function getName return varchar2,
-    member function ignoreExceptions return boolean,
+   -- member function ignoreExceptions return boolean,
 
 	--member procedure setHandler(h ErrorHandler) ,
 
